@@ -1,9 +1,11 @@
 import {combineReducers, createStore, Reducer} from "redux";
 import {StoreState} from "../types";
 import {persistentUiReducer} from "./PersistentUi";
+import { projectsReducer } from "./Projects";
 
 const reducers: Reducer<StoreState> = combineReducers<StoreState>({
     persistentUI: persistentUiReducer,
+    projects: projectsReducer
 });
 
 /* eslint-disable no-underscore-dangle */

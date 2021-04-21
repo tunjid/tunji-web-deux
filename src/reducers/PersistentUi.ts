@@ -4,7 +4,15 @@ import { MenuRes } from "../types/MenuRes";
 export interface AppTab {
     index: number
     text: string
+    route: string
 }
+
+const tabs = [
+    {index: 0, text: 'Posts', route: 'posts'},
+    {index: 1, text: 'Projects', route: 'projects'},
+    {index: 2, text: 'Talks', route: 'talks'},
+    {index: 2, text: 'About', route: 'about'},
+]
 
 export interface PersistentUiState {
     appBarTitle: string;
@@ -27,13 +35,8 @@ export function persistentUiReducer(state = {
     hasAppBarShadow: false,
     hasAppBarHeader: true,
     tabsShow: true,
-    selectedTab: {index: 0, text: 'Posts'},
-    tabs: [
-        {index: 0, text: 'Posts'},
-        {index: 1, text: 'Projects'},
-        {index: 2, text: 'Talks'},
-        {index: 2, text: 'About'},
-    ],
+    selectedTab: tabs[0],
+    tabs: tabs,
     menuItems: [{text: 'About'}, {text: 'Features'}],
 }, action: PersistentUiAction): PersistentUiState {
     switch (action.type) {
