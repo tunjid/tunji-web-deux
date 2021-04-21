@@ -14,11 +14,12 @@ const throttle = require('lodash/throttle');
 const useStyles = makeStyles(() => createStyles({
         root: {
             background: 'linear-gradient(to bottom, #083042, #083042)',
-            minHeight: '60vh',
+            minHeight: '40vh',
         },
         tabs: {
             position: 'relative',
-            top: '100px',
+            top: '30vh',
+            textColorSecondary: '#FFFFFF',
         },
     }
 ));
@@ -29,10 +30,6 @@ interface Props {
     tabsShow: boolean;
     selectedTab: AppTab;
     tabs: AppTab[];
-}
-
-interface AppHeaderProps {
-    children?: JSX.Element;
 }
 
 const selector: OutputSelector<StoreState, Props, (res: PersistentUiState) => Props> = createSelector(
@@ -48,7 +45,7 @@ const selector: OutputSelector<StoreState, Props, (res: PersistentUiState) => Pr
 
 const transparent = '#00000000'
 
-const AppHeader = (props: AppHeaderProps) => {
+const AppHeader = () => {
     const classes = useStyles();
     const dispatch = useDispatch();
     const {
@@ -73,7 +70,7 @@ const AppHeader = (props: AppHeaderProps) => {
 
             dispatch(modifyAppBar({
                 hasAppBarShadow: !currentlyAtTop,
-                appBarColor: currentlyAtTop ? transparent : theme.palette.primary.main
+                appBarColor: currentlyAtTop ? transparent : theme.palette.secondary.main
             }));
         }
 
@@ -107,8 +104,8 @@ const AppHeader = (props: AppHeaderProps) => {
                 onChange={(_: any, index: number) => {
                     dispatch(modifyAppBar({selectedTab: tabs[index]}))
                 }}
-                indicatorColor="primary"
-                textColor="primary"
+                indicatorColor="secondary"
+                textColor="secondary"
                 centered
             >
                 {tabs.map(renderTab)}
