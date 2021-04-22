@@ -51,10 +51,10 @@ const HomeCards = () => {
                 className={classes.gridList}
                 cellHeight={'auto'}
                 spacing={8}
-                cols={3}
+                cols={6}
             >
                 {cards.map((card) => (
-                    <GridListTile key={card.id} cols={card.spanCount || 1}>
+                    <GridListTile key={card.id} cols={card.spanCount || 2}>
                         <AppCard cardInfo={card}/>
                     </GridListTile>
                 ))}
