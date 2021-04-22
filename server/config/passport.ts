@@ -1,19 +1,17 @@
 import passport from 'passport';
 import { User, UserDocument } from '../models/UserSchema';
+import localStrategy from './strategies/local';
 
-module.exports = function () {
-    passport.serializeUser(function (user: UserDocument, done: (error: any, userId: string) => void) {
-        done(null, user.id);
+export default function () {
+    passport.serializeUser<any>((user, done: (error: any, userId: any) => void) => {
+        done(null, user);
     });
 
-    passport.deserializeUser(function (userId: string, done: (error: any, user: UserDocument | null) => void) {
-        User.findOne(
-            {_id: userId},
-            '-password -salt',
-            done
-        );
+    passport.deserializeUser<any>((userId, done) => {
+        User.findById(userId, (err: any, user: UserDocument) => {
+            done(err, user.id);
+        });
     });
 
-    const localStrategy = require('./strategies/local.js');
     localStrategy();
 };

@@ -2,7 +2,7 @@ import passport from 'passport';
 import { Strategy, VerifyFunction } from 'passport-local';
 import { User, UserDocument } from '../../models/UserSchema';
 
-module.exports = function () {
+export default function () {
 
     const verifyFunction : VerifyFunction = (username: string, password: string, done) => {
         User.findOne({
@@ -26,7 +26,7 @@ module.exports = function () {
                     });
                 }
 
-                return done(null, user);
+                return done(null, user.id);
             });
     }
 

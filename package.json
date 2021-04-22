@@ -3,9 +3,15 @@
   "version": "4.0.1",
   "private": true,
   "scripts": {
-    "start": "pm2 start app.sh",
-    "dev": "cd client; npm install; npm run build; cd ..; node start.js",
-    "lint": "tslint \"src/**/*.ts\""
+    "build-client": "cd client; yarn install; npm run build; cd ..;",
+    "build-ts": "tsc",
+    "build": "npm run build-ts && npm run lint && npm run copy-static-assets ",
+    "copy-static-assets": "ts-node copyStaticAssets.ts",
+    "debug": "npm run build && npm run watch-debug",
+    "lint": "tsc --noEmit && eslint \"**/*.{js,ts}\" --quiet --fix",
+    "serve-debug": "nodemon --inspect dist/server.js",
+    "serve": "node dist/server.js",
+    "start": "npm run serve"
   },
   "engines": {
     "node": "14.x"
