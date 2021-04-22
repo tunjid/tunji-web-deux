@@ -10,16 +10,17 @@ export function projectsReducer(state = {
             id: '1',
             title: 'Digilux',
             body: 'Digilux Fingerprint Sensor app',
+            date:'jjsj',
             thumbnail: 'https://www.tunjid.com/public/images/projects/digilux-1.png',
             style: CardStyle.horizontal,
-            categories: [] as string[],
+            categories: ['App', 'Opensource'] as string[],
         },
         {
             id: '2',
             title: 'Digilux',
             body: 'Digilux Fingerprint Sensor app',
             thumbnail: 'https://www.tunjid.com/public/images/projects/digilux-1.png',
-            style: CardStyle.horizontal,
+            style: CardStyle.vertical,
             categories: [] as string[],
         },
         {
@@ -27,7 +28,7 @@ export function projectsReducer(state = {
             title: 'Digilux',
             body: 'Digilux Fingerprint Sensor app',
             thumbnail: 'https://www.tunjid.com/public/images/projects/digilux-1.png',
-            style: CardStyle.horizontal,
+            style: CardStyle.vertical,
             categories: [] as string[],
         },
         {
@@ -35,7 +36,7 @@ export function projectsReducer(state = {
             title: 'Digilux',
             body: 'Digilux Fingerprint Sensor app',
             thumbnail: 'https://www.tunjid.com/public/images/projects/digilux-1.png',
-            style: CardStyle.horizontal,
+            style: CardStyle.vertical,
             categories: [] as string[],
         },
         {

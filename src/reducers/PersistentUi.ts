@@ -11,7 +11,7 @@ const tabs = [
     {index: 0, text: 'Posts', route: 'posts'},
     {index: 1, text: 'Projects', route: 'projects'},
     {index: 2, text: 'Talks', route: 'talks'},
-    {index: 2, text: 'About', route: 'about'},
+    {index: 3, text: 'About', route: 'about'},
 ]
 
 export interface PersistentUiState {
