@@ -11,6 +11,8 @@
     "node": "14.x"
   },
   "dependencies": {
+    "@types/bluebird": "^3.5.33",
+    "@types/mongoose": "^5.10.5",
     "bluebird": "^3.5.4",
     "body-parser": "^1.18.3",
     "compression": "^1.7.4",
