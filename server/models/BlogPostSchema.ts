@@ -8,8 +8,8 @@ interface BlogPostModel extends Model<BlogPostDocument> {
 
 }
 
-const BlogPostSchema = new Schema({
+const BlogPostSchema = new Schema<BlogPostDocument, BlogPostModel>({
     ...ArchiveSchema,
 });
 
-export default model<BlogPostDocument, BlogPostModel>('BlogPost', BlogPostSchema);
+export const BlogPost = model<BlogPostDocument, BlogPostModel>('BlogPost', BlogPostSchema);

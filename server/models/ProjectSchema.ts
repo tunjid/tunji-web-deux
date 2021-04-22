@@ -8,8 +8,8 @@ interface ProjectModel extends Model<ProjectDocument> {
 
 }
 
-const ProjectSchema = new Schema({
+const ProjectSchema = new Schema<ProjectDocument, ProjectModel>({
     ...ArchiveSchema,
 });
 
-export default model<ProjectDocument, ProjectModel>('Project', ProjectSchema);
+export const Project = model<ProjectDocument, ProjectModel>('Project', ProjectSchema);

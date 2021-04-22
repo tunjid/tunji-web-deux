@@ -8,14 +8,15 @@ export interface UserDocument extends Document {
     username: string;
     password: string;
     salt: Buffer;
-    hashPassword: (password: string) => string
+    hashPassword: (password: string) => string,
+    authenticate: (password: string) => boolean
 }
 
 export interface UserModel extends Model<UserDocument> {
-    findUniqueUsername: (username: string, suffix) => Promise<string | undefined>
+    findUniqueUsername: (username: string, suffix?: number) => Promise<string | undefined>
 }
 
-const UserSchema = new Schema({
+const UserSchema = new Schema<UserDocument, UserModel>({
     accessLevel: String,
     firstName: String,
     lastName: String,
@@ -32,7 +33,7 @@ const UserSchema = new Schema({
     password: {
         type: String,
         validate: [
-            function (password) {
+            function (password: string) {
                 return !!password && password.length > 6;
             },
             'Password must be greater than 6 characters'
@@ -67,7 +68,7 @@ UserSchema.methods.authenticate = function (this: UserDocument, password: string
 
 UserSchema.virtual('fullName').get(function (this: UserDocument) {
     return this.firstName + ' ' + this.lastName;
-}).set(function (fullName) {
+}).set(function (this: UserDocument, fullName: string) {
     const splitName = fullName.split(' ');
     this.firstName = splitName[0] || '';
     this.lastName = splitName[1] || '';
@@ -101,4 +102,4 @@ UserSchema.set('toJSON', {
     virtuals: true
 });
 
-export default model<UserDocument, UserModel>('User', UserSchema);
+export const User = model<UserDocument, UserModel>('User', UserSchema);

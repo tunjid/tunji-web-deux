@@ -8,8 +8,8 @@ interface TalkModel extends Model<TalkDocument> {
 
 }
 
-const TalkSchema = new Schema({
+const TalkSchema = new Schema<TalkDocument, TalkModel>({
     ...ArchiveSchema,
 });
 
-export default model<TalkDocument, TalkModel>('Talk', TalkSchema);
+export const Talk = model<TalkDocument, TalkModel>('Talk', TalkSchema);
