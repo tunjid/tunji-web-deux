@@ -1,6 +1,6 @@
-import passport from "passport";
-import { Strategy, VerifyFunction } from "passport-local";
-import { User, UserDocument } from "../../models/UserSchema";
+import passport from 'passport';
+import { Strategy, VerifyFunction } from 'passport-local';
+import { User, UserDocument } from '../../models/UserSchema';
 
 export default function () {
 
@@ -16,13 +16,13 @@ export default function () {
 
                 if (!user) {
                     return done(null, false, {
-                        message: "Unkown user"
+                        message: 'Unkown user'
                     });
                 }
 
                 if (!user.authenticate(password)) {
                     return done(null, false, {
-                        message: "Invalid password"
+                        message: 'Invalid password'
                     });
                 }
 

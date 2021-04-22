@@ -1,6 +1,6 @@
-import passport from "passport";
-import { User, UserDocument } from "../models/UserSchema";
-import localStrategy from "./strategies/local";
+import passport from 'passport';
+import { User, UserDocument } from '../models/UserSchema';
+import localStrategy from './strategies/local';
 
 export default function () {
     passport.serializeUser<any>((user, done: (error: any, userId: any) => void) => {

@@ -84,14 +84,13 @@ UserSchema.pre<UserDocument>('save', function (this: UserDocument, next) {
 });
 
 UserSchema.statics.findUniqueUsername = async function (this: UserModel, username: string, suffix): Promise<string | undefined> {
-    const _this = this;
     const possibleUsername = username + (suffix || '');
 
     try {
-        const document = await _this.findOne({username: possibleUsername}).exec();
+        const document = await this.findOne({username: possibleUsername}).exec();
         if (!document) return possibleUsername;
 
-        return await _this.findUniqueUsername(username, (suffix || 0) + 1);
+        return await this.findUniqueUsername(username, (suffix || 0) + 1);
     } catch (e) {
         return undefined;
     }
