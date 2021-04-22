@@ -19,7 +19,7 @@ const composeMessage = function (res, message, statusCode) {
     return res.json({message: message});
 };
 
-exports.create = function (req, res) {
+export const create = (req, res) => {
     const blogPost = new BlogPost(req.body);
     blogPost.author = req.user;
 
@@ -36,7 +36,7 @@ exports.create = function (req, res) {
     });
 };
 
-exports.find = function (req, res) {
+export const find = (req, res) => {
     const limit = Number(req.query.limit) || 0;
     const offset = Number(req.query.offset) || 0;
 
@@ -90,11 +90,11 @@ exports.find = function (req, res) {
         });
 };
 
-exports.get = function (req, res) {
+export const get = (req, res) => {
     res.json(req.blogPost);
 };
 
-exports.put = function (req, res, next) {
+export const put = (req, res, next) => {
     BlogPost.findByIdAndUpdate(req.blogPost.id, req.body, function (error, blogPost) {
         if (error) {
             return next(error);
@@ -102,7 +102,7 @@ exports.put = function (req, res, next) {
     });
 };
 
-exports.delete = function (req, res, next) {
+export const remove = (req, res, next) => {
     req.blogPost.remove(function (error) {
 
         if (error)
@@ -112,7 +112,7 @@ exports.delete = function (req, res, next) {
     });
 };
 
-exports.blogPostById = function (req, res, next, id) {
+export const blogPostById = (req, res, next, id) => {
 
     BlogPost.findById(id)
         .populate('author', 'firstName lastName fullName')
@@ -129,7 +129,7 @@ exports.blogPostById = function (req, res, next, id) {
         });
 };
 
-exports.hasAuthorization = function (req, res, next) {
+export const hasAuthorization = (req, res, next) => {
     if (req.blogPost.author.id !== req.user.id) {
         return res.status(403).send({
             message: 'User is not authorized'
@@ -139,7 +139,7 @@ exports.hasAuthorization = function (req, res, next) {
     next();
 };
 
-exports.getTagsOrCategories = function (req, res) {
+export const getTagsOrCategories = (req, res) => {
     const type = req.query.type;
 
     if (type == 'tags' || type == 'categories') {
@@ -154,7 +154,7 @@ exports.getTagsOrCategories = function (req, res) {
 };
 
 
-exports.getArchives = function (req, res) {
+export const getArchives = (req, res) => {
     BlogPost.aggregate(
         [{
             $group: {

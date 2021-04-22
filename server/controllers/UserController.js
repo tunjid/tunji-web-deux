@@ -35,7 +35,7 @@ const getErrorMessage = function (err) {
     return message;
 };
 
-exports.create = function (req, res, next) {
+export const create = (req, res, next) => {
     const user = new User(req.body);
 
     console.log(req.body);
@@ -50,7 +50,7 @@ exports.create = function (req, res, next) {
     });
 };
 
-exports.find = function (req, res, next) {
+export const find = (req, res, next) => {
     User.find({}, function (error, users) {
         if (error) {
             return next(error);
@@ -61,11 +61,11 @@ exports.find = function (req, res, next) {
     });
 };
 
-exports.get = function (req, res) {
+export const get = (req, res) => {
     res.json(req.user);
 };
 
-exports.put = function (req, res, next) {
+export const put = (req, res, next) => {
     User.findByIdAndUpdate(req.user.id, req.body, function (error, user) {
         if (error) {
             return next(error);
@@ -76,7 +76,7 @@ exports.put = function (req, res, next) {
     });
 };
 
-exports.delete = function (req, res, next) {
+export const remove = (req, res, next) => {
     req.user.remove(function (error) {
         if (error) {
             return next(error);
@@ -87,7 +87,7 @@ exports.delete = function (req, res, next) {
     });
 };
 
-exports.userById = function (req, res, next, id) {
+export const userById = (req, res, next, id) => {
     User.findOne({_id: id}, function (error, user) {
         if (error) {
             return next(error);
@@ -99,7 +99,7 @@ exports.userById = function (req, res, next, id) {
     });
 };
 
-exports.requiresLogin = function (req, res, next) {
+export const requiresLogin = (req, res, next) => {
     if (!req.isAuthenticated()) {
         return res.status(401).send({
             message: 'User is not logged in'
@@ -110,7 +110,7 @@ exports.requiresLogin = function (req, res, next) {
 };
 
 // Create a new controller method that creates new 'regular' users
-exports.signup = function (req, res) {
+export const signup = (req, res) => {
     // If user is not connected, create and login a new user, otherwise redirect the user back to the main application page
     if (!req.user) {
         // Create a new 'User' model instance
@@ -143,7 +143,7 @@ exports.signup = function (req, res) {
     }
 };
 
-exports.signin = function (req, res, next) {
+export const signin = (req, res, next) => {
     passport.authenticate('local', function (err, user, status) {
         if (err) {
             return next(err);
@@ -164,20 +164,20 @@ exports.signin = function (req, res, next) {
 };
 
 // Create a new controller method for signing out
-exports.signout = function (req, res) {
+export const signout = (req, res) => {
     // Use the Passport 'logout' method to logout
     req.logout();
     return composeMessage(res, 'Signed out');
 };
 
-exports.session = function (req, res) {
+export const session = (req, res) => {
     if (req.user) {
         res.json(req.user);
     }
     else return composeMessage(res, 'Not signed in');
 };
 
-// exports.contact = function (req, res) {
+// export const contact = function (req, res) {
 //
 //     User.findOne({username: "tunji"}, "email twoFactPass", function (error, user) {
 //         if (error) {
