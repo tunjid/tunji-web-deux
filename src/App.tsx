@@ -12,7 +12,6 @@ import { StoreState } from "./types";
 import { createSelector, OutputSelector } from "reselect";
 import { PersistentUiState } from "./reducers/PersistentUi";
 import { useState } from "react";
-import AppHeader from "./components/appBar/AppHeader";
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
     root: {
@@ -22,6 +21,11 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     content: {
         flexGrow: 1,
         overflow: 'auto',
+    },
+    routes: {
+        position: 'relative',
+        'z-index': '100000',
+        top: '-100px',
     }
 }));
 
@@ -52,7 +56,6 @@ const App = () => {
                 <AppBarIconsOverflow/>
                 <main className={classes.content}>
                     {appBarSpacer}
-                    <AppHeader/>
                     <Routes/>
                 </main>
             </ThemeProvider>

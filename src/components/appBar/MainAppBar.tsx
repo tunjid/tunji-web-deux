@@ -11,8 +11,6 @@ import AppBarIcons from "../../components/appBar/AppBarIcons";
 import { StoreState } from "../../types";
 import { PersistentUiState } from "../../reducers/PersistentUi";
 import { createSelector, OutputSelector } from 'reselect'
-import AppHeader from "./AppHeader";
-
 
 const drawerWidth = 240;
 

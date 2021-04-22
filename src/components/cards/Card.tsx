@@ -13,10 +13,12 @@ export enum CardStyle {
 }
 
 export interface CardInfo {
+    id: string;
     title: string;
     body: string;
     thumbnail: string;
     date?: string;
+    spanCount?: number;
     style: CardStyle;
     categories: string[];
 }

@@ -14,7 +14,7 @@ const throttle = require('lodash/throttle');
 const useStyles = makeStyles(() => createStyles({
         root: {
             background: 'linear-gradient(to bottom, #083042, #083042)',
-            minHeight: '40vh',
+            minHeight: '50vh',
         },
         tabs: {
             position: 'relative',
@@ -43,9 +43,8 @@ const selector: OutputSelector<StoreState, Props, (res: PersistentUiState) => Pr
     })
 );
 
-const transparent = '#00000000'
 
-const AppHeader = () => {
+const HomeHeader = () => {
     const classes = useStyles();
     const dispatch = useDispatch();
     const {
@@ -57,6 +56,7 @@ const AppHeader = () => {
 
     useEffect(() => {
         const onScroll = () => {
+            const transparent = '#00000000'
             if (!appBarColor) return;
 
             const position = (window.pageYOffset !== undefined)
@@ -81,21 +81,6 @@ const AppHeader = () => {
         return () => window.removeEventListener('scroll', scrollListener);
     });
 
-
-    // onMenuResClicked(clicked: MenuRes) {
-    //     switch (clicked.text) {
-    //         case 'Features':
-    //             this.props.history.push('#features');
-    //             break;
-    //         case 'About':
-    //             this.props.history.push('#about');
-    //             break;
-    //     }
-    // }
-
-    const renderTab = (item: AppTab) => <Tab label={item.text}/>;
-
-
     return (
         <div className={classes.root}>
             <Tabs
@@ -108,10 +93,10 @@ const AppHeader = () => {
                 textColor="secondary"
                 centered
             >
-                {tabs.map(renderTab)}
+                {tabs.map((item: AppTab) => <Tab label={item.text}/>)}
             </Tabs>
         </div>
     );
 }
 
-export default AppHeader;
+export default HomeHeader;
