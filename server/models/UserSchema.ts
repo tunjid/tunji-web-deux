@@ -101,6 +101,4 @@ UserSchema.set('toJSON', {
     virtuals: true
 });
 
-const ExportedModel = model<UserDocument, UserModel>('User', UserSchema);
-
-export default ExportedModel
+export default model<UserDocument, UserModel>('User', UserSchema);
