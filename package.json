@@ -1,0 +1,30 @@
+{
+  "name": "tunji-web-deux-server",
+  "version": "4.0.1",
+  "private": true,
+  "scripts": {
+    "start": "pm2 start app.sh",
+    "dev": "cd client; npm install; npm run build; cd ..; node start.js",
+    "lint": "tslint \"src/**/*.ts\""
+  },
+  "engines": {
+    "node": "14.x"
+  },
+  "dependencies": {
+    "bluebird": "^3.5.4",
+    "body-parser": "^1.18.3",
+    "compression": "^1.7.4",
+    "cookie-parser": "^1.4.4",
+    "debug": "^4.3.1",
+    "ejs": "*",
+    "express": "^4.16.4",
+    "express-session": "^1.17.1",
+    "mongoose": "^5.4.20",
+    "morgan": "^1.9.1",
+    "nodemailer": "6.5.0",
+    "passport": "^0.4.1",
+    "passport-local": "^1.0.0",
+    "serve-favicon": "^2.5.0"
+  },
+  "devDependencies": {}
+}
