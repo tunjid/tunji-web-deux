@@ -1,7 +1,7 @@
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import * as React from 'react';
 import HomeHeader from "./HomeHeader";
-import Cards from "../cards/Cards";
+import HomeCards from "./HomeCards";
 
 const useStyles = makeStyles(() => createStyles({
         root: {},
@@ -19,7 +19,7 @@ const Home = () => {
         <div className={classes.root}>
             <HomeHeader/>
             <div className={classes.cards}>
-                <Cards/>
+                <HomeCards/>
             </div>
         </div>
     );

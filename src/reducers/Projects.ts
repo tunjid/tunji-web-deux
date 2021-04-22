@@ -1,6 +1,4 @@
-import { CardInfo, CardStyle } from "../components/cards/Card";
-
-
+import { CardInfo, CardStyle } from "../components/home/HomeCard";
 
 export interface ProjectsState {
     cards: CardInfo[];

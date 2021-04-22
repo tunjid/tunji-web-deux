@@ -3,20 +3,19 @@ import * as React from 'react';
 import { createSelector, OutputSelector } from "reselect";
 import { StoreState } from "../../types";
 import { shallowEqual, useSelector } from "react-redux";
-import AppCard, { CardInfo } from "./Card";
+import AppCard, { CardInfo } from "./HomeCard";
 import { GridList, GridListTile } from "@material-ui/core";
 
 const useStyles = makeStyles(() => createStyles({
         root: {
-            minHeight: '200vh',
             display: 'flex',
             position:'relative',
             justifyContent: 'space-around',
-            overflow: 'hidden',
         },
         gridList: {
             width: `80vw`,
-            height: 450,
+            "height": 'auto',
+            "overflowY": 'auto',
         },
     }
 ));
@@ -42,7 +41,7 @@ const selector: OutputSelector<StoreState, Props, (res: StoreState) => Props> = 
     }
 );
 
-const Cards = () => {
+const HomeCards = () => {
     const classes = useStyles();
     const {cards}: Props = useSelector(selector, shallowEqual);
 
@@ -50,7 +49,7 @@ const Cards = () => {
         <div className={classes.root}>
             <GridList
                 className={classes.gridList}
-                cellHeight={200}
+                cellHeight={'auto'}
                 spacing={8}
                 cols={3}
             >
@@ -64,4 +63,4 @@ const Cards = () => {
     );
 }
 
-export default Cards;
+export default HomeCards;
