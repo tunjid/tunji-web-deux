@@ -1,6 +1,5 @@
-const User = require('mongoose').model('User');
-const passport = require('passport');
-const nodemailer = require("nodemailer");
+import {User} from '../models/UserSchema';
+import passport from 'passport';
 
 const composeMessage = function (res, message) {
     return res.json({message: message});
@@ -103,7 +102,7 @@ exports.userById = function (req, res, next, id) {
 exports.requiresLogin = function (req, res, next) {
     if (!req.isAuthenticated()) {
         return res.status(401).send({
-            message: "User is not logged in"
+            message: 'User is not logged in'
         });
     }
 
@@ -178,54 +177,54 @@ exports.session = function (req, res) {
     else return composeMessage(res, 'Not signed in');
 };
 
-exports.contact = function (req, res) {
-
-    User.findOne({username: 'tunji'}, 'email twoFactPass', function (error, user) {
-        if (error) {
-            return composeMessage(res, 'Unable to get user');
-        }
-        else if (!user.email || !user.twoFactPass) {
-            return composeMessage(res, 'User is missing required details');
-        }
-        else {
-
-            const commentBody = req.body;
-
-            const smtpTransport = nodemailer.createTransport("SMTP", {
-                service: "Gmail",
-                auth: {
-                    user: user.email,
-                    pass: user.twoFactPass
-                }
-            });
-
-            // setup e-mail data with unicode symbols
-            const mailOptions = {
-                from: commentBody.email, // sender address
-                to: user.email,
-                subject: "Comment from tunjid.com", // Subject line
-                text: commentBody.comment, // plaintext body
-                html: "<b>From</b>" + " " +
-                    commentBody.firstName +
-                    " " +
-                    commentBody.lastName +
-                    " " +
-                    commentBody.email +
-                    "<p>" + commentBody.comment + "</p>" // html body
-            };
-
-            // send mail with defined transport object
-            smtpTransport.sendMail(mailOptions, function (error) {
-                if (error) {
-                    const message = getErrorMessage(error);
-                    return composeMessage(res, message);
-                }
-                else {
-                    return composeMessage(res, 'Email sent');
-                }
-            });
-        }
-    });
-};
+// exports.contact = function (req, res) {
+//
+//     User.findOne({username: "tunji"}, "email twoFactPass", function (error, user) {
+//         if (error) {
+//             return composeMessage(res, "Unable to get user");
+//         }
+//         else if (!user.email || !user.twoFactPass) {
+//             return composeMessage(res, "User is missing required details");
+//         }
+//         else {
+//
+//             const commentBody = req.body;
+//
+//             const smtpTransport = nodemailer.createTransport("SMTP", {
+//                 service: "Gmail",
+//                 auth: {
+//                     user: user.email,
+//                     pass: user.twoFactPass
+//                 }
+//             });
+//
+//             // setup e-mail data with unicode symbols
+//             const mailOptions = {
+//                 from: commentBody.email, // sender address
+//                 to: user.email,
+//                 subject: "Comment from tunjid.com", // Subject line
+//                 text: commentBody.comment, // plaintext body
+//                 html: "<b>From</b>" + " " +
+//                     commentBody.firstName +
+//                     " " +
+//                     commentBody.lastName +
+//                     " " +
+//                     commentBody.email +
+//                     "<p>" + commentBody.comment + "</p>" // html body
+//             };
+//
+//             // send mail with defined transport object
+//             smtpTransport.sendMail(mailOptions, function (error) {
+//                 if (error) {
+//                     const message = getErrorMessage(error);
+//                     return composeMessage(res, message);
+//                 }
+//                 else {
+//                     return composeMessage(res, "Email sent");
+//                 }
+//             });
+//         }
+//     });
+// };
 
 

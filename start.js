@@ -1,10 +1,8 @@
-const app = require('./server/app');
-const ssl = require('./server/config/ssl');
-const socket = require('./server/config/socket');
+import app from './server/app';
+import ssl from './server/config/ssl';
+import https from 'https';
 
-const server = require('https').createServer(ssl.options, app);
-
-socket(server);
+const server = https.createServer(ssl.options, app);
 
 server.listen(app.get('port'));
 server.on('listening', onListening);

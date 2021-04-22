@@ -1,5 +1,5 @@
-const BlogPost = require('mongoose').model('BlogPost');
-const User = require('mongoose').model('User');
+import {BlogPost} from '../models/BlogPostSchema';
+import {User} from '../models/UserSchema';
 
 const getErrorMessage = function (error) {
     if (error.errors) {
@@ -24,7 +24,7 @@ exports.create = function (req, res) {
     blogPost.author = req.user;
 
     if (!blogPost.author) {
-        return composeMessage(res, "A blog post needs an author", 400);
+        return composeMessage(res, 'A blog post needs an author', 400);
     }
 
     blogPost.save(function (error) {
@@ -32,8 +32,7 @@ exports.create = function (req, res) {
             return res.status(400).send({
                 message: getErrorMessage(error)
             });
-        }
-        else res.json(blogPost);
+        } else res.json(blogPost);
     });
 };
 
@@ -71,7 +70,7 @@ exports.find = function (req, res) {
         query.created = {
             $gte: startDate,
             $lt: endDate
-        }
+        };
     }
 
     BlogPost.find(query)
@@ -85,8 +84,7 @@ exports.find = function (req, res) {
                 return res.status(400).send({
                     message: getErrorMessage(error)
                 });
-            }
-            else {
+            } else {
                 res.json(blogPosts);
             }
         });
@@ -100,8 +98,7 @@ exports.put = function (req, res, next) {
     BlogPost.findByIdAndUpdate(req.blogPost.id, req.body, function (error, blogPost) {
         if (error) {
             return next(error);
-        }
-        else res.json(blogPost);
+        } else res.json(blogPost);
     });
 };
 
@@ -125,7 +122,7 @@ exports.blogPostById = function (req, res, next, id) {
                 return next(error);
 
             if (!blogPost)
-                return composeMessage(res, "Failed to load blog post with id " + id, 400);
+                return composeMessage(res, 'Failed to load blog post with id ' + id, 400);
 
             req.blogPost = blogPost;
             next();
@@ -135,7 +132,7 @@ exports.blogPostById = function (req, res, next, id) {
 exports.hasAuthorization = function (req, res, next) {
     if (req.blogPost.author.id !== req.user.id) {
         return res.status(403).send({
-            message: "User is not authorized"
+            message: 'User is not authorized'
         });
     }
 
@@ -150,12 +147,10 @@ exports.getTagsOrCategories = function (req, res) {
         excludedFields[type] = {$ne: null};
         BlogPost.distinct(type, excludedFields, function (error, result) {
             if (error) {
-                return composeMessage(res, "Error retrieving tags / categories", 500);
-            }
-            else res.json(result);
+                return composeMessage(res, 'Error retrieving tags / categories', 500);
+            } else res.json(result);
         });
-    }
-    else return composeMessage(res, 'Must pick a tag or category', 400);
+    } else return composeMessage(res, 'Must pick a tag or category', 400);
 };
 
 
@@ -163,18 +158,17 @@ exports.getArchives = function (req, res) {
     BlogPost.aggregate(
         [{
             $group: {
-                _id: {month: {$month: "$created"}, year: {$year: "$created"}},
+                _id: {month: {$month: '$created'}, year: {$year: '$created'}},
                 count: {$sum: 1},
-                titles: {$push: "$title"}
+                titles: {$push: '$title'}
             }
         }],
         function (error, result) {
             if (error) {
-                return composeMessage(res, "Error aggregating months", 500);
-            }
-            else res.json(result);
+                return composeMessage(res, 'Error aggregating months', 500);
+            } else res.json(result);
         }
-    )
+    );
 };
 
 

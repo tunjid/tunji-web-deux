@@ -1,5 +1,5 @@
-import { Document, Model, model, Schema } from 'mongoose'
-import { pbkdf2Sync, randomBytes } from 'crypto'
+import { Document, Model, model, Schema } from 'mongoose';
+import { pbkdf2Sync, randomBytes } from 'crypto';
 
 export interface UserDocument extends Document {
     email: string;
@@ -28,7 +28,7 @@ const UserSchema = new Schema<UserDocument, UserModel>({
     },
     email: {
         type: String,
-        match: [/.+\@.+\..+/, "Please fill a valid email address"]
+        match: [/.+\@.+\..+/, 'Please fill a valid email address']
     },
     password: {
         type: String,
@@ -58,7 +58,7 @@ const UserSchema = new Schema<UserDocument, UserModel>({
     }
 });
 
-UserSchema.methods.hashPassword = function (this: UserDocument, password: string): String {
+UserSchema.methods.hashPassword = function (this: UserDocument, password: string): string {
     return pbkdf2Sync(password, this.salt, 10000, 64, 'sha1').toString('base64');
 };
 
@@ -89,7 +89,7 @@ UserSchema.statics.findUniqueUsername = async function (this: UserModel, usernam
 
     try {
         const document = await _this.findOne({username: possibleUsername}).exec();
-        if (!document) return possibleUsername
+        if (!document) return possibleUsername;
 
         return await _this.findUniqueUsername(username, (suffix || 0) + 1);
     } catch (e) {

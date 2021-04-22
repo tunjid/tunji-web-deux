@@ -1,4 +1,5 @@
-process.env.NODE_ENV = require('./config/config').serverEnvironment;
+import config from './config/config';
+process.env.NODE_ENV = config.serverEnvironment;
 
 import express from './config/express';
 import passport from './config/passport';
