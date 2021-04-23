@@ -4,12 +4,12 @@
   "private": true,
   "scripts": {
     "build-client": "cd client; yarn install; npm run build; cd ..;",
-    "build-ts": "tsc",
+    "build-ts": "tsc --noEmit false",
     "build": "npm run build-ts && npm run lint",
     "debug": "npm run build && npm run watch-debug",
     "lint": "tsc --noEmit && eslint \"**/*.{js,ts}\" --quiet --fix",
     "serve-debug": "nodemon --inspect dist/server.js",
-    "serve": "node dist/server.js",
+    "serve": "node build/server.js",
     "start": "npm run serve"
   },
   "engines": {
