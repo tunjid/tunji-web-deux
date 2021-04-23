@@ -21,7 +21,7 @@ export default () => {
     const app: Express = ExpressApp();
 
     // Set the static files location
-    app.use('/', ExpressApp.static(path.join(__dirname, '../../client', 'build')));
+    app.use('/', ExpressApp.static(path.join(__dirname, '../../client')));
 
     if (config.serverEnvironment === 'production') app.use(compress());
     else app.use(morgan('dev'));

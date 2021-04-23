@@ -28,7 +28,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts build && cd ../build && mkdir client && cd ../client && cp -r build/** ../build/client",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
