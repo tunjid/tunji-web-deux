@@ -28,13 +28,14 @@ interface Props {
     cards: CardInfo[];
 }
 
-const cardFromArchive: (archive: ArchiveLike) => CardInfo = (archive) => ({
+const cardFromArchive: (archive: ArchiveLike, index: number) => CardInfo = (archive, index) => ({
     id: archive.key,
     title: archive.title,
-    body: archive.body,
+    body: archive.description,
+    spanCount: index % 4 === 0 ? 6 : 2,
     thumbnail: archive.thumbnail || '',
     date: archive.created.toDateString(),
-    style: CardStyle.horizontal,
+    style: index % 4 === 0 ? CardStyle.horizontal : CardStyle.vertical,
     categories: archive.categories,
 })
 

@@ -45,7 +45,7 @@ const HomeCardBody = ({cardInfo}: Props) => {
                     </Typography>
                 </div>
             </div>
-            <Typography gutterBottom variant="h5" component="h2">
+            <Typography gutterBottom variant="h4" component="h2">
                 {cardInfo.title}
             </Typography>
             <Typography variant="body2" color="textSecondary" component="p">

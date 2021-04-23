@@ -9,9 +9,10 @@ const useStyles = makeStyles(() =>
     createStyles({
         root: {
             display: 'flex',
+            minHeight: '20vh',
         },
         cover: {
-            width: 151,
+            width: '60vw',
         },
     }),
 );

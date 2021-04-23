@@ -8,7 +8,7 @@ import HomeCardBody from "./HomeCardBody";
 
 const useStyles = makeStyles((theme) => createStyles({
     root: {
-        maxWidth: 345,
+        display: 'flex',
     },
     media: {
         height: 140,
