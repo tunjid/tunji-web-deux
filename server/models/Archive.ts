@@ -4,6 +4,7 @@ import { UserDocument } from './UserSchema';
 export interface Archive {
     title: string;
     body: string;
+    description: string;
     author: UserDocument['_id'];
     thumbnail?: string;
     created: Date;
@@ -18,7 +19,8 @@ export type ArchiveModel = Model<ArchiveDocument>
 
 export const ArchiveSchema = {
     title: {type: String, required: true},
-    body: String,
+    body: {type: String, required: true},
+    description: {type: String, required: true},
     author: {type: Schema.Types.ObjectId, ref: 'User', required: 'Author is required',},
     tags: {type: [String], index: true, default: ['untagged']},
     categories: {type: [String], index: true, default: ['uncategorized']},
