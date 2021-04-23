@@ -6,22 +6,33 @@ import morgan from 'morgan';
 import passport from 'passport';
 import path from 'path';
 import helmet from 'helmet';
+import mongoose from 'mongoose';
+import bluebird from 'bluebird';
 
 import config from './config';
 import session from './session';
-import blogPostRouter from '../routes/BlogPostRouter';
 import userRouter from '../routes/UserRouter';
 import archiveRouter from '../routes/ArchiveRouter';
 import errorMiddleware from '../middleware/ErrorMiddleware';
 import HttpException from '../utilities/HttpException';
 
-import './mongoose';
-
 import { BlogPost } from '../models/BlogPostSchema';
+import { Project } from '../models/ProjectSchema';
+import { Talk } from '../models/TalkSchema';
 
 export default () => {
 // Initialize Express app
     const app: Express = ExpressApp();
+
+    mongoose.Promise = bluebird;
+    mongoose.connect(config.mongoUrl, config.mongooseOptions).then(
+        () => {
+            return;
+        },
+    ).catch(err => {
+        console.log(`MongoDB connection error. Please make sure MongoDB is running. ${err}`);
+        // process.exit();
+    });
 
     // Set the static files location
     app.use('/', ExpressApp.static(path.join(__dirname, '../../client')));
@@ -47,8 +58,9 @@ export default () => {
 
 // Route mapping
     userRouter(app);
-    // blogPostRouter(app);
     archiveRouter(app, BlogPost);
+    archiveRouter(app, Project);
+    archiveRouter(app, Talk);
 
     app.all(
         '/*',
