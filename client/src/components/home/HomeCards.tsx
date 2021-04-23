@@ -1,17 +1,18 @@
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import * as React from 'react';
+import { useEffect } from 'react';
 import { createSelector, OutputSelector } from "reselect";
 import { StoreState } from "../../types";
-import { shallowEqual, useSelector } from "react-redux";
+import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import AppCard, { CardInfo, CardStyle } from "./HomeCard";
 import { GridList, GridListTile } from "@material-ui/core";
-import { ArchiveKind } from "../../reducers/Archive";
+import { ArchiveKind, fetchArchives } from "../../reducers/Archive";
 import { ArchiveLike } from "../../../../common/Models";
 
 const useStyles = makeStyles(() => createStyles({
         root: {
             display: 'flex',
-            position:'relative',
+            position: 'relative',
             justifyContent: 'space-around',
         },
         gridList: {
@@ -23,6 +24,7 @@ const useStyles = makeStyles(() => createStyles({
 ));
 
 interface Props {
+    currentKind: ArchiveKind,
     cards: CardInfo[];
 }
 
@@ -55,13 +57,21 @@ const archivesFromState: (state: StoreState) => ArchiveLike[] = (state: StoreSta
 const selector: OutputSelector<StoreState, Props, (res: StoreState) => Props> = createSelector(
     state => state,
     (state: StoreState) => {
-        return {cards: archivesFromState(state).map(cardFromArchive)}
+        return {
+            currentKind: state.persistentUI.selectedTab.kind,
+            cards: archivesFromState(state).map(cardFromArchive)
+        }
     }
 );
 
 const HomeCards = () => {
     const classes = useStyles();
-    const {cards}: Props = useSelector(selector, shallowEqual);
+    const dispatch = useDispatch();
+    const {currentKind, cards}: Props = useSelector(selector, shallowEqual);
+
+    useEffect(() => {
+        dispatch(fetchArchives(currentKind));
+    }, [currentKind, dispatch]);
 
     return (
         <div className={classes.root}>

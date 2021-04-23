@@ -14,3 +14,10 @@ export interface AddArchive {
 }
 
 export type ArchiveAction = AddArchive
+
+export function addArchives(kind: ArchiveKind, archives: ArchiveLike[]): AddArchive {
+    return {
+        type: ADD_ARCHIVES,
+        payload: {kind, archives}
+    }
+}

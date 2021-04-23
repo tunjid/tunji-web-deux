@@ -1,7 +1,9 @@
-import { combineReducers, createStore, Reducer } from "redux";
+import { applyMiddleware, combineReducers, createStore, Reducer } from "redux";
 import { StoreState } from "../types";
 import { persistentUiReducer } from "./PersistentUi";
 import archiveReducerFor, { ArchiveKind } from "./Archive";
+import thunkMiddleware from 'redux-thunk'
+import { composeWithDevTools } from "redux-devtools-extension";
 
 const reducers: Reducer<StoreState> = combineReducers<StoreState>({
     persistentUI: persistentUiReducer,
@@ -10,7 +12,6 @@ const reducers: Reducer<StoreState> = combineReducers<StoreState>({
     talks: archiveReducerFor(ArchiveKind.Talks),
 });
 
-/* eslint-disable no-underscore-dangle */
-// @ts-ignore
-export const store = createStore<StoreState, any, any, any>(reducers, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
-/* eslint-enable */
+const composedEnhancer = composeWithDevTools(applyMiddleware(thunkMiddleware))
+
+export const store = createStore<StoreState, any, any, any>(reducers, composedEnhancer);
