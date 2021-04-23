@@ -3,9 +3,9 @@ import _ from 'lodash';
 import { ArchiveLike } from "../../../common/Models";
 
 export enum ArchiveKind {
-    Article = 'article',
-    Project = 'project',
-    Talk = 'talk',
+    Articles = 'articles',
+    Projects = 'projects',
+    Talks = 'talks',
 }
 
 export interface ArchiveState {

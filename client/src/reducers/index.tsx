@@ -5,9 +5,9 @@ import archiveReducerFor, { ArchiveKind } from "./Archive";
 
 const reducers: Reducer<StoreState> = combineReducers<StoreState>({
     persistentUI: persistentUiReducer,
-    articles: archiveReducerFor(ArchiveKind.Article),
-    projects: archiveReducerFor(ArchiveKind.Project),
-    talks: archiveReducerFor(ArchiveKind.Talk),
+    articles: archiveReducerFor(ArchiveKind.Articles),
+    projects: archiveReducerFor(ArchiveKind.Projects),
+    talks: archiveReducerFor(ArchiveKind.Talks),
 });
 
 /* eslint-disable no-underscore-dangle */

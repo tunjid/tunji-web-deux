@@ -38,13 +38,13 @@ const cardFromArchive: (archive: ArchiveLike) => CardInfo = (archive) => ({
 
 const archivesFromState: (state: StoreState) => ArchiveLike[] = (state: StoreState) => {
     switch (state.persistentUI.selectedTab.kind) {
-        case ArchiveKind.Article: {
+        case ArchiveKind.Articles: {
             return state.articles.archives;
         }
-        case ArchiveKind.Project: {
+        case ArchiveKind.Projects: {
             return state.projects.archives;
         }
-        case ArchiveKind.Talk: {
+        case ArchiveKind.Talks: {
             return state.talks.archives;
         }
         default: {

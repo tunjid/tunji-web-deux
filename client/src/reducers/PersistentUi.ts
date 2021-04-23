@@ -9,9 +9,9 @@ export interface AppTab {
 }
 
 const tabs = [
-    {index: 0, text: 'Articles', kind: ArchiveKind.Article},
-    {index: 1, text: 'Projects', kind: ArchiveKind.Project},
-    {index: 2, text: 'Talks', kind: ArchiveKind.Talk},
+    {index: 0, text: 'Articles', kind: ArchiveKind.Articles},
+    {index: 1, text: 'Projects', kind: ArchiveKind.Projects},
+    {index: 2, text: 'Talks', kind: ArchiveKind.Talks},
 ]
 
 export interface PersistentUiState {
