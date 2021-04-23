@@ -93,7 +93,7 @@ export const userById = (req, res, next, id) => {
             return next(error);
         }
         else {
-            req.user = user;
+            req.signedInUser = user;
             next();
         }
     });

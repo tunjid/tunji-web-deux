@@ -29,7 +29,7 @@ const composeMessage = (res: Response, message: string, statusCode: number) => {
 const archiveController = (Model: ArchiveModel): ArchiveController => ({
     create: (req, res) => {
         const archive = new Model(req.body);
-        archive.author = req.user;
+        archive.author = req.signedInUser;
 
         if (!archive.author) return composeMessage(res, 'A blog post needs an author', 400);
 
@@ -99,7 +99,7 @@ const archiveController = (Model: ArchiveModel): ArchiveController => ({
         });
     },
     remove: (req, res, next) => {
-        req.archive.remove((error: any) => {
+        Model.findByIdAndRemove(req.archive.id, {}, (error: any) => {
             if (error) return next(error);
             else res.json(req.archive);
         });
@@ -145,8 +145,8 @@ const archiveController = (Model: ArchiveModel): ArchiveController => ({
             }
         );
     },
-    hasAuthorization: (res: Request, req: Response, next: NextFunction) => {
-        if (req.archive.author.id !== req.user.id) {
+    hasAuthorization: (req: Request, res: Response, next: NextFunction) => {
+        if (req.archive.author.id !== req.signedInUser?.id) {
             return res.status(403).send({
                 message: 'User is not authorized'
             });

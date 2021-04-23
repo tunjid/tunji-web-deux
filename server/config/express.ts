@@ -11,10 +11,13 @@ import config from './config';
 import session from './session';
 import blogPostRouter from '../routes/BlogPostRouter';
 import userRouter from '../routes/UserRouter';
+import archiveRouter from '../routes/ArchiveRouter';
 import errorMiddleware from '../middleware/ErrorMiddleware';
 import HttpException from '../utilities/HttpException';
 
 import './mongoose';
+
+import { BlogPost } from '../models/BlogPostSchema';
 
 export default () => {
 // Initialize Express app
@@ -43,8 +46,9 @@ export default () => {
     app.use(cookieParser());
 
 // Route mapping
-    blogPostRouter(app);
     userRouter(app);
+    // blogPostRouter(app);
+    archiveRouter(app, BlogPost);
 
     app.all(
         '/*',

@@ -6,8 +6,8 @@ import { ArchiveModel } from '../models/Archive';
 
 export default function (app: Express, model: ArchiveModel): void {
     const archives = archiveController(model);
-    const routeName = model.name;
-    
+    const routeName = model.modelName;
+
     app.route(`/api/${routeName}/archives`)
         .get(archives.archives);
 
