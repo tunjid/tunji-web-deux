@@ -23,8 +23,9 @@ const archiveReducerFor = (kind: ArchiveKind) => {
                 return {
                     ...state,
                     archives: _.sortBy(
-                        _.uniqBy(
-                            _.concat(action.payload.archives, state.cards),
+                        _.unionBy(
+                            action.payload.archives,
+                            state.cards,
                             (archive) => archive._id
                         ),
                         (archive) => archive.created
