@@ -16,12 +16,13 @@ import archiveRouter from '../routes/ArchiveRouter';
 import errorMiddleware from '../middleware/ErrorMiddleware';
 import HttpException from '../utilities/HttpException';
 
+import { Article } from '../models/ArticleSchema';
 import { BlogPost } from '../models/BlogPostSchema';
 import { Project } from '../models/ProjectSchema';
 import { Talk } from '../models/TalkSchema';
 
 export default () => {
-// Initialize Express app
+    // Initialize Express app
     const app: Express = ExpressApp();
 
     mongoose.Promise = bluebird;
@@ -58,6 +59,7 @@ export default () => {
 
 // Route mapping
     userRouter(app);
+    archiveRouter(app, Article);
     archiveRouter(app, BlogPost);
     archiveRouter(app, Project);
     archiveRouter(app, Talk);
