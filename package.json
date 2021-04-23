@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "build-client": "cd client; yarn install; npm run build; cd ..;",
-    "build-ts": "tsc --noEmit false",
+    "copy-ssl": "cp domain.crt build/domain.crt; cp domain.key build/domain.key",
+    "build-ts": "tsc --noEmit false && npm run copy-ssl",
     "build": "npm run build-ts && npm run lint",
     "debug": "npm run build && npm run watch-debug",
     "lint": "tsc --noEmit && eslint \"**/*.{js,ts}\" --quiet --fix",

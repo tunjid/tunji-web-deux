@@ -23,6 +23,6 @@
   },
   "include": [
     "server/*",
-    "start.js"
+    "./server.js"
   ]
 }
