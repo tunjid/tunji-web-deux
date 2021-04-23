@@ -42,7 +42,7 @@ const archiveReducerFor = (kind: ArchiveKind) => {
                             state.archives,
                             (archive) => archive.key
                         ),
-                        (archive) => archive.created
+                        (archive) => -archive.created.getTime()
                     ),
                 }
             }
