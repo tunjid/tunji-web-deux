@@ -1,8 +1,8 @@
-import { Document, Model, Schema } from 'mongoose';
+import { Document, model, Model, Schema } from 'mongoose';
 import { UserDocument } from './UserSchema';
+import { ArchiveLike } from '../../common/Models';
 
-export interface Archive {
-    _id: string,
+export interface Archive extends ArchiveLike {
     title: string;
     body: string;
     description: string;
@@ -27,3 +27,16 @@ export const ArchiveSchema = {
     categories: {type: [String], index: true, default: ['uncategorized']},
     created: {type: Date, default: Date.now}
 };
+
+export default function archiveModel<D extends Document, M extends Model<D>>(name: string, schema: Schema<D, M>): M {
+    schema.virtual('key')
+        .get(function (this: D) {
+            return this._id;
+        });
+
+    schema.set('toJSON', {
+        virtuals: true
+    });
+
+    return model<D, M>(name, schema);
+}

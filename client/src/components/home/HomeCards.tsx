@@ -6,7 +6,7 @@ import { shallowEqual, useSelector } from "react-redux";
 import AppCard, { CardInfo, CardStyle } from "./HomeCard";
 import { GridList, GridListTile } from "@material-ui/core";
 import { ArchiveKind } from "../../reducers/Archive";
-import { Archive } from "../../../../server/models/Archive";
+import { ArchiveLike } from "../../../../common/Models";
 
 const useStyles = makeStyles(() => createStyles({
         root: {
@@ -26,8 +26,8 @@ interface Props {
     cards: CardInfo[];
 }
 
-const cardFromArchive: (archive: Archive) => CardInfo = (archive) => ({
-    id: archive._id,
+const cardFromArchive: (archive: ArchiveLike) => CardInfo = (archive) => ({
+    id: archive.key,
     title: archive.title,
     body: archive.body,
     thumbnail: archive.thumbnail || '',
@@ -36,7 +36,7 @@ const cardFromArchive: (archive: Archive) => CardInfo = (archive) => ({
     categories: archive.categories,
 })
 
-const archivesFromState: (state: StoreState) => Archive[] = (state: StoreState) => {
+const archivesFromState: (state: StoreState) => ArchiveLike[] = (state: StoreState) => {
     switch (state.persistentUI.selectedTab.kind) {
         case ArchiveKind.Article: {
             return state.articles.archives;

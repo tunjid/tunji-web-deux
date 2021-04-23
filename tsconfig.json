@@ -2,7 +2,7 @@
   "compilerOptions": {
     "typeRoots": [
       "@types",
-      "./node_modules/@types",
+      "./node_modules/@types"
     ],
     "allowJs": true,
     "skipLibCheck": true,
@@ -22,9 +22,12 @@
     "baseUrl": ".",
     "outDir": "build"
   },
-  "lib": ["es2015"],
+  "lib": [
+    "es2015"
+  ],
   "include": [
     "server/*",
+    "common/*",
     "./server.ts"
   ]
 }

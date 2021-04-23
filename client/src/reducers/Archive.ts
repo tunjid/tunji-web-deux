@@ -1,6 +1,6 @@
-import { Archive } from '../../../server/models/Archive';
 import { ADD_ARCHIVES, ArchiveAction } from '../actions/Archive';
 import _ from 'lodash';
+import { ArchiveLike } from "../../../common/Models";
 
 export enum ArchiveKind {
     Article = 'article',
@@ -10,13 +10,13 @@ export enum ArchiveKind {
 
 export interface ArchiveState {
     kind: ArchiveKind,
-    archives: Archive[];
+    archives: ArchiveLike[];
 }
 
 const archiveReducerFor = (kind: ArchiveKind) => {
     return (state = {
         kind,
-        cards: [] as Archive[],
+        archives: [] as ArchiveLike[],
     }, action: ArchiveAction) => {
         switch (action.type) {
             case ADD_ARCHIVES: {
@@ -25,8 +25,8 @@ const archiveReducerFor = (kind: ArchiveKind) => {
                     archives: _.sortBy(
                         _.unionBy(
                             action.payload.archives,
-                            state.cards,
-                            (archive) => archive._id
+                            state.archives,
+                            (archive) => archive.key
                         ),
                         (archive) => archive.created
                     ),

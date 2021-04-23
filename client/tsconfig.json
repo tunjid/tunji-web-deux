@@ -22,6 +22,7 @@
     "outDir": "../build/client"
   },
   "include": [
-    "src"
+    "src",
+    "../common/*"
   ]
 }

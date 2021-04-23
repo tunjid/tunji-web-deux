@@ -1,5 +1,5 @@
-import { Document, Model, model, Schema } from 'mongoose';
-import { Archive, ArchiveSchema } from './Archive';
+import { Document, Model, Schema } from 'mongoose';
+import archiveModel, { Archive, ArchiveSchema } from './Archive';
 
 export interface TalkDocument extends Document, Archive {
 }
@@ -10,4 +10,4 @@ const TalkSchema = new Schema<TalkDocument, TalkModel>({
     ...ArchiveSchema,
 });
 
-export const Talk = model<TalkDocument, TalkModel>('Talk', TalkSchema);
+export const Talk = archiveModel<TalkDocument, TalkModel>('Talk', TalkSchema);
