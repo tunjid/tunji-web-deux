@@ -1,4 +1,4 @@
-import { Document, Schema } from 'mongoose';
+import { Document, Model, Schema } from 'mongoose';
 import { UserDocument } from './UserSchema';
 
 export interface Archive {
@@ -13,6 +13,8 @@ export interface Archive {
 }
 
 export type ArchiveDocument = Document & Archive
+
+export type ArchiveModel = Model<ArchiveDocument>
 
 export const ArchiveSchema = {
     title: {type: String, required: true},

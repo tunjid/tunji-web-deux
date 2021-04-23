@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { Document, Model } from 'mongoose';
-import { Archive } from '../models/Archive';
+import { ArchiveModel } from '../models/Archive';
 
 interface ArchiveController {
     create: (res: Request, req: Response, next: NextFunction) => void;
@@ -27,7 +26,7 @@ const composeMessage = (res: Response, message: string, statusCode: number) => {
     return res.json({message: message});
 };
 
-const archiveController = <T extends Document & Archive>(Model: Model<T>): ArchiveController => ({
+const archiveController = (Model: ArchiveModel): ArchiveController => ({
     create: (req, res) => {
         const archive = new Model(req.body);
         archive.author = req.user;
@@ -147,7 +146,7 @@ const archiveController = <T extends Document & Archive>(Model: Model<T>): Archi
         );
     },
     hasAuthorization: (res: Request, req: Response, next: NextFunction) => {
-        if ( req.archive.author.id !== req.user.id) {
+        if (req.archive.author.id !== req.user.id) {
             return res.status(403).send({
                 message: 'User is not authorized'
             });
