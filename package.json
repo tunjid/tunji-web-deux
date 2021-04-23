@@ -14,7 +14,7 @@
     "start": "npm run serve"
   },
   "engines": {
-    "node": "14.x"
+    "node": "12.x"
   },
   "dependencies": {
     "@types/bluebird": "^3.5.33",

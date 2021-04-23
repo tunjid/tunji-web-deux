@@ -1,8 +1,8 @@
 import app from './server/app';
 import ssl from './server/config/ssl';
-import https from 'https';
+import { createServer } from 'https';
 
-const server = https.createServer(ssl.options, app);
+const server = createServer(ssl.options, app);
 
 server.listen(app.get('port'));
 server.on('listening', onListening);

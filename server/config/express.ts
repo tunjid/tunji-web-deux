@@ -14,7 +14,7 @@ import userRouter from '../routes/UserRouter';
 import errorMiddleware from '../middleware/ErrorMiddleware';
 import HttpException from '../utilities/HttpException';
 
-import('./mongoose');
+import './mongoose';
 
 export default () => {
 // Initialize Express app
