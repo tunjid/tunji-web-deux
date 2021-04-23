@@ -20,6 +20,9 @@ export const fetchArchives = (
     kind: ArchiveKind
 ): ThunkAction<void, StoreState, unknown, ArchiveAction> => async (dispatch) => {
     const response = await axios.get<ArchiveLike[]>(`/api/${kind}`);
+    const status = response.status;
+    if (status < 200 || status > 399) return;
+
     const archives = response.data.map((raw) => ({...raw, created: new Date(raw.created)}));
     dispatch(addArchives(kind, archives));
 };

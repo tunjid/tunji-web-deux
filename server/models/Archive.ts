@@ -22,6 +22,7 @@ export const ArchiveSchema = {
     title: {type: String, required: true},
     body: {type: String, required: true},
     description: {type: String, required: true},
+    thumbnail: {type: String},
     author: {type: Schema.Types.ObjectId, ref: 'User', required: 'Author is required',},
     tags: {type: [String], index: true, default: ['untagged']},
     categories: {type: [String], index: true, default: ['uncategorized']},
