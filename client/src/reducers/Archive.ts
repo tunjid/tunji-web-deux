@@ -34,7 +34,7 @@ const archiveReducerFor = (kind: ArchiveKind) => {
     }, action: ArchiveAction) => {
         switch (action.type) {
             case ADD_ARCHIVES: {
-                return {
+                return action.payload.kind !== kind ? state : {
                     ...state,
                     archives: _.sortBy(
                         _.unionBy(
