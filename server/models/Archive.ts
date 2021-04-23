@@ -2,6 +2,7 @@ import { Document, Model, Schema } from 'mongoose';
 import { UserDocument } from './UserSchema';
 
 export interface Archive {
+    _id: string,
     title: string;
     body: string;
     description: string;

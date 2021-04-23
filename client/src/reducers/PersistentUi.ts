@@ -1,17 +1,17 @@
 import { MODIFY_APP_BAR, PersistentUiAction } from '../actions/PersistentUi';
 import { MenuRes } from "../types/MenuRes";
+import { ArchiveKind } from "./Archive";
 
 export interface AppTab {
     index: number
     text: string
-    route: string
+    kind: ArchiveKind
 }
 
 const tabs = [
-    {index: 0, text: 'Posts', route: 'posts'},
-    {index: 1, text: 'Projects', route: 'projects'},
-    {index: 2, text: 'Talks', route: 'talks'},
-    {index: 3, text: 'About', route: 'about'},
+    {index: 0, text: 'Articles', kind: ArchiveKind.Article},
+    {index: 1, text: 'Projects', kind: ArchiveKind.Project},
+    {index: 2, text: 'Talks', kind: ArchiveKind.Talk},
 ]
 
 export interface PersistentUiState {

@@ -1,7 +1,9 @@
-import { PersistentUiState } from "../reducers/PersistentUi";
-import { ProjectsState } from "../reducers/Projects";
+import { PersistentUiState } from '../reducers/PersistentUi';
+import { ArchiveState } from '../reducers/Archive';
 
 export interface StoreState {
     persistentUI: PersistentUiState;
-    projects: ProjectsState;
+    articles: ArchiveState;
+    projects: ArchiveState;
+    talks: ArchiveState;
 }
