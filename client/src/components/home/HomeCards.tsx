@@ -36,16 +36,16 @@ const cardFromArchive: (archive: Archive) => CardInfo = (archive) => ({
     categories: archive.categories,
 })
 
-const cardsFromState: (state: StoreState) => Archive[] = (state: StoreState) => {
+const archivesFromState: (state: StoreState) => Archive[] = (state: StoreState) => {
     switch (state.persistentUI.selectedTab.kind) {
         case ArchiveKind.Article: {
-            return state.articles.cards;
+            return state.articles.archives;
         }
         case ArchiveKind.Project: {
-            return state.projects.cards;
+            return state.projects.archives;
         }
         case ArchiveKind.Talk: {
-            return state.talks.cards;
+            return state.talks.archives;
         }
         default: {
             return [];
@@ -55,7 +55,7 @@ const cardsFromState: (state: StoreState) => Archive[] = (state: StoreState) => 
 const selector: OutputSelector<StoreState, Props, (res: StoreState) => Props> = createSelector(
     state => state,
     (state: StoreState) => {
-        return {cards: cardsFromState(state).map(cardFromArchive)}
+        return {cards: archivesFromState(state).map(cardFromArchive)}
     }
 );
 
