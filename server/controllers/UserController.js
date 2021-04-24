@@ -2,6 +2,7 @@ import {User} from '../models/UserSchema';
 import passport from 'passport';
 
 const composeMessage = function (res, message) {
+    res.status(400);
     return res.json({message: message});
 };
 

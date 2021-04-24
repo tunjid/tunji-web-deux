@@ -5,7 +5,7 @@ import { useDispatch } from "react-redux";
 import { PersistentUiActions } from "../../actions/PersistentUi";
 import { theme } from "../../styles/PersistentUi";
 import Button from "@material-ui/core/Button";
-import { AuthActions } from "../../actions/Auth";
+import { AuthActions, SignInArgs } from "../../actions/Auth";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -22,15 +22,10 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 
-interface State {
-    username: string;
-    password: string;
-}
-
 const SignIn = () => {
     const classes = useStyles();
     const dispatch = useDispatch();
-    const [state, setState] = useState<State>({username: '', password: ''});
+    const [state, setState] = useState<SignInArgs>({username: '', password: ''});
 
     useEffect(() => {
         dispatch(PersistentUiActions.modifyAppBar({
@@ -42,7 +37,7 @@ const SignIn = () => {
 
     return (
         <form
-            className={classes.root} noValidate autoComplete="off">
+            className={classes.root} noValidate autoComplete="on">
             <TextField
                 required
                 id="outlined-required"

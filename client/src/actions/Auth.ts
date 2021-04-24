@@ -1,7 +1,7 @@
 import { UserLike } from "../../../common/Models";
 import { ThunkAction } from "redux-thunk";
 import { StoreState } from "../types";
-import axios from "axios";
+import ApiService from "../rest/ApiService";
 
 export const SET_USER = 'SET_USER';
 
@@ -10,7 +10,7 @@ export interface SetUser {
     user: UserLike;
 }
 
-interface SignInArgs {
+export interface SignInArgs {
     username: string;
     password: string;
 }
@@ -18,15 +18,22 @@ interface SignInArgs {
 export type AuthAction = SetUser;
 
 interface IAuthActions {
+    fetchSession: () => ThunkAction<void, StoreState, unknown, SetUser>
     signIn: (args: SignInArgs) => ThunkAction<void, StoreState, unknown, SetUser>
     setUser: (user: UserLike) => SetUser
 }
 
 export const AuthActions: IAuthActions = {
-    signIn: (args: SignInArgs) => async (dispatch) => {
-        const response = await axios.post<UserLike>(`/api/sign-in`, args);
+    fetchSession: () => async (dispatch) => {
+        const response = await ApiService.session();
         const status = response.status;
-        console.log(`SIGN IN: ${JSON.stringify(response)}`);
+        if (status < 200 || status > 399) return;
+
+        dispatch(AuthActions.setUser(response.data));
+    },
+    signIn: (args: SignInArgs) => async (dispatch) => {
+        const response = await ApiService.signIn(args);
+        const status = response.status;
         if (status < 200 || status > 399) return;
 
         dispatch(AuthActions.setUser(response.data));

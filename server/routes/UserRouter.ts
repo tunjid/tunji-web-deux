@@ -11,7 +11,7 @@ export default function (app: Express): void {
         .put(users.requiresLogin, users.put);
         // .delete(users.requiresLogin, users.delete);
 
-    app.route('/session')
+    app.route('/api/session')
         .get(users.session);
 
     /*app.route('/signup')

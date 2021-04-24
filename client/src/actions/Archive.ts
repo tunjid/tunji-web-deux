@@ -2,7 +2,7 @@ import { ArchiveKind } from "../reducers/Archive";
 import { ArchiveLike } from "../../../common/Models";
 import { ThunkAction } from "redux-thunk";
 import { StoreState } from "../types";
-import axios from "axios";
+import ApiService from "../rest/ApiService";
 
 export const ADD_ARCHIVES = 'ADD_ARCHIVES';
 
@@ -25,7 +25,7 @@ interface IArchiveActions {
 
 export const ArchiveActions: IArchiveActions = {
     fetchArchives: (kind: ArchiveKind) => async (dispatch) => {
-        const response = await axios.get<ArchiveLike[]>(`/api/${kind}`);
+        const response = await ApiService.fetchArchives(kind);
         const status = response.status;
         if (status < 200 || status > 399) return;
 

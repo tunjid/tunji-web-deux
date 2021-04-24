@@ -14,8 +14,6 @@ import Card from "@material-ui/core/Card";
 import ReactMarkdown from 'react-markdown'
 import { createSelector, OutputSelector } from "reselect";
 import { StoreState } from "../../types";
-import { PersistentUiState } from "../../reducers/PersistentUi";
-import { HomeState } from "../../reducers/Home";
 
 const gfm = require('remark-gfm')
 
