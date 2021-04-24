@@ -59,9 +59,10 @@ const CardBody = ({cardInfo}: Props) => {
             <div className={classes.metadata}>
                 <div className={classes.chips}>
                     {cardInfo.categories.map((label) => <Chip
+                        key={label}
                         label={label}
                         color="secondary"
-                        style={{backgroundColor:'#4282F1'}}
+                        style={{backgroundColor: '#4282F1'}}
                         size="small"/>
                     )}
                 </div>

@@ -99,7 +99,7 @@ const HomeHeader = () => {
                 textColor="secondary"
                 centered
             >
-                {tabs.map((item: HomeTab) => <Tab className={classes.tab} label={item.text}/>)}
+                {tabs.map((item: HomeTab) => <Tab className={classes.tab} key={item.kind} label={item.text}/>)}
             </Tabs>
         </div>
     );
