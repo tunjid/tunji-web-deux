@@ -11,6 +11,9 @@ import { PersistentUiActions } from "../../actions/PersistentUi";
 import { theme } from "../../styles/PersistentUi";
 import CardMedia from "@material-ui/core/CardMedia";
 import Card from "@material-ui/core/Card";
+import ReactMarkdown from 'react-markdown'
+
+const gfm = require('remark-gfm')
 
 const useStyles = makeStyles((theme) => createStyles({
         root: {
@@ -26,7 +29,7 @@ const useStyles = makeStyles((theme) => createStyles({
         title: {
             margin: theme.spacing(2),
         },
-        chips: {
+        categories: {
             display: 'flex',
             flexWrap: 'wrap',
             'align-items': 'center',
@@ -42,6 +45,9 @@ const useStyles = makeStyles((theme) => createStyles({
         cardImage: {
             height: '50vh',
             width: '90vw',
+        },
+        archiveBody: {
+            width: '60vw',
         },
     }
 ));
@@ -77,7 +83,7 @@ const ArchiveDetail = () => {
             <Typography className={classes.date} gutterBottom variant="subtitle1">
                 {archive?.created?.toDateString() || ''}
             </Typography>
-            <div className={classes.chips}>
+            <div className={classes.categories}>
                 {(archive?.categories || []).map((label) => <Chip
                     label={label}
                     color="secondary"
@@ -95,6 +101,15 @@ const ArchiveDetail = () => {
                     title={archive?.title}
                 />
             </Card>
+            <ReactMarkdown className={classes.archiveBody} remarkPlugins={[gfm]} children={archive?.body || ''}/>
+            <div className={classes.categories}>
+                {(archive?.tags || []).map((label) => <Chip
+                    label={label}
+                    color="secondary"
+                    style={{backgroundColor: theme.palette.secondary.dark}}
+                    size="small"/>
+                )}
+            </div>
         </div>
     );
 }
