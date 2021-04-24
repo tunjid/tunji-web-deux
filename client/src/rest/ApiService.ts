@@ -9,8 +9,9 @@ const transport = axios.create({
 
 const session = () => transport.get<UserLike>(`/api/session`);
 const signIn = (args: SignInArgs) => transport.post<UserLike>(`/api/sign-in`, args);
+const fetchArchive = (path:string) => transport.get<ArchiveLike>(`/api${path}`);
 const fetchArchives = (kind: ArchiveKind) => transport.get<ArchiveLike[]>(`/api/${kind}`);
 
-const ApiService = {session, signIn, fetchArchives};
+const ApiService = {session, signIn, fetchArchive, fetchArchives};
 
 export default ApiService;

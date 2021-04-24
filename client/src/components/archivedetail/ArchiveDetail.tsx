@@ -3,7 +3,6 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { useLocation, useParams } from "react-router-dom";
 import { ArchiveLike, UserLike } from "../../../../common/Models";
-import axios from "axios";
 import { Chip } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
@@ -14,6 +13,7 @@ import Card from "@material-ui/core/Card";
 import ReactMarkdown from 'react-markdown'
 import { createSelector, OutputSelector } from "reselect";
 import { StoreState } from "../../types";
+import ApiService from "../../rest/ApiService";
 
 const gfm = require('remark-gfm')
 
@@ -85,7 +85,7 @@ const ArchiveDetail = () => {
             menuItems: isSignedIn ? [{id: 'edit', text: 'Edit'}] : []
         }));
         const fetch = async () => {
-            const response = await axios.get<ArchiveLike>(`/api${pathname}`);
+            const response = await ApiService.fetchArchive(pathname);
             const status = response.status;
             if (status < 200 || status > 399) return;
             setArchive({...response.data, created: new Date(response.data.created)})
