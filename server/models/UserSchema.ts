@@ -8,6 +8,8 @@ export interface UserDocument extends Document, UserLike {
     lastName: string;
     username: string;
     password: string;
+    accessLevel: string;
+    provider: string;
     salt: Buffer;
     hashPassword: (password: string) => string,
     authenticate: (password: string) => boolean
@@ -100,7 +102,14 @@ UserSchema.statics.findUniqueUsername = async function (this: UserModel, usernam
 
 UserSchema.set('toJSON', {
     getters: true,
-    virtuals: true
+    virtuals: true,
+    transform: (doc: UserDocument, ret: Partial<UserDocument>) => {
+        delete ret.password;
+        delete ret.salt;
+        delete ret.accessLevel;
+        delete ret.provider;
+        return ret;
+    }
 });
 
 export const User = model<UserDocument, UserModel>('User', UserSchema);

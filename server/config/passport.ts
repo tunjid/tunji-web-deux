@@ -9,7 +9,7 @@ export default function () {
 
     passport.deserializeUser<string>((userId, done) => {
         User.findById(userId, (err: any, user: UserDocument) => {
-            done(err, user.id);
+            done(err, {...user, id: user._id});
         });
     });
 
