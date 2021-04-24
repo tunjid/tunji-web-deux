@@ -1,6 +1,8 @@
 export interface UserLike {
     firstName: string;
     lastName: string;
+    fullName: string;
+    imageUrl: string;
 }
 
 export interface ArchiveLike {

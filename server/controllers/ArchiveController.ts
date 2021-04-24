@@ -77,7 +77,7 @@ const archiveController = (Model: ArchiveModel): ArchiveController => ({
             .skip(offset)
             .limit(limit)
             .sort({'created': -1})
-            .populate('author', 'firstName lastName fullName')
+            .populate('author', 'firstName lastName fullName imageUrl')
             .exec(function (error, archives) {
                 if (error) {
                     console.log(error);

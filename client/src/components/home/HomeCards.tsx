@@ -31,7 +31,8 @@ interface Props {
 const cardFromArchive: (archive: ArchiveLike, index: number) => CardInfo = (archive, index) => ({
     id: archive.key,
     title: archive.title,
-    body: archive.description,
+    description: archive.description,
+    author: archive.author,
     spanCount: index % 4 === 0 ? 6 : 2,
     thumbnail: archive.thumbnail || '',
     date: archive.created.toDateString(),
@@ -79,7 +80,7 @@ const HomeCards = () => {
             <GridList
                 className={classes.gridList}
                 cellHeight={'auto'}
-                spacing={8}
+                spacing={16}
                 cols={6}
             >
                 {cards.map((card) => (

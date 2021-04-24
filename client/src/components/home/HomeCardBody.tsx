@@ -1,24 +1,50 @@
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
-import { Chip } from "@material-ui/core";
+import { Avatar, Chip } from "@material-ui/core";
 import { CardInfo } from "./HomeCard";
 
 
 const useStyles = makeStyles((theme) => createStyles({
-    root: {
+    metadata: {
         display: 'flex',
-        'justify-content': 'space-between'
+        'align-items': 'center',
+        'justify-content': 'space-between',
+        margin: theme.spacing(0.5),
     },
     chips: {
         display: 'flex',
         flexWrap: 'wrap',
+        'align-items': 'center',
         '& > *': {
             margin: theme.spacing(0.5),
         },
     },
     date: {
         display: 'flex',
+    },
+    description: {
+        'margin-left': theme.spacing(0.5),
+        'margin-right': theme.spacing(0.5),
+    },
+    titleColumn: {
+        'margin-left': theme.spacing(0.5),
+        'margin-right': theme.spacing(0.5),
+        'margin-top': theme.spacing(1),
+        'margin-bottom': theme.spacing(1),
+    },
+    authorRow: {
+        display: 'flex',
+        'align-items': 'center',
+        'justify-content': 'space-between',
+        'margin-left': theme.spacing(0.5),
+        'margin-right': theme.spacing(0.5),
+        'margin-top': theme.spacing(2),
+        'margin-bottom': theme.spacing(1),
+    },
+    avatar: {
+        width: theme.spacing(3),
+        height: theme.spacing(3),
     },
 }));
 
@@ -31,7 +57,7 @@ const HomeCardBody = ({cardInfo}: Props) => {
 
     return (
         <CardContent>
-            <div className={classes.root}>
+            <div className={classes.metadata}>
                 <div className={classes.chips}>
                     {cardInfo.categories.map((label) => <Chip
                         label={label}
@@ -45,12 +71,27 @@ const HomeCardBody = ({cardInfo}: Props) => {
                     </Typography>
                 </div>
             </div>
-            <Typography gutterBottom variant="h4" component="h2">
-                {cardInfo.title}
-            </Typography>
-            <Typography variant="body2" color="textSecondary" component="p">
-                {cardInfo.body}
-            </Typography>
+            <div className={classes.titleColumn}>
+                <Typography gutterBottom variant="h5">
+                    {cardInfo.title}
+                </Typography>
+                <Typography variant="body1" color="textPrimary">
+                    {cardInfo.description}
+                </Typography>
+            </div>
+            <div className={classes.authorRow}>
+                <div className={classes.chips}>
+                    <Avatar className={classes.avatar} src={cardInfo.author.imageUrl}/>
+                    <Typography variant="body1" color="textSecondary" component="p">
+                        {cardInfo.author.fullName}
+                    </Typography>
+                </div>
+                <div className={classes.date}>
+                    <Typography gutterBottom variant="caption" component="p">
+                        {'X MIN READ'}
+                    </Typography>
+                </div>
+            </div>
         </CardContent>
     );
 }

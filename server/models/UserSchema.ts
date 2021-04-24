@@ -1,7 +1,8 @@
 import { Document, Model, model, Schema } from 'mongoose';
 import { pbkdf2Sync, randomBytes } from 'crypto';
+import { UserLike } from '../../common/Models';
 
-export interface UserDocument extends Document {
+export interface UserDocument extends Document, UserLike {
     email: string;
     firstName: string;
     lastName: string;
@@ -20,6 +21,7 @@ const UserSchema = new Schema<UserDocument, UserModel>({
     accessLevel: String,
     firstName: String,
     lastName: String,
+    imageUrl: String,
     username: {
         type: String,
         unique: true,
