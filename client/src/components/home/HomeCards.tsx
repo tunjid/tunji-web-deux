@@ -6,9 +6,10 @@ import { StoreState } from "../../types";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import AppCard from "./HomeCard";
 import { GridList, GridListTile } from "@material-ui/core";
-import { ArchiveKind, fetchArchives } from "../../reducers/Archive";
+import { ArchiveKind } from "../../reducers/Archive";
 import { ArchiveLike } from "../../../../common/Models";
 import { CardInfo, CardStyle } from "../cards/CardInfo";
+import { ArchiveActions } from "../../actions/Archive";
 
 const useStyles = makeStyles(() => createStyles({
         root: {
@@ -73,7 +74,7 @@ const HomeCards = () => {
     const {currentKind, cards}: Props = useSelector(selector, shallowEqual);
 
     useEffect(() => {
-        dispatch(fetchArchives(currentKind));
+        dispatch(ArchiveActions.fetchArchives(currentKind));
     }, [currentKind, dispatch]);
 
     return (

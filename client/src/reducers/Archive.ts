@@ -1,9 +1,6 @@
-import { ADD_ARCHIVES, addArchives, ArchiveAction } from '../actions/Archive';
+import { ADD_ARCHIVES, ArchiveAction } from '../actions/Archive';
 import _ from 'lodash';
 import { ArchiveLike } from "../../../common/Models";
-import axios from 'axios'
-import { ThunkAction } from "redux-thunk";
-import { StoreState } from "../types";
 
 export enum ArchiveKind {
     Articles = 'articles',
@@ -15,17 +12,6 @@ export interface ArchiveState {
     kind: ArchiveKind,
     archives: ArchiveLike[];
 }
-
-export const fetchArchives = (
-    kind: ArchiveKind
-): ThunkAction<void, StoreState, unknown, ArchiveAction> => async (dispatch) => {
-    const response = await axios.get<ArchiveLike[]>(`/api/${kind}`);
-    const status = response.status;
-    if (status < 200 || status > 399) return;
-
-    const archives = response.data.map((raw) => ({...raw, created: new Date(raw.created)}));
-    dispatch(addArchives(kind, archives));
-};
 
 const archiveReducerFor = (kind: ArchiveKind) => {
     return (state = {
