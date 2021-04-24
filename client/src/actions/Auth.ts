@@ -10,17 +10,23 @@ export interface SetUser {
     user: UserLike;
 }
 
+interface SignInArgs {
+    username: string;
+    password: string;
+}
+
 export type AuthAction = SetUser;
 
 interface IAuthActions {
-    signIn: (username: string, password: string) => ThunkAction<void, StoreState, unknown, SetUser>
+    signIn: (args: SignInArgs) => ThunkAction<void, StoreState, unknown, SetUser>
     setUser: (user: UserLike) => SetUser
 }
 
 export const AuthActions: IAuthActions = {
-    signIn: (username: string, password: string) => async (dispatch) => {
-        const response = await axios.post<UserLike>(`/api/sign-in`, {username, password});
+    signIn: (args: SignInArgs) => async (dispatch) => {
+        const response = await axios.post<UserLike>(`/api/sign-in`, args);
         const status = response.status;
+        console.log(`SIGN IN: ${JSON.stringify(response)}`);
         if (status < 200 || status > 399) return;
 
         dispatch(AuthActions.setUser(response.data));

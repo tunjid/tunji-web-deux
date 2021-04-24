@@ -17,10 +17,10 @@ export default function (app: Express): void {
     /*app.route('/signup')
         .post(users.signup);*/
 
-    app.route('/sign-in')
+    app.route('/api/sign-in')
         .post(users.signin);
 
-    app.route('/sign-out')
+    app.route('/api/sign-out')
         .post(users.signout);
 
     // app.route('/contact')
