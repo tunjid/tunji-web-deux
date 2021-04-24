@@ -75,6 +75,7 @@ const HomeHeader = () => {
             if (hasTopState === currentlyAtTop) return;
 
             dispatch(PersistentUiActions.modifyAppBar({
+                hasAppBarSpacer: false,
                 hasAppBarShadow: !currentlyAtTop,
                 appBarColor: currentlyAtTop ? transparent : theme.palette.secondary.main
             }));
