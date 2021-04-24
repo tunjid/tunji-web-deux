@@ -61,6 +61,7 @@ const CardBody = ({cardInfo}: Props) => {
                     {cardInfo.categories.map((label) => <Chip
                         label={label}
                         color="secondary"
+                        style={{backgroundColor:'#4282F1'}}
                         size="small"/>
                     )}
                 </div>

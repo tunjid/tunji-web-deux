@@ -21,6 +21,9 @@ const useStyles = makeStyles(() => createStyles({
             top: '30vh',
             textColorSecondary: '#FFFFFF',
         },
+        tab: {
+            color: "#FFFFFF"
+        },
     }
 ));
 
@@ -93,7 +96,7 @@ const HomeHeader = () => {
                 textColor="secondary"
                 centered
             >
-                {tabs.map((item: AppTab) => <Tab label={item.text}/>)}
+                {tabs.map((item: AppTab) => <Tab className={classes.tab} label={item.text}/>)}
             </Tabs>
         </div>
     );

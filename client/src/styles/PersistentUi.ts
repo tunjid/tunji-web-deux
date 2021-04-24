@@ -4,9 +4,10 @@ export const theme = createMuiTheme({
     palette: {
         secondary: {
             main: "#4CDB85",
+            contrastText: "#fff" //button text white instead of black
         },
         primary: {
-            main: "#083042"
+            main: "#083042",
         }
     },
     typography: {

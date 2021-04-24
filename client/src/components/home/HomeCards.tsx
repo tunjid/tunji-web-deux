@@ -36,7 +36,7 @@ const cardFromArchive: (archive: ArchiveLike, index: number) => CardInfo = (arch
     author: archive.author,
     spanCount: index % 4 === 0 ? 6 : 2,
     thumbnail: archive.thumbnail || '',
-    date: archive.created.toDateString(),
+    date: archive.created.toDateString().split(' ').splice(1).join(' '),
     style: index % 4 === 0 ? CardStyle.horizontal : CardStyle.vertical,
     categories: archive.categories,
 })
