@@ -30,14 +30,15 @@ const useStyles = makeStyles((theme) => createStyles({
 }));
 
 interface Props {
-    cardInfo: CardInfo
+    cardInfo: CardInfo;
+    onClick: () => void;
 }
 
-const VerticalCard = ({cardInfo}: Props) => {
+const VerticalCard = ({cardInfo, onClick}: Props) => {
     const classes = useStyles();
 
     return (
-        <Card className={classes.root}>
+        <Card className={classes.root} onClick={onClick}>
             <CardActionArea>
                 <CardMedia
                     className={classes.media}

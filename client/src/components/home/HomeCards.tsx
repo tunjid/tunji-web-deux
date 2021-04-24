@@ -87,7 +87,7 @@ const HomeCards = () => {
             >
                 {cards.map((card) => (
                     <GridListTile key={card.id} cols={card.spanCount || 2}>
-                        <AppCard cardInfo={card}/>
+                        <AppCard kind={currentKind} cardInfo={card}/>
                     </GridListTile>
                 ))}
             </GridList>

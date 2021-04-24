@@ -18,14 +18,15 @@ const useStyles = makeStyles(() =>
 );
 
 interface Props {
-    cardInfo: CardInfo
+    cardInfo: CardInfo;
+    onClick: () => void;
 }
 
-const HorizontalCard = ({cardInfo}: Props) => {
+const HorizontalCard = ({cardInfo, onClick}: Props) => {
     const classes = useStyles();
 
     return (
-        <Card className={classes.root}>
+        <Card className={classes.root} onClick={onClick}>
             <CardMedia
                 className={classes.cover}
                 image={cardInfo.thumbnail}
