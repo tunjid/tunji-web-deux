@@ -12,7 +12,7 @@ import { theme } from "./styles/PersistentUi";
 import { StoreState } from "./types";
 import { createSelector, OutputSelector } from "reselect";
 import { BrowserRouter } from "react-router-dom";
-import { UserLike } from "../../common/Models";
+import { UserLike } from "./common/Models";
 import { AuthActions } from "./actions/Auth";
 
 const useStyles = makeStyles((theme: Theme) => createStyles({

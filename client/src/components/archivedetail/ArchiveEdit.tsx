@@ -8,14 +8,11 @@ import Typography from "@material-ui/core/Typography";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { PersistentUiActions } from "../../actions/PersistentUi";
 import { theme } from "../../styles/PersistentUi";
-import CardMedia from "@material-ui/core/CardMedia";
-import Card from "@material-ui/core/Card";
-import ReactMarkdown from 'react-markdown'
 import { createSelector, OutputSelector } from "reselect";
 import { StoreState } from "../../types";
 import ApiService from "../../rest/ApiService";
-
-const gfm = require('remark-gfm')
+import MEDitor from '@uiw/react-md-editor';
+import { ArchiveActions } from "../../actions/Archive";
 
 const useStyles = makeStyles((theme) => createStyles({
         root: {
@@ -39,8 +36,8 @@ const useStyles = makeStyles((theme) => createStyles({
                 margin: theme.spacing(0.5),
             },
         },
-        cardBackground: {
-            height: '50vh',
+        editor: {
+            height: '100vh',
             width: '90vw',
             margin: theme.spacing(0.5),
         },
@@ -54,7 +51,7 @@ const useStyles = makeStyles((theme) => createStyles({
     }
 ));
 
-interface ArchiveDetailParams {
+interface ArchiveEditParams {
     archiveId: string
 }
 
@@ -69,11 +66,11 @@ const selector: OutputSelector<StoreState, Props, (a: UserLike) => Props> = crea
     })
 );
 
-const ArchiveDetail = () => {
+const ArchiveEdit = () => {
     const classes = useStyles();
     const dispatch = useDispatch();
     const {pathname} = useLocation();
-    const {archiveId} = useParams<ArchiveDetailParams>();
+    const {archiveId} = useParams<ArchiveEditParams>();
     const [archive, setArchive] = useState<ArchiveLike>();
     const {isSignedIn} = useSelector(selector, shallowEqual);
 
@@ -83,9 +80,9 @@ const ArchiveDetail = () => {
             hasAppBarSpacer: true,
             appBarColor: theme.palette.primary.dark,
             menuItems: isSignedIn ? [{
-                id: 'edit',
-                text: 'Edit',
-                action: PersistentUiActions.menuRoute(`${pathname}/edit`)
+                id: 'save',
+                text: 'Save',
+                action: ArchiveActions.saveArchive(archive)
             }] : []
         }));
         const fetch = async () => {
@@ -114,14 +111,16 @@ const ArchiveDetail = () => {
             <Typography className={classes.title} gutterBottom variant="h2">
                 {archive?.title || ''}
             </Typography>
-            <Card className={classes.cardBackground} elevation={1}>
-                <CardMedia
-                    className={classes.cardImage}
-                    image={archive?.thumbnail}
-                    title={archive?.title}
-                />
-            </Card>
-            <ReactMarkdown className={classes.archiveBody} remarkPlugins={[gfm]} children={archive?.body || ''}/>
+
+            <MEDitor
+                className={classes.editor}
+                value={archive?.body || ''}
+                onChange={(markdown) => {
+                    if (archive) setArchive({...archive, body: markdown || ''})
+                }}
+            />
+            {/*<MDEditor.Markdown source={value} />*/}
+
             <div className={classes.categories}>
                 {(archive?.tags || []).map((label) => <Chip
                     key={label}
@@ -135,4 +134,4 @@ const ArchiveDetail = () => {
     );
 }
 
-export default ArchiveDetail;
+export default ArchiveEdit;

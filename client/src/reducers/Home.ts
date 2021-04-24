@@ -1,5 +1,5 @@
-import { ArchiveKind } from "./Archive";
 import { HomeAction, SELECT_TAB } from "../actions/Home";
+import { ArchiveKind } from "../common/Models";
 
 export interface HomeTab {
     index: number

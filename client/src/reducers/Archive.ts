@@ -1,12 +1,6 @@
 import { ADD_ARCHIVES, ArchiveAction } from '../actions/Archive';
 import _ from 'lodash';
-import { ArchiveLike } from "../../../common/Models";
-
-export enum ArchiveKind {
-    Articles = 'articles',
-    Projects = 'projects',
-    Talks = 'talks',
-}
+import { ArchiveKind, ArchiveLike } from "../common/Models";
 
 export interface ArchiveState {
     kind: ArchiveKind,

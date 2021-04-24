@@ -1,26 +1,31 @@
-import { ArchiveKind } from "../reducers/Archive";
-import { ArchiveLike } from "../../../common/Models";
-import { ThunkAction } from "redux-thunk";
-import { StoreState } from "../types";
+import { ArchiveKind, ArchiveLike } from "../common/Models";
 import ApiService from "../rest/ApiService";
+import { AppThunk } from "./index";
 
 export const ADD_ARCHIVES = 'ADD_ARCHIVES';
+export const SAVE_ARCHIVE = 'SAVE_ARCHIVE';
 
 export interface ArchivePayload {
     kind: ArchiveKind,
     archives: ArchiveLike[]
 }
 
-export interface AddArchive {
+export interface AddArchives {
     type: typeof ADD_ARCHIVES;
     payload: ArchivePayload;
 }
 
-export type ArchiveAction = AddArchive
+export interface SaveArchive {
+    type: typeof SAVE_ARCHIVE;
+    archive: ArchiveLike;
+}
+
+export type ArchiveAction = AddArchives | SaveArchive;
 
 interface IArchiveActions {
-    fetchArchives: (kind: ArchiveKind) => ThunkAction<void, StoreState, unknown, AddArchive>
-    addArchives: (kind: ArchiveKind, archives: ArchiveLike[]) => AddArchive
+    fetchArchives: (kind: ArchiveKind) => AppThunk
+    addArchives: (kind: ArchiveKind, archives: ArchiveLike[]) => AddArchives
+    saveArchive: (archive?: ArchiveLike) => AppThunk
 }
 
 export const ArchiveActions: IArchiveActions = {
@@ -35,5 +40,8 @@ export const ArchiveActions: IArchiveActions = {
     addArchives: (kind: ArchiveKind, archives: ArchiveLike[]) => ({
         type: ADD_ARCHIVES,
         payload: {kind, archives}
-    })
+    }),
+    saveArchive: (archive?: ArchiveLike) => async () => {
+        if (archive) await ApiService.saveArchive(archive);
+    },
 }

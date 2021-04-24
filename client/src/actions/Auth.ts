@@ -1,7 +1,6 @@
-import { UserLike } from "../../../common/Models";
-import { ThunkAction } from "redux-thunk";
-import { StoreState } from "../types";
+import { UserLike } from "../common/Models";
 import ApiService from "../rest/ApiService";
+import { AppThunk } from "./index";
 
 export const SET_USER = 'SET_USER';
 
@@ -18,8 +17,8 @@ export interface SignInArgs {
 export type AuthAction = SetUser;
 
 interface IAuthActions {
-    fetchSession: () => ThunkAction<void, StoreState, unknown, SetUser>
-    signIn: (args: SignInArgs) => ThunkAction<void, StoreState, unknown, SetUser>
+    fetchSession: () => AppThunk
+    signIn: (args: SignInArgs) => AppThunk
     setUser: (user: UserLike) => SetUser
 }
 

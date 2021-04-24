@@ -1,11 +1,12 @@
 import { applyMiddleware, combineReducers, createStore, Reducer } from "redux";
 import { StoreState } from "../types";
 import { persistentUiReducer } from "./PersistentUi";
-import archiveReducerFor, { ArchiveKind } from "./Archive";
+import archiveReducerFor from "./Archive";
 import thunkMiddleware from 'redux-thunk'
 import { composeWithDevTools } from "redux-devtools-extension";
 import { homeReducer } from "./Home";
 import { authReducer } from "./Auth";
+import { ArchiveKind } from "../common/Models";
 
 const reducers: Reducer<StoreState> = combineReducers<StoreState>({
     persistentUI: persistentUiReducer,

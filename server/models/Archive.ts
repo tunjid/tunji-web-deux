@@ -1,6 +1,6 @@
 import { Document, model, Model, Schema } from 'mongoose';
 import { UserDocument } from './UserSchema';
-import { ArchiveLike } from '../../common/Models';
+import { ArchiveLike } from '../../client/src/common/Models';
 
 export interface Archive extends ArchiveLike {
     title: string;
@@ -33,6 +33,11 @@ export default function archiveModel<D extends Document, M extends Model<D>>(nam
     schema.virtual('key')
         .get(function (this: D) {
             return this._id;
+        });
+
+    schema.virtual('kind')
+        .get(function (this: D) {
+            return `${this.modelName}s`;
         });
 
     schema.set('toJSON', {

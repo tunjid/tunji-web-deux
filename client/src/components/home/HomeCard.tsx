@@ -3,7 +3,7 @@ import VerticalCard from "../cards/VerticalCard";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import { CardInfo, CardStyle } from "../cards/CardInfo";
 import { useHistory } from "react-router-dom";
-import { ArchiveKind } from "../../reducers/Archive";
+import { ArchiveKind } from "../../common/Models";
 
 const useStyles = makeStyles(() => createStyles({
         root: {

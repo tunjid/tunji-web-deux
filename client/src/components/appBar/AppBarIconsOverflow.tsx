@@ -30,15 +30,11 @@ const AppBarIconsOverflow = () => {
         anchorEl,
     }: Props = useSelector(selector, shallowEqual);
 
-    const closeMenu = () => {
-        PersistentUiActions.modifyAppBar({anchorEl: undefined})
-    }
-
     const onMenuItemClicked = (item: MenuRes) => {
         if (item.action.type === MENU_ROUTE) history.push(item.action.route);
         else dispatch(item.action);
 
-        dispatch(closeMenu());
+        dispatch(PersistentUiActions.modifyAppBar({anchorEl: undefined}));
     };
 
     const isMenuOpen = Boolean(anchorEl);
@@ -49,7 +45,7 @@ const AppBarIconsOverflow = () => {
             anchorOrigin={{vertical: 'top', horizontal: 'right'}}
             transformOrigin={{vertical: 'top', horizontal: 'right'}}
             open={isMenuOpen}
-            onClose={() => dispatch(closeMenu())}>
+            onClose={() => dispatch(PersistentUiActions.modifyAppBar({anchorEl: undefined}))}>
             {items.map(item => (
                 <MenuItem key={item.id} onClick={() => onMenuItemClicked(item)}>{item.text}</MenuItem>))}
         </Menu>

@@ -1,6 +1,6 @@
 import { Document, Model, model, Schema } from 'mongoose';
 import { pbkdf2Sync, randomBytes } from 'crypto';
-import { UserLike } from '../../common/Models';
+import { UserLike } from '../../client/src/common/Models';
 
 export interface UserDocument extends Document, UserLike {
     email: string;

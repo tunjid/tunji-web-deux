@@ -1,5 +1,5 @@
 import { AuthAction, SET_USER } from "../actions/Auth";
-import { UserLike } from "../../../common/Models";
+import { UserLike } from "../common/Models";
 
 export interface AuthState {
     signedInUser?: UserLike;

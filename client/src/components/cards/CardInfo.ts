@@ -1,4 +1,4 @@
-import { UserLike } from "../../../../common/Models";
+import { UserLike } from "../../common/Models";
 
 export enum CardStyle {
     horizontal = "horizontal",

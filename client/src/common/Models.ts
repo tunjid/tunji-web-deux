@@ -16,4 +16,11 @@ export interface ArchiveLike {
     spanCount?: number;
     tags: string[];
     categories: string[];
+    kind: ArchiveKind,
+}
+
+export enum ArchiveKind {
+    Articles = 'articles',
+    Projects = 'projects',
+    Talks = 'talks',
 }

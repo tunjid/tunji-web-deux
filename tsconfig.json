@@ -27,7 +27,7 @@
   ],
   "include": [
     "server/*",
-    "common/*",
+    "client/src/common/*",
     "./server.ts"
   ]
 }

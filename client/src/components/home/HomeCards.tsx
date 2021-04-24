@@ -6,8 +6,7 @@ import { StoreState } from "../../types";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import AppCard from "./HomeCard";
 import { GridList, GridListTile } from "@material-ui/core";
-import { ArchiveKind } from "../../reducers/Archive";
-import { ArchiveLike } from "../../../../common/Models";
+import { ArchiveKind, ArchiveLike } from "../../common/Models";
 import { CardInfo, CardStyle } from "../cards/CardInfo";
 import { ArchiveActions } from "../../actions/Archive";
 
