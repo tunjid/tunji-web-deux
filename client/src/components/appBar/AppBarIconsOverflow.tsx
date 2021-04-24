@@ -1,6 +1,5 @@
 import { Menu } from "@material-ui/core";
 import MenuItem from "@material-ui/core/MenuItem";
-import { createStyles, makeStyles } from '@material-ui/core/styles';
 import * as React from 'react';
 import { MenuRes } from "../../types/MenuRes";
 import { createSelector, OutputSelector } from "reselect";
@@ -8,8 +7,6 @@ import { StoreState } from "../../types";
 import { PersistentUiState } from "../../reducers/PersistentUi";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { PersistentUiActions } from "../../actions/PersistentUi";
-
-const useStyles = makeStyles(() => createStyles({}));
 
 interface Props {
     items: MenuRes[];
@@ -28,7 +25,6 @@ const selector: OutputSelector<StoreState, Props, (res: PersistentUiState) => Pr
 
 const AppBarIconsOverflow = () => {
     const dispatch = useDispatch();
-    const classes = useStyles();
     const {
         items,
         anchorEl,
@@ -53,7 +49,8 @@ const AppBarIconsOverflow = () => {
             transformOrigin={{vertical: 'top', horizontal: 'right'}}
             open={isMenuOpen}
             onClose={() => dispatch(closeMenu())}>
-            {items.map(item => (<MenuItem onClick={() => onMenuItemClicked(item)}>{item.text}</MenuItem>))}
+            {items.map(item => (
+                <MenuItem key={item.id} onClick={() => onMenuItemClicked(item)}>{item.text}</MenuItem>))}
         </Menu>
     );
 

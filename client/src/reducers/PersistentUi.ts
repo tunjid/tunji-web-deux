@@ -20,7 +20,7 @@ export function persistentUiReducer(state = {
     hasAppBarShadow: false,
     hasAppBarHeader: true,
     tabsShow: true,
-    menuItems: [{text: 'About'}, {text: 'Features'}],
+    menuItems: [{id: 'about', text: 'About'}, {id: 'features', text: 'Features'}],
 }, action: PersistentUiAction): PersistentUiState {
     switch (action.type) {
         case MODIFY_APP_BAR: {
