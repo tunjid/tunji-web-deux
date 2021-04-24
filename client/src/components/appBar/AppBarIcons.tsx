@@ -9,7 +9,7 @@ import { createSelector, OutputSelector } from "reselect";
 import { StoreState } from "../../types";
 import { PersistentUiState } from "../../reducers/PersistentUi";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
-import { modifyAppBar } from "../../actions/PersistentUi";
+import { PersistentUiActions } from "../../actions/PersistentUi";
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
     root: {
@@ -75,7 +75,7 @@ const AppBarIcons = () => {
     const isSmallScreen = /xs|sm/.test(width);
 
     const handleMenuOpen = (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
-        dispatch(modifyAppBar({anchorEl: event.currentTarget}))
+        dispatch(PersistentUiActions.modifyAppBar({anchorEl: event.currentTarget}))
     };
 
     const clickMenuItem = (clicked: MenuRes) => {

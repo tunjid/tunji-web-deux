@@ -6,9 +6,9 @@ import { createSelector, OutputSelector } from "reselect";
 import { StoreState } from "../../types";
 import { PersistentUiState } from "../../reducers/PersistentUi";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
-import { modifyAppBar } from "../../actions/PersistentUi";
+import { PersistentUiActions } from "../../actions/PersistentUi";
 import { Tab, Tabs } from "@material-ui/core";
-import { HomeTab, HomeState } from "../../reducers/Home";
+import { HomeState, HomeTab } from "../../reducers/Home";
 import { HomeActions } from "../../actions/Home";
 
 const throttle = require('lodash/throttle');
@@ -74,7 +74,7 @@ const HomeHeader = () => {
 
             if (hasTopState === currentlyAtTop) return;
 
-            dispatch(modifyAppBar({
+            dispatch(PersistentUiActions.modifyAppBar({
                 hasAppBarShadow: !currentlyAtTop,
                 appBarColor: currentlyAtTop ? transparent : theme.palette.secondary.main
             }));

@@ -7,7 +7,7 @@ import { createSelector, OutputSelector } from "reselect";
 import { StoreState } from "../../types";
 import { PersistentUiState } from "../../reducers/PersistentUi";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
-import { modifyAppBar } from "../../actions/PersistentUi";
+import { PersistentUiActions } from "../../actions/PersistentUi";
 
 const useStyles = makeStyles(() => createStyles({}));
 
@@ -36,13 +36,14 @@ const AppBarIconsOverflow = () => {
     }: Props = useSelector(selector, shallowEqual);
 
     const closeMenu = () => {
-        modifyAppBar({anchorEl: undefined})
+        PersistentUiActions.modifyAppBar({anchorEl: undefined})
     }
 
     const onMenuItemClicked = (item: MenuRes) => {
         onItemClick?.(item);
         dispatch(closeMenu());
     };
+
     const isMenuOpen = Boolean(anchorEl);
 
     const renderMenu = (

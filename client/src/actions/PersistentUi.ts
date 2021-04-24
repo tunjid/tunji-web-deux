@@ -11,9 +11,9 @@ export type AppBarAction = ModifyAppBar;
 
 export type PersistentUiAction = AppBarAction;
 
-export function modifyAppBar(payload: Partial<PersistentUiState>): ModifyAppBar {
-    return {
+export const PersistentUiActions = {
+    modifyAppBar: (payload: Partial<PersistentUiState>) => ({
         type: MODIFY_APP_BAR,
         payload
-    }
+    })
 }
