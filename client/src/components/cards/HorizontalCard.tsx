@@ -2,8 +2,8 @@ import React from 'react';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardMedia from '@material-ui/core/CardMedia';
-import { CardInfo } from "./HomeCard";
-import HomeCardBody from "./HomeCardBody";
+import { CardInfo } from "./CardInfo";
+import CardBody from "./CardBody";
 
 const useStyles = makeStyles(() =>
     createStyles({
@@ -31,7 +31,7 @@ const HorizontalCard = ({cardInfo}: Props) => {
                 image={cardInfo.thumbnail}
                 title={cardInfo.title}
             />
-            <HomeCardBody cardInfo={cardInfo}/>
+            <CardBody cardInfo={cardInfo}/>
         </Card>
     );
 }

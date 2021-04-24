@@ -2,8 +2,7 @@ import { createStyles, makeStyles } from '@material-ui/core/styles';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import { Avatar, Chip } from "@material-ui/core";
-import { CardInfo } from "./HomeCard";
-
+import { CardInfo } from "./CardInfo";
 
 const useStyles = makeStyles((theme) => createStyles({
     metadata: {
@@ -52,7 +51,7 @@ interface Props {
     cardInfo: CardInfo
 }
 
-const HomeCardBody = ({cardInfo}: Props) => {
+const CardBody = ({cardInfo}: Props) => {
     const classes = useStyles();
 
     return (
@@ -96,4 +95,4 @@ const HomeCardBody = ({cardInfo}: Props) => {
     );
 }
 
-export default HomeCardBody;
+export default CardBody;

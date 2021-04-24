@@ -1,24 +1,7 @@
-import HorizontalCard from "./HomeHorizontalCard";
-import HomeVerticalCard from "./HomeVerticalCard";
-import { UserLike } from "../../../../common/Models";
+import HorizontalCard from "../cards/HorizontalCard";
+import VerticalCard from "../cards/VerticalCard";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
-
-export enum CardStyle {
-    horizontal = "horizontal",
-    vertical = "vertical",
-}
-
-export interface CardInfo {
-    id: string;
-    title: string;
-    description: string;
-    thumbnail: string;
-    date?: string;
-    spanCount?: number;
-    categories: string[];
-    style: CardStyle;
-    author: UserLike;
-}
+import { CardInfo, CardStyle } from "../cards/CardInfo";
 
 const useStyles = makeStyles(() => createStyles({
         root: {
@@ -35,7 +18,7 @@ export default function AppCard({cardInfo}: Props) {
     const classes = useStyles();
     const element = cardInfo.style === CardStyle.horizontal
         ? <HorizontalCard cardInfo={cardInfo}/>
-        : <HomeVerticalCard cardInfo={cardInfo}/>
+        : <VerticalCard cardInfo={cardInfo}/>
 
     return (<div className={classes.root}>{element}</div>);
 }

@@ -2,8 +2,8 @@ import { createStyles, makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
 import CardMedia from '@material-ui/core/CardMedia';
-import { CardInfo } from "./HomeCard";
-import HomeCardBody from "./HomeCardBody";
+import { CardInfo } from "./CardInfo";
+import CardBody from "./CardBody";
 
 
 const useStyles = makeStyles((theme) => createStyles({
@@ -33,7 +33,7 @@ interface Props {
     cardInfo: CardInfo
 }
 
-const HomeVerticalCard = ({cardInfo}: Props) => {
+const VerticalCard = ({cardInfo}: Props) => {
     const classes = useStyles();
 
     return (
@@ -44,10 +44,10 @@ const HomeVerticalCard = ({cardInfo}: Props) => {
                     image={cardInfo.thumbnail}
                     title={cardInfo.title}
                 />
-                <HomeCardBody cardInfo={cardInfo}/>
+                <CardBody cardInfo={cardInfo}/>
             </CardActionArea>
         </Card>
     );
 }
 
-export default HomeVerticalCard;
+export default VerticalCard;

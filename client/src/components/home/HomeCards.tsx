@@ -4,10 +4,11 @@ import { useEffect } from 'react';
 import { createSelector, OutputSelector } from "reselect";
 import { StoreState } from "../../types";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
-import AppCard, { CardInfo, CardStyle } from "./HomeCard";
+import AppCard from "./HomeCard";
 import { GridList, GridListTile } from "@material-ui/core";
 import { ArchiveKind, fetchArchives } from "../../reducers/Archive";
 import { ArchiveLike } from "../../../../common/Models";
+import { CardInfo, CardStyle } from "../cards/CardInfo";
 
 const useStyles = makeStyles(() => createStyles({
         root: {
