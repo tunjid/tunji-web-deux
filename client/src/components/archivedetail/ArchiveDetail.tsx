@@ -82,7 +82,11 @@ const ArchiveDetail = () => {
             hasAppBarShadow: true,
             hasAppBarSpacer: true,
             appBarColor: theme.palette.primary.dark,
-            menuItems: isSignedIn ? [{id: 'edit', text: 'Edit'}] : []
+            menuItems: isSignedIn ? [{
+                id: 'edit',
+                text: 'Edit',
+                action: PersistentUiActions.menuRoute('')
+            }] : []
         }));
         const fetch = async () => {
             const response = await ApiService.fetchArchive(pathname);

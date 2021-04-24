@@ -6,12 +6,12 @@ import { createSelector, OutputSelector } from "reselect";
 import { StoreState } from "../../types";
 import { PersistentUiState } from "../../reducers/PersistentUi";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
-import { PersistentUiActions } from "../../actions/PersistentUi";
+import { MENU_ROUTE, PersistentUiActions } from "../../actions/PersistentUi";
+import { useHistory } from "react-router-dom";
 
 interface Props {
     items: MenuRes[];
     anchorEl?: HTMLElement,
-    onItemClick?: (item: MenuRes) => void;
 }
 
 const selector: OutputSelector<StoreState, Props, (res: PersistentUiState) => Props> = createSelector(
@@ -19,16 +19,15 @@ const selector: OutputSelector<StoreState, Props, (res: PersistentUiState) => Pr
     persistentUI => ({
         items: persistentUI.menuItems,
         anchorEl: persistentUI.anchorEl,
-        onItemClick: persistentUI.menuClickListener,
     })
 );
 
 const AppBarIconsOverflow = () => {
     const dispatch = useDispatch();
+    const history = useHistory();
     const {
         items,
         anchorEl,
-        onItemClick,
     }: Props = useSelector(selector, shallowEqual);
 
     const closeMenu = () => {
@@ -36,7 +35,9 @@ const AppBarIconsOverflow = () => {
     }
 
     const onMenuItemClicked = (item: MenuRes) => {
-        onItemClick?.(item);
+        if (item.action.type === MENU_ROUTE) history.push(item.action.route);
+        else dispatch(item.action);
+
         dispatch(closeMenu());
     };
 

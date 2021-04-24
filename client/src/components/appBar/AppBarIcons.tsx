@@ -9,7 +9,8 @@ import { createSelector, OutputSelector } from "reselect";
 import { StoreState } from "../../types";
 import { PersistentUiState } from "../../reducers/PersistentUi";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
-import { PersistentUiActions } from "../../actions/PersistentUi";
+import { MENU_ROUTE, PersistentUiActions } from "../../actions/PersistentUi";
+import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
     root: {
@@ -37,7 +38,6 @@ interface Props {
     items: MenuRes[];
     hasOverflow: boolean;
     anchorEl?: HTMLElement,
-    onItemClick?: (item: MenuRes) => void;
 }
 
 const selector: OutputSelector<StoreState, Props, (res: PersistentUiState) => Props> = createSelector(
@@ -46,7 +46,6 @@ const selector: OutputSelector<StoreState, Props, (res: PersistentUiState) => Pr
         items: persistentUI.menuItems,
         hasOverflow: persistentUI.menuItems.length > 0,
         anchorEl: persistentUI.anchorEl,
-        onItemClick: persistentUI.menuClickListener,
     })
 );
 
@@ -64,11 +63,11 @@ function useWidth(): string {
 
 const AppBarIcons = () => {
     const dispatch = useDispatch();
+    const history = useHistory();
     const classes = useStyles();
     const {
         items,
         hasOverflow,
-        onItemClick,
     }: Props = useSelector(selector, shallowEqual);
 
     const width = useWidth();
@@ -79,8 +78,8 @@ const AppBarIcons = () => {
     };
 
     const clickMenuItem = (clicked: MenuRes) => {
-        if (onItemClick) onItemClick(clicked);
-        else console.log('MENU CLICK LISTENER IS NULL')
+        if (clicked.action.type === MENU_ROUTE) history.push(clicked.action.route);
+        else dispatch(clicked.action);
     };
 
     const overflow = hasOverflow

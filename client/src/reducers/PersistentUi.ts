@@ -10,7 +10,6 @@ export interface PersistentUiState {
     tabsShow: boolean;
     menuItems: MenuRes[];
     anchorEl?: HTMLElement;
-    menuClickListener?: (clicked: MenuRes) => void;
 }
 
 export function persistentUiReducer(state = {
@@ -20,7 +19,7 @@ export function persistentUiReducer(state = {
     hasAppBarShadow: false,
     hasAppBarHeader: true,
     tabsShow: true,
-    menuItems: [{id: 'about', text: 'About'}, {id: 'features', text: 'Features'}],
+    menuItems: [] as MenuRes[],
 }, action: PersistentUiAction): PersistentUiState {
     switch (action.type) {
         case MODIFY_APP_BAR: {
