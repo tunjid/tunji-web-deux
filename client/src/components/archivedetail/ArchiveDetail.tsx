@@ -6,11 +6,10 @@ import { ArchiveKind } from "../../reducers/Archive";
 import { ArchiveLike } from "../../../../common/Models";
 import axios from "axios";
 import { Chip } from "@material-ui/core";
+import Typography from "@material-ui/core/Typography";
 
 const useStyles = makeStyles(() => createStyles({
-        root: {
-            display: 'flex'
-        },
+        root: {},
     }
 ));
 
@@ -24,13 +23,15 @@ const ArchiveDetail = () => {
     const {archiveId} = useParams<ArchiveDetailParams>();
     const [archive, setArchive] = useState<ArchiveLike>();
 
+    console.log('WHEREEEEE');
+
     const kind = Object.keys(ArchiveKind).find((key) => key === pathname)!!;
 
-    console.log('UMMMMMM');
+    console.log(`UMMMMMM. Path name: ${pathname}; kind: ${kind}`);
 
     useEffect(() => {
         const fetch = async () => {
-            const response = await axios.get<ArchiveLike>(`/api/${kind}/${archiveId}`);
+            const response = await axios.get<ArchiveLike>(`/api${pathname}`);
             const status = response.status;
             console.log(`DONEEEE; ${JSON.stringify(response)}`)
             if (status < 200 || status > 399) return;
@@ -42,10 +43,14 @@ const ArchiveDetail = () => {
 
     return (
         <div className={classes.root}>
+            <div>{'HELLO HI HOW ARE YOU'}</div>
+            <Typography gutterBottom variant="h1">
+                {'HELLO HI HOW ARE YOU'}
+            </Typography>
             {(archive?.categories || []).map((label) => <Chip
                 label={label}
                 color="secondary"
-                style={{backgroundColor:'#4282F1'}}
+                style={{backgroundColor: '#4282F1'}}
                 size="small"/>
             )}
         </div>

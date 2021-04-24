@@ -10,9 +10,10 @@ export default () => (
         <ScrollToTop>
             <Switch>
                 <Route exact path='/' component={Home}/>
-                <Route path={`${ArchiveKind.Articles}/:archiveId`} component={ArchiveDetail}/>
-                <Route path={`${ArchiveKind.Projects}/:archiveId`} component={ArchiveDetail}/>
-                <Route path={`${ArchiveKind.Talks}/:archiveId`} component={ArchiveDetail}/>
+                <Route path='/test' component={Home}/>
+                <Route path={`/${ArchiveKind.Articles}/:archiveId`} component={ArchiveDetail}/>
+                <Route path={`/${ArchiveKind.Projects}/:archiveId`} component={ArchiveDetail}/>
+                <Route path={`/${ArchiveKind.Talks}/:archiveId`} component={ArchiveDetail}/>
             </Switch>
         </ScrollToTop>
     </BrowserRouter>

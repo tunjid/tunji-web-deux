@@ -6,7 +6,7 @@ interface ArchiveController {
     get: (res: Request, req: Response, next: NextFunction) => void;
     put: (res: Request, req: Response, next: NextFunction) => void;
     remove: (res: Request, req: Response, next: NextFunction) => void;
-    archiveById: (res: Request, req: Response, next: NextFunction, id: string) => void;
+    byId: (res: Request, req: Response, next: NextFunction, id: string) => void;
     find: (res: Request, req: Response, next: NextFunction) => void;
     archives: (res: Request, req: Response, next: NextFunction) => void;
     tagsOrCategories: (res: Request, req: Response, next: NextFunction) => void;
@@ -104,9 +104,9 @@ const archiveController = (Model: ArchiveModel): ArchiveController => ({
             else res.json(req.archive);
         });
     },
-    archiveById: (req, res, next, id) => {
+    byId: (req, res, next, id) => {
         Model.findById(id)
-            .populate('author', 'firstName lastName fullName')
+            .populate('author', 'firstName lastName fullName imageUrl')
             .exec(function (error, archive) {
                 if (error) return next(error);
 

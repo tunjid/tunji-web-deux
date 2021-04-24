@@ -6,7 +6,9 @@ import { ArchiveModel } from '../models/Archive';
 
 export default function (app: Express, model: ArchiveModel): void {
     const archives = archiveController(model);
-    const routeName = `${model.modelName.toLowerCase()}s`;
+    const modelPath = model.modelName.toLowerCase();
+    const routeName = `${modelPath}s`;
+    const paramName = `${modelPath}Id`;
 
     app.route(`/api/${routeName}/archives`)
         .get(archives.archives);
@@ -18,10 +20,10 @@ export default function (app: Express, model: ArchiveModel): void {
         .post(users.requiresLogin, archives.create)
         .get(archives.find);
 
-    app.route(`/api/${routeName}/:archiveId`)
+    app.route(`/api/${routeName}/:${paramName}`)
         .get(archives.get)
         .put(users.requiresLogin, archives.put)
         .delete(users.requiresLogin, archives.hasAuthorization, archives.remove);
 
-    app.param('archiveId', archives.archiveById);
+    app.param(paramName, archives.byId);
 }
