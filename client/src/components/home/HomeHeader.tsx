@@ -4,10 +4,12 @@ import { useEffect } from 'react';
 import { theme } from "../../styles/PersistentUi";
 import { createSelector, OutputSelector } from "reselect";
 import { StoreState } from "../../types";
-import { AppTab, PersistentUiState } from "../../reducers/PersistentUi";
+import { PersistentUiState } from "../../reducers/PersistentUi";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { modifyAppBar } from "../../actions/PersistentUi";
 import { Tab, Tabs } from "@material-ui/core";
+import { HomeTab, HomeState } from "../../reducers/Home";
+import { HomeActions } from "../../actions/Home";
 
 const throttle = require('lodash/throttle');
 
@@ -31,18 +33,19 @@ interface Props {
     appBarColor: string;
     hasAppBarShadow: boolean;
     tabsShow: boolean;
-    selectedTab: AppTab;
-    tabs: AppTab[];
+    selectedTab: HomeTab;
+    tabs: HomeTab[];
 }
 
-const selector: OutputSelector<StoreState, Props, (res: PersistentUiState) => Props> = createSelector(
+const selector: OutputSelector<StoreState, Props, (a: PersistentUiState, b: HomeState) => Props> = createSelector(
     state => state.persistentUI,
-    persistentUI => ({
+    state => state.home,
+    (persistentUI, home) => ({
         appBarColor: persistentUI.appBarColor,
         hasAppBarShadow: persistentUI.hasAppBarShadow,
         tabsShow: persistentUI.tabsShow,
-        selectedTab: persistentUI.selectedTab,
-        tabs: persistentUI.tabs,
+        selectedTab: home.selectedTab,
+        tabs: home.tabs,
     })
 );
 
@@ -90,13 +93,13 @@ const HomeHeader = () => {
                 className={classes.tabs}
                 value={selectedTab.index}
                 onChange={(_: any, index: number) => {
-                    dispatch(modifyAppBar({selectedTab: tabs[index]}))
+                    dispatch(HomeActions.selectTab(tabs[index]))
                 }}
                 indicatorColor="secondary"
                 textColor="secondary"
                 centered
             >
-                {tabs.map((item: AppTab) => <Tab className={classes.tab} label={item.text}/>)}
+                {tabs.map((item: HomeTab) => <Tab className={classes.tab} label={item.text}/>)}
             </Tabs>
         </div>
     );

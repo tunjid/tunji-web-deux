@@ -4,12 +4,14 @@ import { persistentUiReducer } from "./PersistentUi";
 import archiveReducerFor, { ArchiveKind } from "./Archive";
 import thunkMiddleware from 'redux-thunk'
 import { composeWithDevTools } from "redux-devtools-extension";
+import { homeReducer } from "./Home";
 
 const reducers: Reducer<StoreState> = combineReducers<StoreState>({
     persistentUI: persistentUiReducer,
     articles: archiveReducerFor(ArchiveKind.Articles),
     projects: archiveReducerFor(ArchiveKind.Projects),
     talks: archiveReducerFor(ArchiveKind.Talks),
+    home: homeReducer,
 });
 
 const composedEnhancer = composeWithDevTools(applyMiddleware(thunkMiddleware))

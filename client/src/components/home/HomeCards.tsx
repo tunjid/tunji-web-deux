@@ -42,7 +42,7 @@ const cardFromArchive: (archive: ArchiveLike, index: number) => CardInfo = (arch
 })
 
 const archivesFromState: (state: StoreState) => ArchiveLike[] = (state: StoreState) => {
-    switch (state.persistentUI.selectedTab.kind) {
+    switch (state.home.selectedTab.kind) {
         case ArchiveKind.Articles: {
             return state.articles.archives;
         }
@@ -61,7 +61,7 @@ const selector: OutputSelector<StoreState, Props, (res: StoreState) => Props> = 
     state => state,
     (state: StoreState) => {
         return {
-            currentKind: state.persistentUI.selectedTab.kind,
+            currentKind: state.home.selectedTab.kind,
             cards: archivesFromState(state).map(cardFromArchive)
         }
     }
