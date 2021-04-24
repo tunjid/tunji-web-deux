@@ -143,17 +143,15 @@ export const signup = (req, res) => {
     }
 };
 
-export const signin = (req, res, next) => {
+export const signIn = (req, res, next) => {
     passport.authenticate('local', function (err, user, status) {
         if (err) {
             return next(err);
         }
-        if (!user) {
-            if(status) {
-                return composeMessage(res, status.message);
-            }
-            return composeMessage(res, 'User does not exist');
-        }
+        if (!user) return status
+            ? composeMessage(res, status.message)
+            : composeMessage(res, 'User does not exist');
+
         req.logIn(user, function (err) {
             if (err) {
                 return res.json(e);
@@ -164,7 +162,7 @@ export const signin = (req, res, next) => {
 };
 
 // Create a new controller method for signing out
-export const signout = (req, res) => {
+export const signOut = (req, res) => {
     // Use the Passport 'logout' method to logout
     req.logout();
     return composeMessage(res, 'Signed out');

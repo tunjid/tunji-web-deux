@@ -18,10 +18,10 @@ export default function (app: Express): void {
         .post(users.signup);*/
 
     app.route('/api/sign-in')
-        .post(users.signin);
+        .post(users.signIn);
 
     app.route('/api/sign-out')
-        .post(users.signout);
+        .post(users.signOut);
 
     // app.route('/contact')
     //     .post(users.contact);

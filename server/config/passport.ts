@@ -3,11 +3,11 @@ import { User, UserDocument } from '../models/UserSchema';
 import localStrategy from './strategies/local';
 
 export default function () {
-    passport.serializeUser<any>((user, done: (error: any, userId: any) => void) => {
-        done(null, user);
+    passport.serializeUser<string>((user, done: (error: any, misc: any) => void) => {
+        done(null, user.id);
     });
 
-    passport.deserializeUser<any>((userId, done) => {
+    passport.deserializeUser<string>((userId, done) => {
         User.findById(userId, (err: any, user: UserDocument) => {
             done(err, user.id);
         });
