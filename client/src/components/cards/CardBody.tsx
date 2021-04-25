@@ -89,7 +89,7 @@ const CardBody = ({cardInfo}: Props) => {
                 </div>
                 <div className={classes.date}>
                     <Typography gutterBottom variant="caption" component="p">
-                        {'X MIN READ'}
+                        {`${cardInfo.readTime} MIN READ`}
                     </Typography>
                 </div>
             </div>

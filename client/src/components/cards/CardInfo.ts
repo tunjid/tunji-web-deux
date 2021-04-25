@@ -12,6 +12,7 @@ export interface CardInfo {
     thumbnail: string;
     date?: string;
     spanCount?: number;
+    readTime: number;
     categories: string[];
     style: CardStyle;
     author: UserLike;

@@ -40,6 +40,7 @@ const cardFromArchive: (archive: ArchiveLike, index: number) => CardInfo = (arch
     date: archive.created.toDateString().split(' ').splice(1).join(' '),
     style: index % 4 === 0 ? CardStyle.horizontal : CardStyle.vertical,
     categories: archive.categories,
+    readTime: Math.ceil(archive.body.trim().split(/\s+/).length / 250),
 })
 
 const archivesFromState: (state: StoreState) => ArchiveLike[] = (state: StoreState) => {

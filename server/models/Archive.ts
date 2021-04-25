@@ -41,7 +41,11 @@ export default function archiveModel<D extends Document, M extends Model<D>>(nam
         });
 
     schema.set('toJSON', {
-        virtuals: true
+        virtuals: true,
+        transform: (doc: ArchiveDocument, ret: Partial<ArchiveDocument>) => {
+            if(!ret.thumbnail) ret.thumbnail = 'https://miro.medium.com/max/4800/1*F7eVQ1Fe7-O6vZWvEt7kHg.png';
+            return ret;
+        }
     });
 
     return model<D, M>(name, schema);
