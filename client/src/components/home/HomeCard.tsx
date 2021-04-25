@@ -4,6 +4,7 @@ import { createStyles, makeStyles } from "@material-ui/core/styles";
 import { CardInfo, CardStyle } from "../cards/CardInfo";
 import { ArchiveKind } from "../../common/Models";
 import { RouterActions } from "../../actions/Router";
+import { useDispatch } from "react-redux";
 
 const useStyles = makeStyles(() => createStyles({
         root: {
@@ -19,7 +20,8 @@ interface Props {
 
 export default function AppCard({kind, cardInfo}: Props) {
     const classes = useStyles();
-    const onClick = () => RouterActions.push(`${kind}/${cardInfo.id}`);
+    const dispatch = useDispatch();
+    const onClick = () => dispatch(RouterActions.push(`${kind}/${cardInfo.id}`));
     const element = cardInfo.style === CardStyle.horizontal
         ? <HorizontalCard cardInfo={cardInfo} onClick={onClick}/>
         : <VerticalCard cardInfo={cardInfo} onClick={onClick}/>

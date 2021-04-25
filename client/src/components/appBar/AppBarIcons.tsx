@@ -62,8 +62,8 @@ function useWidth(): string {
 }
 
 const AppBarIcons = () => {
-    const dispatch = useDispatch();
     const classes = useStyles();
+    const dispatch = useDispatch();
     const {
         items,
         hasOverflow,
@@ -77,7 +77,7 @@ const AppBarIcons = () => {
     };
 
     const clickMenuItem = (clicked: MenuRes) => {
-        if (clicked.action.type === MENU_ROUTE) RouterActions.push(clicked.action.route);
+        if (clicked.action.type === MENU_ROUTE) dispatch(RouterActions.push(clicked.action.route));
         else dispatch(clicked.action);
     };
 

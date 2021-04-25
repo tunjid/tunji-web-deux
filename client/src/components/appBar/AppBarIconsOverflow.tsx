@@ -30,7 +30,7 @@ const AppBarIconsOverflow = () => {
     }: Props = useSelector(selector, shallowEqual);
 
     const onMenuItemClicked = (item: MenuRes) => {
-        if (item.action.type === MENU_ROUTE) RouterActions.push(item.action.route);
+        if (item.action.type === MENU_ROUTE) dispatch(RouterActions.push(item.action.route));
         else dispatch(item.action);
 
         dispatch(PersistentUiActions.modifyAppBar({anchorEl: undefined}));
