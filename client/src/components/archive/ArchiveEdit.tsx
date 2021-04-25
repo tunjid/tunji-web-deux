@@ -1,18 +1,16 @@
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { useLocation, useParams } from "react-router-dom";
-import { ArchiveKind, ArchiveLike, UserLike } from "../../common/Models";
+import { ArchiveLike } from "../../common/Models";
 import { Chip } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { PersistentUiActions } from "../../actions/PersistentUi";
 import { theme } from "../../styles/PersistentUi";
-import { createSelector, OutputSelector } from "reselect";
-import { StoreState } from "../../types";
 import ApiService from "../../rest/ApiService";
 import MEDitor from '@uiw/react-md-editor';
 import { ArchiveActions } from "../../actions/Archive";
+import { archiveSelector } from "./Common";
 
 const useStyles = makeStyles((theme) => createStyles({
         root: {
@@ -51,28 +49,11 @@ const useStyles = makeStyles((theme) => createStyles({
     }
 ));
 
-interface ArchiveEditParams {
-    archiveId: string
-}
-
-interface Props {
-    isSignedIn: boolean;
-}
-
-const selector: OutputSelector<StoreState, Props, (a: UserLike) => Props> = createSelector(
-    state => state.auth.signedInUser,
-    (signedInUser) => ({
-        isSignedIn: signedInUser !== undefined,
-    })
-);
-
 const ArchiveEdit = () => {
     const classes = useStyles();
     const dispatch = useDispatch();
-    const {pathname} = useLocation();
-    const {archiveId} = useParams<ArchiveEditParams>();
     const [archive, setArchive] = useState<ArchiveLike>();
-    const {isSignedIn} = useSelector(selector, shallowEqual);
+    const {isSignedIn, kind, archiveId} = useSelector(archiveSelector, shallowEqual);
 
     const random = Math.random();
     console.log(`Random: ${random}; Render. ${!!archive}`);
@@ -86,15 +67,14 @@ const ArchiveEdit = () => {
     }
 
     useEffect(() => {
-        const path = `/${pathname.split('/')[1]}/${archiveId}`;
         const fetch = async () => {
-            const response = await ApiService.fetchArchive(path);
+            const response = await ApiService.fetchArchive(kind, archiveId);
             const status = response.status;
             if (status < 200 || status > 399) return;
             setArchive({...response.data, created: new Date(response.data.created)})
         }
         fetch();
-    }, [archiveId, isSignedIn, pathname]);
+    }, [archiveId, isSignedIn, kind]);
 
 
     useEffect(() => {
@@ -110,7 +90,6 @@ const ArchiveEdit = () => {
             }] : []
         }));
     }, [archive, isSignedIn, dispatch]);
-
 
 
     return (

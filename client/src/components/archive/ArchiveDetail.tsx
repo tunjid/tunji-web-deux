@@ -1,8 +1,7 @@
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { useLocation, useParams } from "react-router-dom";
-import { ArchiveLike, UserLike } from "../../common/Models";
+import { ArchiveKind, ArchiveLike, UserLike } from "../../common/Models";
 import { Chip } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
@@ -14,6 +13,7 @@ import ReactMarkdown from 'react-markdown'
 import { createSelector, OutputSelector } from "reselect";
 import { StoreState } from "../../types";
 import ApiService from "../../rest/ApiService";
+import { archiveSelector } from "./Common";
 
 const gfm = require('remark-gfm')
 
@@ -54,28 +54,11 @@ const useStyles = makeStyles((theme) => createStyles({
     }
 ));
 
-interface ArchiveDetailParams {
-    archiveId: string
-}
-
-interface Props {
-    isSignedIn: boolean;
-}
-
-const selector: OutputSelector<StoreState, Props, (a: UserLike) => Props> = createSelector(
-    state => state.auth.signedInUser,
-    (signedInUser) => ({
-        isSignedIn: signedInUser !== undefined,
-    })
-);
-
 const ArchiveDetail = () => {
     const classes = useStyles();
     const dispatch = useDispatch();
-    const {pathname} = useLocation();
-    const {archiveId} = useParams<ArchiveDetailParams>();
     const [archive, setArchive] = useState<ArchiveLike>();
-    const {isSignedIn} = useSelector(selector, shallowEqual);
+    const {isSignedIn, kind, archiveId} = useSelector(archiveSelector, shallowEqual);
 
     useEffect(() => {
         dispatch(PersistentUiActions.modifyAppBar({
@@ -85,17 +68,17 @@ const ArchiveDetail = () => {
             menuItems: isSignedIn ? [{
                 id: 'edit',
                 text: 'Edit',
-                action: PersistentUiActions.menuRoute(`${pathname}/edit`)
+                action: PersistentUiActions.menuRoute(`${kind}/${archiveId}/edit`)
             }] : []
         }));
         const fetch = async () => {
-            const response = await ApiService.fetchArchive(pathname);
+            const response = await ApiService.fetchArchive(kind, archiveId);
             const status = response.status;
             if (status < 200 || status > 399) return;
             setArchive({...response.data, created: new Date(response.data.created)})
         }
         fetch();
-    }, [archiveId, isSignedIn, dispatch, pathname]);
+    }, [archiveId, isSignedIn, dispatch, kind]);
 
     return (
         <div className={classes.root}>
