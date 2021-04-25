@@ -11,8 +11,7 @@ import Card from "@material-ui/core/Card";
 import ReactMarkdown from 'react-markdown'
 import { archiveSelector } from "./Common";
 import { ArchiveActions } from "../../actions/Archive";
-
-const gfm = require('remark-gfm')
+import gfm from "remark-gfm";
 
 const useStyles = makeStyles((theme) => createStyles({
         root: {
@@ -97,7 +96,19 @@ const ArchiveDetail = () => {
                     title={archive?.title}
                 />
             </Card>
-            <ReactMarkdown className={classes.archiveBody} remarkPlugins={[gfm]} children={archive?.body || ''}/>
+            <ReactMarkdown
+                className={classes.archiveBody}
+                remarkPlugins={[gfm]}
+                children={archive?.body || ''}
+                components={{
+                    img: ({node, ...props}) => (
+                        <img
+                            {...props}
+                            style={{ maxWidth: '10vw' }}
+                            />
+                    ),
+                }}
+            />
             <div className={classes.categories}>
                 {(archive?.tags || []).map((label) => <Chip
                     key={label}

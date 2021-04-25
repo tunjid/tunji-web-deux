@@ -33,16 +33,13 @@ const useStyles = makeStyles((theme) => createStyles({
             },
         },
         editor: {
-            height: '100vh',
             width: '90vw',
+            'max-width': '800',
             margin: theme.spacing(0.5),
         },
         cardImage: {
             height: '50vh',
             width: '90vw',
-        },
-        archiveBody: {
-            width: '60vw',
         },
     }
 ));
@@ -91,11 +88,13 @@ const ArchiveEdit = () => {
                 {archive?.title || ''}
             </Typography>
 
-            <MEDitor
-                className={classes.editor}
-                value={archive.body || ''}
-                onChange={onNewText}
-            />
+            <div className={classes.editor}>
+                <MEDitor
+                    value={archive.body || ''}
+                    onChange={onNewText}
+                />
+            </div>
+
             {/*<MEDditor.Markdown source={value} />*/}
 
             <div className={classes.categories}>
