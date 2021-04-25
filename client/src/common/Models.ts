@@ -24,3 +24,22 @@ export enum ArchiveKind {
     Projects = 'projects',
     Talks = 'talks',
 }
+
+export const EmptyUser: UserLike = {
+    firstName: '',
+    lastName: '',
+    fullName: '',
+    imageUrl: '',
+};
+
+export const EmptyArchive : ArchiveLike = {
+    key: '',
+    title: '',
+    body: '',
+    description: '',
+    author: EmptyUser,
+    created: new Date(),
+    tags: [],
+    categories: [],
+    kind: ArchiveKind.Articles,
+};

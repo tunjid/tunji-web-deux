@@ -2,7 +2,7 @@ import { createStyles, makeStyles } from '@material-ui/core/styles';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { useLocation, useParams } from "react-router-dom";
-import { ArchiveLike, UserLike } from "../../common/Models";
+import { ArchiveKind, ArchiveLike, UserLike } from "../../common/Models";
 import { Chip } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
@@ -74,7 +74,31 @@ const ArchiveEdit = () => {
     const [archive, setArchive] = useState<ArchiveLike>();
     const {isSignedIn} = useSelector(selector, shallowEqual);
 
+    const random = Math.random();
+    console.log(`Random: ${random}; Render. ${!!archive}`);
+
+    const c = () => archive;
+
+    const onNewText = (markdown: string | undefined) => {
+        console.log(`On change. ${markdown}; archive? ${!!archive}; random: ${random}; aaaa:${!!c()}`);
+
+        if (archive) setArchive({...archive, body: markdown || ''})
+    }
+
     useEffect(() => {
+        const path = `/${pathname.split('/')[1]}/${archiveId}`;
+        const fetch = async () => {
+            const response = await ApiService.fetchArchive(path);
+            const status = response.status;
+            if (status < 200 || status > 399) return;
+            setArchive({...response.data, created: new Date(response.data.created)})
+        }
+        fetch();
+    }, [archiveId, isSignedIn, pathname]);
+
+
+    useEffect(() => {
+        console.log(`ARCHIVE CHANGED: ${archive?.body}`);
         dispatch(PersistentUiActions.modifyAppBar({
             hasAppBarShadow: true,
             hasAppBarSpacer: true,
@@ -85,14 +109,9 @@ const ArchiveEdit = () => {
                 action: ArchiveActions.saveArchive(archive)
             }] : []
         }));
-        const fetch = async () => {
-            const response = await ApiService.fetchArchive(pathname);
-            const status = response.status;
-            if (status < 200 || status > 399) return;
-            setArchive({...response.data, created: new Date(response.data.created)})
-        }
-        fetch();
-    }, [archiveId, isSignedIn, dispatch, pathname]);
+    }, [archive, isSignedIn, dispatch]);
+
+
 
     return (
         <div className={classes.root}>
@@ -114,12 +133,10 @@ const ArchiveEdit = () => {
 
             <MEDitor
                 className={classes.editor}
-                value={archive?.body || ''}
-                onChange={(markdown) => {
-                    if (archive) setArchive({...archive, body: markdown || ''})
-                }}
+                value={archive?.body || 'llllllll'}
+                onChange={onNewText}
             />
-            {/*<MDEditor.Markdown source={value} />*/}
+            {/*<MEDditor.Markdown source={value} />*/}
 
             <div className={classes.categories}>
                 {(archive?.tags || []).map((label) => <Chip

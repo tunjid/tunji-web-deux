@@ -37,7 +37,7 @@ export default function archiveModel<D extends Document, M extends Model<D>>(nam
 
     schema.virtual('kind')
         .get(function (this: D) {
-            return `${this.modelName}s`;
+            return `${name.toLowerCase()}s`;
         });
 
     schema.set('toJSON', {
