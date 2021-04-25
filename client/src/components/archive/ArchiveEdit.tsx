@@ -52,23 +52,15 @@ const ArchiveEdit = () => {
     const dispatch = useDispatch();
     const {isSignedIn, kind, archiveId, archive} = useSelector(archiveSelector('edit'), shallowEqual);
 
-    const random = Math.random();
-    console.log(`Random: ${random}; Render. ${!!archive}`);
-
-    const c = () => archive;
-
     const onNewText = (markdown: string | undefined) => {
-        console.log(`On change. ${markdown}; archive? ${!!archive}; random: ${random}; aaaa:${!!c()}`);
-        ArchiveActions.editArchive({...archive, body: markdown || ''});
+        dispatch(ArchiveActions.editArchive({kind, body: markdown || ''}));
     }
 
     useEffect(() => {
         dispatch(ArchiveActions.fetchArchive({kind, view: "edit", id: archiveId}));
     }, [archiveId, dispatch, kind]);
 
-
     useEffect(() => {
-        console.log(`ARCHIVE CHANGED: ${archive?.body}`);
         dispatch(PersistentUiActions.modifyAppBar({
             hasAppBarShadow: true,
             hasAppBarSpacer: true,
@@ -76,11 +68,10 @@ const ArchiveEdit = () => {
             menuItems: isSignedIn ? [{
                 id: 'save',
                 text: 'Save',
-                action: ArchiveActions.saveArchive(archive)
+                action: ArchiveActions.saveArchive(kind)
             }] : []
         }));
-    }, [archive, isSignedIn, dispatch]);
-
+    }, [kind, isSignedIn, dispatch]);
 
     return (
         <div className={classes.root}>
@@ -102,7 +93,7 @@ const ArchiveEdit = () => {
 
             <MEDitor
                 className={classes.editor}
-                value={archive?.body || 'llllllll'}
+                value={archive.body || ''}
                 onChange={onNewText}
             />
             {/*<MEDditor.Markdown source={value} />*/}

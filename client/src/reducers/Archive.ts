@@ -40,8 +40,12 @@ const archiveReducer = (state = {
             }
         }
         case EDIT_ARCHIVE: {
-            const updatedArchive = action.updatedArchive;
-            const editedMap = {...state.kindToEditMap, [updatedArchive.kind]: updatedArchive};
+            const edits = action.edits;
+            const kind = edits.kind;
+            if (!kind) return state;
+            const existing = state.kindToEditMap[kind];
+            const edited = {...existing, ...edits};
+            const editedMap = {...state.kindToEditMap, [kind]: edited};
             return {
                 ...state,
                 kindToEditMap: editedMap,

@@ -32,7 +32,7 @@ export interface AddArchive {
 
 export interface EditArchive {
     type: typeof EDIT_ARCHIVE;
-    updatedArchive: ArchiveLike;
+    edits: Partial<ArchiveLike>;
 }
 
 export interface AddArchives {
@@ -50,10 +50,10 @@ export type ArchiveAction = AddArchive | EditArchive | AddArchives | SaveArchive
 interface IArchiveActions {
     fetchArchive: (request: FetchArchiveRequest) => AppThunk
     fetchArchives: (kind: ArchiveKind) => AppThunk
-    editArchive: (updatedArchive: ArchiveLike) => EditArchive
+    editArchive: (edits: Partial<ArchiveLike>) => EditArchive
     addArchive: (response: FetchArchiveResponse) => AddArchive
     addArchives: (kind: ArchiveKind, archives: ArchiveLike[]) => AddArchives
-    saveArchive: (archive?: ArchiveLike) => AppThunk
+    saveArchive: (kind: ArchiveKind) => AppThunk
 }
 
 export const ArchiveActions: IArchiveActions = {
@@ -73,16 +73,18 @@ export const ArchiveActions: IArchiveActions = {
         const archives = response.data.map((raw) => ({...raw, created: new Date(raw.created)}));
         dispatch(ArchiveActions.addArchives(kind, archives));
     },
-    saveArchive: (archive?: ArchiveLike) => async () => {
-        if (archive) await ApiService.saveArchive(archive);
+    saveArchive: (kind: ArchiveKind) => async (dispatch, getState) => {
+        const state = getState();
+        const edited = state.archives.kindToEditMap[kind];
+        await ApiService.saveArchive(edited);
     },
     addArchive: (response: FetchArchiveResponse) => ({
         type: ADD_ARCHIVE,
         payload: response
     }),
-    editArchive: (updatedArchive: ArchiveLike) => ({
+    editArchive: (edits: Partial<ArchiveLike>) => ({
         type: EDIT_ARCHIVE,
-        updatedArchive
+        edits
     }),
     addArchives: (kind: ArchiveKind, archives: ArchiveLike[]) => ({
         type: ADD_ARCHIVES,
