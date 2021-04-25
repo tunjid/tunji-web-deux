@@ -62,7 +62,7 @@ const archiveReducer = (state = {
 
             return {
                 ...state,
-                archives: updatedArchives,
+                kindToArchivesMap: updatedArchives,
             }
         }
     }
