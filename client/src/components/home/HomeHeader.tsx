@@ -1,6 +1,5 @@
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import * as React from 'react';
-import { useEffect } from 'react';
 import { theme } from "../../styles/PersistentUi";
 import { createSelector, OutputSelector } from "reselect";
 import { StoreState } from "../../types";
@@ -10,6 +9,7 @@ import { PersistentUiActions } from "../../actions/PersistentUi";
 import { Tab, Tabs } from "@material-ui/core";
 import { HomeState, HomeTab } from "../../reducers/Home";
 import { HomeActions } from "../../actions/Home";
+import useEventListener from "../../hooks/UseEventListener";
 
 const throttle = require('lodash/throttle');
 
@@ -32,20 +32,23 @@ const useStyles = makeStyles(() => createStyles({
 interface Props {
     appBarColor: string;
     hasAppBarShadow: boolean;
+    onHomePage: boolean;
     tabsShow: boolean;
     selectedTab: HomeTab;
     tabs: HomeTab[];
 }
 
-const selector: OutputSelector<StoreState, Props, (a: PersistentUiState, b: HomeState) => Props> = createSelector(
+const selector: OutputSelector<StoreState, Props, (a: PersistentUiState, b: HomeState, c: boolean) => Props> = createSelector(
     state => state.persistentUI,
     state => state.home,
-    (persistentUI, home) => ({
+    state => !!state.router.location.pathname,
+    (persistentUI, home, onHomePage) => ({
         appBarColor: persistentUI.appBarColor,
         hasAppBarShadow: persistentUI.hasAppBarShadow,
         tabsShow: persistentUI.tabsShow,
         selectedTab: home.selectedTab,
         tabs: home.tabs,
+        onHomePage,
     })
 );
 
@@ -57,36 +60,33 @@ const HomeHeader = () => {
         appBarColor,
         hasAppBarShadow,
         selectedTab,
+        onHomePage,
         tabs,
     }: Props = useSelector(selector, shallowEqual);
 
-    useEffect(() => {
-        const onScroll = () => {
-            const transparent = '#00000000'
-            if (!appBarColor) return;
+    const onScroll = () => {
+        const transparent = '#00000000'
+        if (!appBarColor || !onHomePage) return;
 
-            const position = (window.pageYOffset !== undefined)
-                ? window.pageYOffset
-                : (document.documentElement || document.body.parentNode || document.body).scrollTop;
+        const position = (window.pageYOffset !== undefined)
+            ? window.pageYOffset
+            : (document.documentElement || document.body.parentNode || document.body).scrollTop;
 
-            const currentlyAtTop = position < 100;
-            const hasTopState = appBarColor === transparent || !hasAppBarShadow;
+        const currentlyAtTop = position < 100;
+        const hasTopState = appBarColor === transparent || !hasAppBarShadow;
 
-            if (hasTopState === currentlyAtTop) return;
+        if (hasTopState === currentlyAtTop) return;
 
-            dispatch(PersistentUiActions.modifyAppBar({
-                hasAppBarSpacer: false,
-                hasAppBarShadow: !currentlyAtTop,
-                appBarColor: currentlyAtTop ? transparent : theme.palette.secondary.main
-            }));
-        }
+        dispatch(PersistentUiActions.modifyAppBar({
+            hasAppBarSpacer: false,
+            hasAppBarShadow: !currentlyAtTop,
+            appBarColor: currentlyAtTop ? transparent : theme.palette.secondary.main,
+        }));
+    }
 
-        const scrollListener = () => throttle(onScroll, 100)();
+    const scrollListener = () => throttle(onScroll, 100)();
 
-        window.addEventListener('scroll', scrollListener, true);
-
-        return () => window.removeEventListener('scroll', scrollListener);
-    });
+    useEventListener('scroll', scrollListener);
 
     return (
         <div className={classes.root}>
