@@ -7,7 +7,7 @@ import ArchiveDetail from "./components/archive/ArchiveDetail";
 import ArchiveEdit from "./components/archive/ArchiveEdit";
 import {ArchiveKind} from "./common/Models";
 
-export default () => (
+const routes = () => (
     <ScrollToTop>
         <Switch>
             <Route exact path='/' component={Home}/>
@@ -21,3 +21,5 @@ export default () => (
         </Switch>
     </ScrollToTop>
 )
+
+export default routes;

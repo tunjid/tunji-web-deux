@@ -71,7 +71,7 @@ const ArchiveDetail = () => {
                 action: PersistentUiActions.menuRoute(`${kind}/${archiveId}/edit`)
             }] : []
         }));
-    }, [isSignedIn, dispatch]);
+    }, [archiveId, kind, isSignedIn, dispatch]);
 
     return (
         <div className={classes.root}>
