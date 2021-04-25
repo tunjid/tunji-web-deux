@@ -1,7 +1,6 @@
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import * as React from 'react';
-import { useEffect, useState } from 'react';
-import { ArchiveKind, ArchiveLike, UserLike } from "../../common/Models";
+import { useEffect } from 'react';
 import { Chip } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
@@ -10,10 +9,8 @@ import { theme } from "../../styles/PersistentUi";
 import CardMedia from "@material-ui/core/CardMedia";
 import Card from "@material-ui/core/Card";
 import ReactMarkdown from 'react-markdown'
-import { createSelector, OutputSelector } from "reselect";
-import { StoreState } from "../../types";
-import ApiService from "../../rest/ApiService";
 import { archiveSelector } from "./Common";
+import { ArchiveActions } from "../../actions/Archive";
 
 const gfm = require('remark-gfm')
 
@@ -57,8 +54,11 @@ const useStyles = makeStyles((theme) => createStyles({
 const ArchiveDetail = () => {
     const classes = useStyles();
     const dispatch = useDispatch();
-    const [archive, setArchive] = useState<ArchiveLike>();
-    const {isSignedIn, kind, archiveId} = useSelector(archiveSelector, shallowEqual);
+    const {isSignedIn, kind, archiveId, archive} = useSelector(archiveSelector('detail'), shallowEqual);
+
+    useEffect(() => {
+        dispatch(ArchiveActions.fetchArchive({kind, view: "detail", id: archiveId}));
+    }, [archiveId, dispatch, kind]);
 
     useEffect(() => {
         dispatch(PersistentUiActions.modifyAppBar({
@@ -71,14 +71,7 @@ const ArchiveDetail = () => {
                 action: PersistentUiActions.menuRoute(`${kind}/${archiveId}/edit`)
             }] : []
         }));
-        const fetch = async () => {
-            const response = await ApiService.fetchArchive(kind, archiveId);
-            const status = response.status;
-            if (status < 200 || status > 399) return;
-            setArchive({...response.data, created: new Date(response.data.created)})
-        }
-        fetch();
-    }, [archiveId, isSignedIn, dispatch, kind]);
+    }, [isSignedIn, dispatch]);
 
     return (
         <div className={classes.root}>

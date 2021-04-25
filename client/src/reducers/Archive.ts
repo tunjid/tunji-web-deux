@@ -1,4 +1,4 @@
-import { ADD_ARCHIVES, ArchiveAction } from '../actions/Archive';
+import { ADD_ARCHIVE, ADD_ARCHIVES, ArchiveAction, EDIT_ARCHIVE } from '../actions/Archive';
 import _ from 'lodash';
 import { ArchiveKind, ArchiveLike, EmptyArchive } from "../common/Models";
 
@@ -26,6 +26,27 @@ const archiveReducer = (state = {
     },
 }, action: ArchiveAction) => {
     switch (action.type) {
+        case ADD_ARCHIVE: {
+            const kind = action.payload.archive.kind;
+            const view = action.payload.view;
+            const archive = action.payload.archive;
+            const isDetail = view === 'detail';
+            const mapToEdit = isDetail ? state.kindToDetailMap : state.kindToEditMap;
+            const editedMap = {...mapToEdit, [kind]: archive};
+            return {
+                ...state,
+                kindToEditMap: isDetail ? state.kindToEditMap : editedMap,
+                kindToDetailMap: isDetail ? editedMap : state.kindToDetailMap,
+            }
+        }
+        case EDIT_ARCHIVE: {
+            const updatedArchive = action.updatedArchive;
+            const editedMap = {...state.kindToEditMap, [updatedArchive.kind]: updatedArchive};
+            return {
+                ...state,
+                kindToEditMap: editedMap,
+            }
+        }
         case ADD_ARCHIVES: {
             const kind = action.payload.kind;
             const existingArray = state.kindToArchivesMap[kind];

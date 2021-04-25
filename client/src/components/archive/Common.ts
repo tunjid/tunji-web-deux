@@ -1,19 +1,29 @@
-import { ArchiveKind, UserLike } from "../../common/Models";
+import { ArchiveKind, ArchiveLike, UserLike } from "../../common/Models";
 import { createSelector, OutputSelector } from "reselect";
 import { StoreState } from "../../types";
+import { ArchiveState } from "../../reducers/Archive";
+import { ArchiveView } from "../../actions/Archive";
 
 export interface ArchiveProps {
     isSignedIn: boolean;
     kind: ArchiveKind;
-    archiveId: string
+    archiveId: string;
+    archive: ArchiveLike;
 }
 
-export const archiveSelector: OutputSelector<StoreState, ArchiveProps, (a: UserLike, b: string[]) => ArchiveProps> = createSelector(
+export const archiveSelector:
+    (archiveViewType: ArchiveView) => OutputSelector<StoreState, ArchiveProps, (a: UserLike, b: string[], c: ArchiveState) => ArchiveProps>
+    = (archiveViewType) => createSelector(
     state => state.auth.signedInUser,
     state => state.router.location.pathname.split('/'),
-    (signedInUser, pathSegments) => ({
-        isSignedIn: signedInUser !== undefined,
-        kind: pathSegments[1] as ArchiveKind,
-        archiveId: pathSegments[2],
-    })
+    state => state.archives,
+    (signedInUser, pathSegments, archiveState) => {
+        const kind = pathSegments[1] as ArchiveKind;
+        return {
+            isSignedIn: signedInUser !== undefined,
+            kind,
+            archiveId: pathSegments[2],
+            archive: archiveViewType === 'detail' ? archiveState.kindToDetailMap[kind] : archiveState.kindToEditMap[kind]
+        };
+    }
 );
