@@ -68,7 +68,7 @@ const ArchiveDetail = () => {
             menuItems: isSignedIn ? [{
                 id: 'edit',
                 text: 'Edit',
-                action: PersistentUiActions.menuRoute(`${kind}/${archiveId}/edit`)
+                action: PersistentUiActions.menuRoute(`/${kind}/${archiveId}/edit`)
             }] : []
         }));
     }, [archiveId, kind, isSignedIn, dispatch]);

@@ -21,7 +21,7 @@ interface Props {
 export default function AppCard({kind, cardInfo}: Props) {
     const classes = useStyles();
     const dispatch = useDispatch();
-    const onClick = () => dispatch(RouterActions.push(`${kind}/${cardInfo.id}`));
+    const onClick = () => dispatch(RouterActions.push(`/${kind}/${cardInfo.id}`));
     const element = cardInfo.style === CardStyle.horizontal
         ? <HorizontalCard cardInfo={cardInfo} onClick={onClick}/>
         : <VerticalCard cardInfo={cardInfo} onClick={onClick}/>
