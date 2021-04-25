@@ -9,6 +9,7 @@ import { GridList, GridListTile } from "@material-ui/core";
 import { ArchiveKind, ArchiveLike } from "../../common/Models";
 import { CardInfo, CardStyle } from "../cards/CardInfo";
 import { ArchiveActions } from "../../actions/Archive";
+import { PersistentUiActions } from "../../actions/PersistentUi";
 
 const useStyles = makeStyles(() => createStyles({
         root: {
@@ -62,6 +63,7 @@ const HomeCards = () => {
     const {currentKind, cards}: Props = useSelector(selector, shallowEqual);
 
     useEffect(() => {
+        dispatch(PersistentUiActions.modifyAppBar({menuItems: []}));
         dispatch(ArchiveActions.fetchArchives(currentKind));
     }, [currentKind, dispatch]);
 
