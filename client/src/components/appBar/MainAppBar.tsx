@@ -1,4 +1,4 @@
-import { Theme } from "@material-ui/core";
+import { Avatar, Theme } from "@material-ui/core";
 import AppBar from "@material-ui/core/AppBar";
 import IconButton from "@material-ui/core/IconButton";
 import { createStyles, makeStyles } from '@material-ui/core/styles';
@@ -6,11 +6,13 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import classNames from "classnames";
 import * as React from "react";
-import { shallowEqual, useSelector } from "react-redux";
+import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import AppBarIcons from "../../components/appBar/AppBarIcons";
 import { StoreState } from "../../types";
 import { PersistentUiState } from "../../reducers/PersistentUi";
-import { createSelector, OutputSelector } from 'reselect'
+import { createSelector } from 'reselect'
+import { UserLike } from "../../common/Models";
+import { RouterActions } from "../../actions/Router";
 
 const drawerWidth = 240;
 
@@ -53,6 +55,10 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     },
     title: {
         flexGrow: 1,
+    },
+    avatar: {
+        'margin-left': theme.spacing(2),
+        'margin-right': theme.spacing(2),
     }
 }));
 
@@ -60,9 +66,10 @@ interface Props {
     appBarTitle: string;
     appBarColor: string;
     hasAppBarShadow: boolean;
+    signedInUser?: UserLike
 }
 
-const selector: OutputSelector<StoreState, Props, (res: PersistentUiState) => Props> = createSelector(
+const selector = createSelector<StoreState, PersistentUiState, Props>(
     state => state.persistentUI,
     persistentUI => ({
         appBarTitle: persistentUI.appBarTitle,
@@ -73,6 +80,7 @@ const selector: OutputSelector<StoreState, Props, (res: PersistentUiState) => Pr
 
 const MainAppBar = () => {
     const classes = useStyles();
+    const dispatch = useDispatch();
     const {
         appBarTitle,
         appBarColor,
@@ -94,6 +102,11 @@ const MainAppBar = () => {
                         classes.menuButton
                     )}>
                 </IconButton>
+                <Avatar
+                    onClick={() => dispatch(RouterActions.push('/'))}
+                    className={classes.avatar}
+                    src={'https://pbs.twimg.com/profile_images/1368773620386922502/XN6-njLn_400x400.jpg'}
+                />
                 <Typography
                     component="h1"
                     variant="h6"
