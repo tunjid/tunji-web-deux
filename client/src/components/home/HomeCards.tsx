@@ -42,21 +42,10 @@ const cardFromArchive: (archive: ArchiveLike, index: number) => CardInfo = (arch
 })
 
 const archivesFromState: (state: StoreState) => ArchiveLike[] = (state: StoreState) => {
-    switch (state.home.selectedTab.kind) {
-        case ArchiveKind.Articles: {
-            return state.articles.archives;
-        }
-        case ArchiveKind.Projects: {
-            return state.projects.archives;
-        }
-        case ArchiveKind.Talks: {
-            return state.talks.archives;
-        }
-        default: {
-            return [];
-        }
-    }
+    const kind = state.home.selectedTab.kind;
+    return state.archives.kindToArchivesMap[kind];
 };
+
 const selector: OutputSelector<StoreState, Props, (res: StoreState) => Props> = createSelector(
     state => state,
     (state: StoreState) => {

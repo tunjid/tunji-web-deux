@@ -6,9 +6,7 @@ import { RouterState } from "connected-react-router";
 
 export interface StoreState {
     persistentUI: PersistentUiState;
-    articles: ArchiveState;
-    projects: ArchiveState;
-    talks: ArchiveState;
+    archives: ArchiveState;
     home: HomeState;
     auth: AuthState;
     router: RouterState
