@@ -7,7 +7,7 @@ import { StoreState } from "../../types";
 import { PersistentUiState } from "../../reducers/PersistentUi";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { MENU_ROUTE, PersistentUiActions } from "../../actions/PersistentUi";
-import { useHistory } from "react-router-dom";
+import { RouterActions } from "../../actions/Router";
 
 interface Props {
     items: MenuRes[];
@@ -24,14 +24,13 @@ const selector: OutputSelector<StoreState, Props, (res: PersistentUiState) => Pr
 
 const AppBarIconsOverflow = () => {
     const dispatch = useDispatch();
-    const history = useHistory();
     const {
         items,
         anchorEl,
     }: Props = useSelector(selector, shallowEqual);
 
     const onMenuItemClicked = (item: MenuRes) => {
-        if (item.action.type === MENU_ROUTE) history.push(item.action.route);
+        if (item.action.type === MENU_ROUTE) RouterActions.push(item.action.route);
         else dispatch(item.action);
 
         dispatch(PersistentUiActions.modifyAppBar({anchorEl: undefined}));

@@ -10,7 +10,7 @@ import { StoreState } from "../../types";
 import { PersistentUiState } from "../../reducers/PersistentUi";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { MENU_ROUTE, PersistentUiActions } from "../../actions/PersistentUi";
-import { useHistory } from "react-router-dom";
+import { RouterActions } from "../../actions/Router";
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
     root: {
@@ -63,7 +63,6 @@ function useWidth(): string {
 
 const AppBarIcons = () => {
     const dispatch = useDispatch();
-    const history = useHistory();
     const classes = useStyles();
     const {
         items,
@@ -78,7 +77,7 @@ const AppBarIcons = () => {
     };
 
     const clickMenuItem = (clicked: MenuRes) => {
-        if (clicked.action.type === MENU_ROUTE) history.push(clicked.action.route);
+        if (clicked.action.type === MENU_ROUTE) RouterActions.push(clicked.action.route);
         else dispatch(clicked.action);
     };
 
