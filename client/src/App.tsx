@@ -11,9 +11,10 @@ import Routes from './routes'
 import { theme } from "./styles/PersistentUi";
 import { StoreState } from "./types";
 import { createSelector, OutputSelector } from "reselect";
-import { BrowserRouter } from "react-router-dom";
 import { UserLike } from "./common/Models";
 import { AuthActions } from "./actions/Auth";
+import { ConnectedRouter } from 'connected-react-router'
+import { history } from "./reducers";
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
     root: {
@@ -60,7 +61,7 @@ const App = () => {
     return (
         <div className={classes.root}>
             <ThemeProvider theme={appTheme}>
-                <BrowserRouter>
+                <ConnectedRouter history={history}>
                     <CssBaseline/>
                     <MainAppBar/>
                     <AppBarIconsOverflow/>
@@ -68,7 +69,7 @@ const App = () => {
                         {appBarSpacer}
                         <Routes/>
                     </main>
-                </BrowserRouter>
+                </ConnectedRouter>
             </ThemeProvider>
         </div>
     );

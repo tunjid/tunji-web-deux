@@ -4,8 +4,9 @@ import { AuthAction } from "./Auth";
 import { HomeAction } from "./Home";
 import { ThunkAction } from "redux-thunk";
 import { StoreState } from "../types";
+import { RouterAction } from "./Router";
 
-type SynchronousAppActions = ArchiveAction | HomeAction | AuthAction | PersistentUiAction;
+type SynchronousAppActions = ArchiveAction | HomeAction | AuthAction | PersistentUiAction | RouterAction;
 
 const APP_THUNK = 'APP_THUNK';
 export interface AppThunk extends ThunkAction<void, StoreState, unknown, SynchronousAppActions> {

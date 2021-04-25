@@ -7,16 +7,26 @@ import { composeWithDevTools } from "redux-devtools-extension";
 import { homeReducer } from "./Home";
 import { authReducer } from "./Auth";
 import { ArchiveKind } from "../common/Models";
+import { connectRouter, routerMiddleware } from 'connected-react-router'
+import { createBrowserHistory, History, LocationState } from 'history'
 
-const reducers: Reducer<StoreState> = combineReducers<StoreState>({
+const reducers: (history: History) => Reducer<StoreState> = (history) => combineReducers<StoreState>({
     persistentUI: persistentUiReducer,
     articles: archiveReducerFor(ArchiveKind.Articles),
     projects: archiveReducerFor(ArchiveKind.Projects),
     talks: archiveReducerFor(ArchiveKind.Talks),
     home: homeReducer,
     auth: authReducer,
+    router: connectRouter<LocationState>(history),
 });
 
-const composedEnhancer = composeWithDevTools(applyMiddleware(thunkMiddleware))
 
-export const store = createStore<StoreState, any, any, any>(reducers, composedEnhancer);
+export const history = createBrowserHistory();
+
+export const store = createStore<StoreState, any, any, any>(
+    reducers(history),
+    composeWithDevTools(applyMiddleware(
+        routerMiddleware(history),
+        thunkMiddleware
+    ))
+);
