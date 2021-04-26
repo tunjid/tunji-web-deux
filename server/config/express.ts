@@ -17,11 +17,10 @@ import errorMiddleware from '../middleware/ErrorMiddleware';
 import HttpException from '../utilities/HttpException';
 
 import { Article } from '../models/ArticleSchema';
-import { BlogPost } from '../models/BlogPostSchema';
 import { Project } from '../models/ProjectSchema';
 import { Talk } from '../models/TalkSchema';
 
-export default () => {
+const App : () => Express = () => {
     // Initialize Express app
     const app: Express = ExpressApp();
 
@@ -60,13 +59,12 @@ export default () => {
 // Route mapping
     userRouter(app);
     archiveRouter(app, Article);
-    archiveRouter(app, BlogPost);
     archiveRouter(app, Project);
     archiveRouter(app, Talk);
 
     app.all(
         '/*',
-        (req: Request, res: Response) => res.sendfile(path.join(__dirname, '../..', 'client/build/index.html'))
+        (req: Request, res: Response) => res.sendFile(path.join(__dirname, '../..', 'client/build/index.html'))
     );
 
 // catch 404 and forward to error handler
@@ -84,3 +82,4 @@ export default () => {
     return app;
 };
 
+export default App;
