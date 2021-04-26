@@ -111,15 +111,22 @@ const ArchiveCreateOrEdit = ({isCreating}: Props) => {
     }, [archiveId, dispatch, isCreating, kind]);
 
     useEffect(() => {
+        const menuItems = [];
+        if (isSignedIn) menuItems.push({
+            id: isCreating ? 'create' : 'update',
+            text: isCreating ? 'Create' : 'Update',
+            action: isCreating ? ArchiveActions.createArchive(kind) : ArchiveActions.updateArchive(kind),
+        });
+        if (!isCreating) menuItems.push({
+            id: 'delete',
+            text: 'Delete',
+            action: ArchiveActions.deleteArchive(kind),
+        });
         dispatch(PersistentUiActions.modifyAppBar({
             hasAppBarShadow: true,
             hasAppBarSpacer: true,
             appBarColor: theme.palette.primary.dark,
-            menuItems: isSignedIn ? [{
-                id: isCreating ? 'create' : 'update',
-                text: isCreating ? 'Create' : 'Update',
-                action: isCreating ? ArchiveActions.createArchive(kind) : ArchiveActions.updateArchive(kind),
-            }] : []
+            menuItems,
         }));
     }, [kind, isCreating, isSignedIn, dispatch]);
 
