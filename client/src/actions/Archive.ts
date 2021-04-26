@@ -3,6 +3,7 @@ import ApiService from "../rest/ApiService";
 import { AppThunk } from "./index";
 import onHttpResponse from "./Common";
 import { RouterActions } from "./Router";
+import { SnackbarActions, SnackbarKind } from "./Snackbar";
 
 export const ADD_ARCHIVE = 'ADD_ARCHIVE';
 export const EDIT_ARCHIVE = 'EDIT_ARCHIVE';
@@ -77,7 +78,14 @@ export const ArchiveActions: IArchiveActions = {
     updateArchive: (kind: ArchiveKind) => async (dispatch, getState) => {
         const state = getState();
         const edited = state.archives.kindToEditMap[kind];
-        await ApiService.updateArchive(edited);
+        onHttpResponse(
+            await ApiService.updateArchive(edited),
+            (archive) => dispatch(SnackbarActions.enqueueSnackbar({
+                key: archive.key,
+                kind: SnackbarKind.Success,
+                title: 'Updated!'
+            })
+        ));
     },
     deleteArchive: (kind: ArchiveKind) => async (dispatch, getState) => {
         const state = getState();

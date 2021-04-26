@@ -8,12 +8,14 @@ import { homeReducer } from "./Home";
 import { authReducer } from "./Auth";
 import { connectRouter, routerMiddleware } from 'connected-react-router'
 import { createBrowserHistory, History, LocationState } from 'history'
+import { snackbarReducer } from "./Snackbar";
 
 const reducers: (history: History) => Reducer<StoreState> = (history) => combineReducers<StoreState>({
     persistentUI: persistentUiReducer,
     home: homeReducer,
     auth: authReducer,
     archives: archiveReducer,
+    snackbars: snackbarReducer,
     router: connectRouter<LocationState>(history),
 });
 

@@ -15,6 +15,8 @@ import { UserLike } from "./common/Models";
 import { AuthActions } from "./actions/Auth";
 import { ConnectedRouter } from 'connected-react-router'
 import { history } from "./reducers";
+import { SnackbarProvider } from "notistack";
+import SnackbarManager from "./containers/SnackbarManager";
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
     root: {
@@ -61,8 +63,10 @@ const App = () => {
     return (
         <div className={classes.root}>
             <ThemeProvider theme={appTheme}>
+                <SnackbarProvider maxSnack={3}>
                 <ConnectedRouter history={history}>
                     <CssBaseline/>
+                    <SnackbarManager />
                     <MainAppBar/>
                     <AppBarIconsOverflow/>
                     <main className={classes.content}>
@@ -70,6 +74,7 @@ const App = () => {
                         <Routes/>
                     </main>
                 </ConnectedRouter>
+                </SnackbarProvider>
             </ThemeProvider>
         </div>
     );
