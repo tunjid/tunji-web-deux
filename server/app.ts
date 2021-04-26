@@ -2,10 +2,10 @@ import config from './config/config';
 process.env.NODE_ENV = config.serverEnvironment;
 
 import express from './config/express';
-import passport from './config/passport';
+import passportConfiguration from './config/passportConfiguraton';
 
 const app = express();
-passport();
+passportConfiguration();
 
 app.set('port', 8080);
 
