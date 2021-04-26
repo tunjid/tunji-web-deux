@@ -9,7 +9,7 @@ interface IRouterActions {
 export type RouterAction = CallHistoryMethodAction;
 
 export const RouterActions: IRouterActions = {
-    push: push,
-    replace: replace,
+    push,
+    replace,
     pop: goBack
 }
