@@ -39,26 +39,16 @@ const getErrorMessage = function (err) {
 export const create = (req, res, next) => {
     const user = new User(req.body);
 
-    console.log(req.body);
-
-    user.save(function (error) {
-        if (error) {
-            return next(error);
-        }
-        else {
-            res.json(user);
-        }
+    user.save(error => {
+        if (error) return next(error);
+        res.json(user);
     });
 };
 
 export const find = (req, res, next) => {
-    User.find({}, function (error, users) {
-        if (error) {
-            return next(error);
-        }
-        else {
-            res.json(users);
-        }
+    User.find({}, (error, users) => {
+        if (error) return next(error);
+        res.json(users);
     });
 };
 
@@ -67,36 +57,24 @@ export const get = (req, res) => {
 };
 
 export const put = (req, res, next) => {
-    User.findByIdAndUpdate(req.user.id, req.body, function (error, user) {
-        if (error) {
-            return next(error);
-        }
-        else {
-            res.json(user);
-        }
+    User.findByIdAndUpdate(req.user.id, req.body, (error, user) => {
+        if (error) return next(error);
+        res.json(user);
     });
 };
 
 export const remove = (req, res, next) => {
     req.user.remove(function (error) {
-        if (error) {
-            return next(error);
-        }
-        else {
-            res.json(req.user);
-        }
+        if (error) return next(error);
+        res.json(req.user);
     });
 };
 
 export const userById = (req, res, next, id) => {
-    User.findOne({_id: id}, function (error, user) {
-        if (error) {
-            return next(error);
-        }
-        else {
-            req.signedInUser = user;
-            next();
-        }
+    User.findOne({_id: id}, (error, user) => {
+        if (error) return next(error);
+        req.signedInUser = user;
+        next();
     });
 };
 
@@ -170,10 +148,8 @@ export const signOut = (req, res) => {
 };
 
 export const session = (req, res) => {
-    if (req.user) {
-        res.json(req.user);
-    }
-    else return composeMessage(res, 'Not signed in');
+    if (req.user) return res.json(req.user);
+    return composeMessage(res, 'Not signed in');
 };
 
 // export const contact = function (req, res) {
