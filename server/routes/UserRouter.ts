@@ -1,5 +1,5 @@
 import { Express } from 'express';
-import * as users from '../controllers/UserController';
+import users from '../controllers/UserController';
 
 export default function (app: Express): void {
     app.route('/api/users');
@@ -26,5 +26,5 @@ export default function (app: Express): void {
     // app.route('/contact')
     //     .post(users.contact);
 
-    app.param('userId', users.userById);
+    app.param('userId', users.byId);
 }

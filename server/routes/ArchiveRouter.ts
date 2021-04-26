@@ -1,6 +1,6 @@
 import { Express } from 'express';
 import archiveController from '../controllers/ArchiveController';
-import * as users from '../controllers/UserController';
+import users from '../controllers/UserController';
 
 import { ArchiveModel } from '../models/Archive';
 

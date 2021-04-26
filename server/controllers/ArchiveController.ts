@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { ArchiveModel } from '../models/Archive';
+import { errorMessage, getErrorMessage } from './Common';
 
 interface ArchiveController {
     create: (res: Request, req: Response, next: NextFunction) => void;
@@ -13,25 +14,12 @@ interface ArchiveController {
     hasAuthorization: (res: Request, req: Response, next: NextFunction) => void;
 }
 
-const getErrorMessage = function (error: any) {
-    if (!error.errors) return 'Unkown server error';
-
-    for (const errorName in error.errors)
-        if (error.errors[errorName].message)
-            return error.errors[errorName].message;
-};
-
-const composeMessage = (res: Response, message: string, statusCode: number) => {
-    if (statusCode) res.status(statusCode);
-    return res.json({message: message});
-};
-
 const archiveController = (Model: ArchiveModel): ArchiveController => ({
     create: (req, res) => {
         const archive = new Model(req.body);
         archive.author = req.signedInUser;
 
-        if (!archive.author) return composeMessage(res, 'A blog post needs an author', 400);
+        if (!archive.author) return errorMessage(res, 'A blog post needs an author', 400);
 
         archive.save(error => {
             if (error) return res.status(400).send({
@@ -110,7 +98,7 @@ const archiveController = (Model: ArchiveModel): ArchiveController => ({
             .exec(function (error, archive) {
                 if (error) return next(error);
 
-                if (!archive) return composeMessage(res, 'Failed to load blog post with id ' + id, 400);
+                if (!archive) return errorMessage(res, 'Failed to load blog post with id ' + id, 400);
 
                 req.archive = archive;
                 next();
@@ -124,10 +112,10 @@ const archiveController = (Model: ArchiveModel): ArchiveController => ({
             excludedFields[type] = {$ne: null};
             Model.distinct(type, excludedFields, function (error, result) {
                 if (error) {
-                    return composeMessage(res, 'Error retrieving tags / categories', 500);
+                    return errorMessage(res, 'Error retrieving tags / categories', 500);
                 } else res.json(result);
             });
-        } else return composeMessage(res, 'Must pick a tag or category', 400);
+        } else return errorMessage(res, 'Must pick a tag or category', 400);
     },
     archives: (req, res) => {
         Model.aggregate(
@@ -140,7 +128,7 @@ const archiveController = (Model: ArchiveModel): ArchiveController => ({
             }],
             (error: any, result: any) => {
                 if (error) {
-                    return composeMessage(res, 'Error aggregating months', 500);
+                    return errorMessage(res, 'Error aggregating months', 500);
                 } else res.json(result);
             }
         );
