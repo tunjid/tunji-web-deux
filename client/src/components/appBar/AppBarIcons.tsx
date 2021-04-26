@@ -44,7 +44,7 @@ const selector: OutputSelector<StoreState, Props, (res: PersistentUiState) => Pr
     state => state.persistentUI,
     persistentUI => ({
         items: persistentUI.menuItems,
-        hasOverflow: persistentUI.menuItems.length > 0,
+        hasOverflow: persistentUI.menuItems.length > 2,
         anchorEl: persistentUI.anchorEl,
     })
 );

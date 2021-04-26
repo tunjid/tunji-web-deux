@@ -17,7 +17,7 @@ interface Props {
 const selector: OutputSelector<StoreState, Props, (res: PersistentUiState) => Props> = createSelector(
     state => state.persistentUI,
     persistentUI => ({
-        items: persistentUI.menuItems,
+        items: persistentUI.menuItems.splice(2, persistentUI.menuItems.length),
         anchorEl: persistentUI.anchorEl,
     })
 );
