@@ -226,6 +226,7 @@ const ArchiveCreateOrEdit = ({isCreating}: Props) => {
                 <MEDitor
                     value={archive?.body || ''}
                     onChange={onBodyChanged}
+                    height={1000}
                 />
             </div>
 
