@@ -10,6 +10,8 @@ import MEDitor from '@uiw/react-md-editor';
 import { ArchiveActions } from "../../actions/Archive";
 import { archiveSelector } from "./Common";
 import _ from 'lodash';
+import Card from "@material-ui/core/Card";
+import CardMedia from "@material-ui/core/CardMedia";
 
 const useStyles = makeStyles((theme) => createStyles({
         root: {
@@ -24,17 +26,20 @@ const useStyles = makeStyles((theme) => createStyles({
         },
         title: {
             width: '90vw',
-            margin: theme.spacing(2),
+            margin: theme.spacing(1),
         },
         titleSize: {
             fontSize: 50
         },
         description: {
             width: '90vw',
-            margin: theme.spacing(2),
+            margin: theme.spacing(1),
         },
         descriptionSize: {
             fontSize: 30
+        },
+        headerImageSize: {
+            fontSize: 14
         },
         chips: {
             display: 'flex',
@@ -43,6 +48,11 @@ const useStyles = makeStyles((theme) => createStyles({
             '& > *': {
                 margin: theme.spacing(0.5),
             },
+        },
+        cardBackground: {
+            height: '50vh',
+            width: '90vw',
+            margin: theme.spacing(0.5),
         },
         editor: {
             width: '90vw',
@@ -96,6 +106,13 @@ const ArchiveCreateOrEdit = ({isCreating}: Props) => {
         dispatch(ArchiveActions.editArchive({
             kind,
             description: event.target.value
+        }));
+    };
+
+    const onHeaderImageChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+        dispatch(ArchiveActions.editArchive({
+            kind,
+            thumbnail: event.target.value
         }));
     };
 
@@ -183,6 +200,27 @@ const ArchiveCreateOrEdit = ({isCreating}: Props) => {
                     disableUnderline: true
                 }}
             />
+
+            <TextField
+                className={classes.description}
+                id="standard-basic"
+                size='medium'
+                label='Header Image'
+                value={archive?.thumbnail}
+                onChange={onHeaderImageChanged}
+                InputProps={{
+                    classes: {input: classes.headerImageSize},
+                    disableUnderline: true
+                }}
+            />
+
+            <Card className={classes.cardBackground} elevation={1}>
+                <CardMedia
+                    className={classes.cardImage}
+                    image={archive?.thumbnail}
+                    title={archive?.title}
+                />
+            </Card>
 
             <div className={classes.editor}>
                 <MEDitor
