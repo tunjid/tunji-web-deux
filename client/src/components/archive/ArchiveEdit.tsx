@@ -1,7 +1,7 @@
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import * as React from 'react';
 import { useEffect } from 'react';
-import { Chip } from "@material-ui/core";
+import { Chip, TextField } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { PersistentUiActions } from "../../actions/PersistentUi";
@@ -22,7 +22,18 @@ const useStyles = makeStyles((theme) => createStyles({
             'margin-bottom': theme.spacing(2),
         },
         title: {
+            width: '90vw',
             margin: theme.spacing(2),
+        },
+        titleSize: {
+            fontSize: 50
+        },
+        description: {
+            width: '90vw',
+            margin: theme.spacing(2),
+        },
+        descriptionSize: {
+            fontSize: 30
         },
         categories: {
             display: 'flex',
@@ -84,9 +95,36 @@ const ArchiveEdit = () => {
                     size="small"/>
                 )}
             </div>
-            <Typography className={classes.title} gutterBottom variant="h2">
-                {archive?.title || ''}
-            </Typography>
+
+            <TextField
+                className={classes.title}
+                id="standard-basic"
+                size='medium'
+                label='Title'
+                value={archive.title}
+                onChange={(event) => dispatch(ArchiveActions.editArchive({kind, title: event.target.value}))}
+                InputProps={{
+                    classes: {
+                        input: classes.titleSize,
+                    },
+                    disableUnderline: true
+                }}
+            />
+
+            <TextField
+                className={classes.description}
+                id="standard-basic"
+                size='medium'
+                label='Description'
+                value={archive.description}
+                onChange={(event) => dispatch(ArchiveActions.editArchive({kind, description: event.target.value}))}
+                InputProps={{
+                    classes: {
+                        input: classes.descriptionSize,
+                    },
+                    disableUnderline: true
+                }}
+            />
 
             <div className={classes.editor}>
                 <MEDitor
