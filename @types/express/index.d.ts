@@ -10,7 +10,7 @@ declare global {
         }
 
         interface Request {
-            signedInUser: UserDocument
+            pathUser: UserDocument
             archive: ArchiveDocument
         }
     }

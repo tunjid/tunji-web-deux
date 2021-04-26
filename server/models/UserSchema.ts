@@ -3,6 +3,7 @@ import { pbkdf2Sync, randomBytes } from 'crypto';
 import { UserLike } from '../../client/src/common/Models';
 
 export interface UserDocument extends Document, UserLike {
+    id: string;
     email: string;
     firstName: string;
     lastName: string;
@@ -70,13 +71,20 @@ UserSchema.methods.authenticate = function (this: UserDocument, password: string
     return this.password === this.hashPassword(password);
 };
 
-UserSchema.virtual('fullName').get(function (this: UserDocument) {
-    return this.firstName + ' ' + this.lastName;
-}).set(function (this: UserDocument, fullName: string) {
-    const splitName = fullName.split(' ');
-    this.firstName = splitName[0] || '';
-    this.lastName = splitName[1] || '';
-});
+UserSchema.virtual('fullName')
+    .get(function (this: UserDocument) {
+        return this.firstName + ' ' + this.lastName;
+    })
+    .set(function (this: UserDocument, fullName: string) {
+        const splitName = fullName.split(' ');
+        this.firstName = splitName[0] || '';
+        this.lastName = splitName[1] || '';
+    });
+
+UserSchema.virtual('id')
+    .get(function (this: UserDocument) {
+        return this._id;
+    });
 
 UserSchema.pre<UserDocument>('save', function (this: UserDocument, next) {
     if (this.password) {

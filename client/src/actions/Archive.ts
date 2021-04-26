@@ -63,9 +63,7 @@ interface IArchiveActions {
 export const ArchiveActions: IArchiveActions = {
     createArchive: (kind: ArchiveKind) => async (dispatch, getState) => {
         const state = getState();
-        const author = state.auth.signedInUser;
-        if (!author) return;
-        const edited = {...state.archives.kindToEditMap[kind], author};
+        const edited = {...state.archives.kindToEditMap[kind]};
         onHttpResponse(await ApiService.createArchive(edited), (created) => {
             dispatch(RouterActions.replace(`/${created.kind}/${created.key}/edit`))
         });

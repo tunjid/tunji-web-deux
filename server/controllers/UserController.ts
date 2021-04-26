@@ -32,12 +32,12 @@ const UserController: UserController = {
         });
     },
     get: (req, res) => {
-        res.json(req.signedInUser);
+        res.json(req.pathUser);
     },
     put: (req, res, next) => {
         next('Unimplemented');
 
-        // User.findByIdAndUpdate(req.signedInUser.id, req.body, (error, user) => {
+        // User.findByIdAndUpdate(req.pathUser.id, req.body, (error, user) => {
         //     if (error) return next(error);
         //     res.json(user);
         // });
@@ -48,7 +48,7 @@ const UserController: UserController = {
     byId: (req, res, next, id) => {
         User.findOne({_id: id}, (error: any, user: UserDocument) => {
             if (error) return next(error);
-            req.signedInUser = user;
+            req.pathUser = user;
             next();
         });
     },

@@ -1,4 +1,5 @@
 export interface UserLike {
+    id: string;
     firstName: string;
     lastName: string;
     fullName: string;
@@ -11,13 +12,15 @@ export interface ArchiveLike {
     body: string;
     description: string;
     thumbnail?: string;
-    author: UserLike,
+    author: Author,
     created: Date;
     spanCount?: number;
     tags: string[];
     categories: string[];
     kind: ArchiveKind,
 }
+
+export type Author = UserLike;
 
 export enum ArchiveKind {
     Articles = 'articles',
@@ -26,13 +29,14 @@ export enum ArchiveKind {
 }
 
 export const EmptyUser: UserLike = {
+    id: '',
     firstName: '',
     lastName: '',
     fullName: '',
     imageUrl: '',
 };
 
-export const EmptyArchive : ArchiveLike = {
+export const EmptyArchive: ArchiveLike = {
     key: '',
     title: '',
     body: '',

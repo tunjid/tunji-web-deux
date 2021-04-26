@@ -17,7 +17,7 @@ interface ArchiveController {
 const archiveController = (Model: ArchiveModel): ArchiveController => ({
     create: (req, res) => {
         const archive = new Model(req.body);
-        archive.author = req.signedInUser;
+        archive.author = req.user?.id;
 
         if (!archive.author) return errorMessage(res, 'A blog post needs an author', 400);
 
@@ -134,7 +134,7 @@ const archiveController = (Model: ArchiveModel): ArchiveController => ({
         );
     },
     hasAuthorization: (req: Request, res: Response, next: NextFunction) => {
-        if (req.archive.author.id !== req.signedInUser?.id) {
+        if (req.archive.author.id !== req.user?.id) {
             return res.status(403).send({
                 message: 'User is not authorized'
             });
