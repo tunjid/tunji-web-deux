@@ -62,7 +62,11 @@ interface ChipChange {
     isTag: boolean
 }
 
-const ArchiveEdit = () => {
+export interface Props {
+    isCreating: boolean
+}
+
+const ArchiveCreateOrEdit = ({isCreating}: Props) => {
     const classes = useStyles();
     const dispatch = useDispatch();
     const {isSignedIn, kind, archiveId, archive} = useSelector(archiveSelector('edit'), shallowEqual);
@@ -103,8 +107,8 @@ const ArchiveEdit = () => {
     }
 
     useEffect(() => {
-        dispatch(ArchiveActions.fetchArchive({kind, view: "edit", id: archiveId}));
-    }, [archiveId, dispatch, kind]);
+        if (!isCreating) dispatch(ArchiveActions.readArchive({kind, view: "edit", id: archiveId}));
+    }, [archiveId, dispatch, isCreating, kind]);
 
     useEffect(() => {
         dispatch(PersistentUiActions.modifyAppBar({
@@ -112,12 +116,12 @@ const ArchiveEdit = () => {
             hasAppBarSpacer: true,
             appBarColor: theme.palette.primary.dark,
             menuItems: isSignedIn ? [{
-                id: 'save',
-                text: 'Save',
-                action: ArchiveActions.saveArchive(kind)
+                id: isCreating ? 'create' : 'update',
+                text: isCreating ? 'Create' : 'Update',
+                action: isCreating ? ArchiveActions.createArchive(kind) : ArchiveActions.updateArchive(kind),
             }] : []
         }));
-    }, [kind, isSignedIn, dispatch]);
+    }, [kind, isCreating, isSignedIn, dispatch]);
 
     return (
         <div className={classes.root}>
@@ -152,7 +156,7 @@ const ArchiveEdit = () => {
                 id="standard-basic"
                 size='medium'
                 label='Title'
-                value={archive.title}
+                value={archive?.title}
                 onChange={onTitleChanged}
                 InputProps={{
                     classes: {input: classes.titleSize},
@@ -165,7 +169,7 @@ const ArchiveEdit = () => {
                 id="standard-basic"
                 size='medium'
                 label='Description'
-                value={archive.description}
+                value={archive?.description}
                 onChange={onDescriptionChanged}
                 InputProps={{
                     classes: {input: classes.descriptionSize},
@@ -175,7 +179,7 @@ const ArchiveEdit = () => {
 
             <div className={classes.editor}>
                 <MEDitor
-                    value={archive.body || ''}
+                    value={archive?.body || ''}
                     onChange={onBodyChanged}
                 />
             </div>
@@ -186,4 +190,6 @@ const ArchiveEdit = () => {
     );
 }
 
-export default ArchiveEdit;
+export const ArchiveEdit = () => ArchiveCreateOrEdit({isCreating: false});
+
+export const ArchiveCreate = () => ArchiveCreateOrEdit({isCreating: true});

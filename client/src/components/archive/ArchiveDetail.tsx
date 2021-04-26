@@ -56,7 +56,7 @@ const ArchiveDetail = () => {
     const {isSignedIn, kind, archiveId, archive} = useSelector(archiveSelector('detail'), shallowEqual);
 
     useEffect(() => {
-        dispatch(ArchiveActions.fetchArchive({kind, view: "detail", id: archiveId}));
+        dispatch(ArchiveActions.readArchive({kind, view: "detail", id: archiveId}));
     }, [archiveId, dispatch, kind]);
 
     useEffect(() => {

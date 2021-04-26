@@ -8,10 +8,20 @@ const transport = axios.create({
 
 const session = () => transport.get<UserLike>(`/api/session`);
 const signIn = (args: SignInArgs) => transport.post<UserLike>(`/api/sign-in`, args);
-const fetchArchive = (kind: ArchiveKind, id: string) => transport.get<ArchiveLike>(`/api/${kind}/${id}`);
 const fetchArchives = (kind: ArchiveKind) => transport.get<ArchiveLike[]>(`/api/${kind}`);
-const saveArchive = (archive: ArchiveLike) => transport.put<ArchiveLike>(`/api/${archive.kind}/${archive.key}`, archive);
+const createArchive = (archive: ArchiveLike) => transport.post<ArchiveLike>(`/api/${archive.kind}/${archive.key}`, archive);
+const readArchive = (kind: ArchiveKind, id: string) => transport.get<ArchiveLike>(`/api/${kind}/${id}`);
+const updateArchive = (archive: ArchiveLike) => transport.put<ArchiveLike>(`/api/${archive.kind}/${archive.key}`, archive);
+const deleteArchive = (archive: ArchiveLike) => transport.delete<ArchiveLike>(`/api/${archive.kind}/${archive.key}`);
 
-const ApiService = {session, signIn, saveArchive, fetchArchive, fetchArchives};
+const ApiService = {
+    session,
+    signIn,
+    createArchive,
+    readArchive,
+    updateArchive,
+    deleteArchive,
+    fetchArchives
+};
 
 export default ApiService;

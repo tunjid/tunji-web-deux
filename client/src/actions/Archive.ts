@@ -1,6 +1,8 @@
 import { ArchiveKind, ArchiveLike } from "../common/Models";
 import ApiService from "../rest/ApiService";
 import { AppThunk } from "./index";
+import onHttpResponse from "./Common";
+import { RouterActions } from "./Router";
 
 export const ADD_ARCHIVE = 'ADD_ARCHIVE';
 export const EDIT_ARCHIVE = 'EDIT_ARCHIVE';
@@ -48,35 +50,49 @@ export interface SaveArchive {
 export type ArchiveAction = AddArchive | EditArchive | AddArchives | SaveArchive;
 
 interface IArchiveActions {
-    fetchArchive: (request: FetchArchiveRequest) => AppThunk
     fetchArchives: (kind: ArchiveKind) => AppThunk
     editArchive: (edits: Partial<ArchiveLike>) => EditArchive
     addArchive: (response: FetchArchiveResponse) => AddArchive
     addArchives: (kind: ArchiveKind, archives: ArchiveLike[]) => AddArchives
-    saveArchive: (kind: ArchiveKind) => AppThunk
+    createArchive: (kind: ArchiveKind) => AppThunk
+    readArchive: (request: FetchArchiveRequest) => AppThunk
+    updateArchive: (kind: ArchiveKind) => AppThunk
+    deleteArchive: (kind: ArchiveKind) => AppThunk
 }
 
 export const ArchiveActions: IArchiveActions = {
-    fetchArchive: (request: FetchArchiveRequest) => async (dispatch) => {
-        const response = await ApiService.fetchArchive(request.kind, request.id);
-        const status = response.status;
-        if (status < 200 || status > 399) return;
-
-        const archive = {...response.data, created: new Date(response.data.created)};
-        dispatch(ArchiveActions.addArchive({archive, view: request.view}));
+    createArchive: (kind: ArchiveKind) => async (dispatch, getState) => {
+        const state = getState();
+        const author = state.auth.signedInUser;
+        if (!author) return;
+        const edited = {...state.archives.kindToEditMap[kind], author};
+        onHttpResponse(await ApiService.createArchive(edited), (created) => {
+            dispatch(RouterActions.replace(`/${created.kind}/${created.key}/edit`))
+        });
     },
-    fetchArchives: (kind: ArchiveKind) => async (dispatch) => {
-        const response = await ApiService.fetchArchives(kind);
-        const status = response.status;
-        if (status < 200 || status > 399) return;
-
-        const archives = response.data.map((raw) => ({...raw, created: new Date(raw.created)}));
-        dispatch(ArchiveActions.addArchives(kind, archives));
+    readArchive: (request: FetchArchiveRequest) => async (dispatch) => {
+        onHttpResponse(await ApiService.readArchive(request.kind, request.id), (fetched) => {
+            const archive = {...fetched, created: new Date(fetched.created)};
+            dispatch(ArchiveActions.addArchive({archive, view: request.view}));
+        });
     },
-    saveArchive: (kind: ArchiveKind) => async (dispatch, getState) => {
+    updateArchive: (kind: ArchiveKind) => async (dispatch, getState) => {
         const state = getState();
         const edited = state.archives.kindToEditMap[kind];
-        await ApiService.saveArchive(edited);
+        await ApiService.updateArchive(edited);
+    },
+    deleteArchive: (kind: ArchiveKind) => async (dispatch, getState) => {
+        const state = getState();
+        const edited = state.archives.kindToEditMap[kind];
+        onHttpResponse(await ApiService.updateArchive(edited), () => {
+            dispatch(RouterActions.pop());
+        });
+    },
+    fetchArchives: (kind: ArchiveKind) => async (dispatch) => {
+        onHttpResponse(await ApiService.fetchArchives(kind), (fetched) => {
+            const archives = fetched.map((raw) => ({...raw, created: new Date(raw.created)}));
+            dispatch(ArchiveActions.addArchives(kind, archives));
+        });
     },
     addArchive: (response: FetchArchiveResponse) => ({
         type: ADD_ARCHIVE,

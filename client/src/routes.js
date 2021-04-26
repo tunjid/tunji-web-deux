@@ -4,7 +4,7 @@ import ScrollToTop from './components/ScrollTop'
 import Home from "./components/home/Home";
 import SignIn from "./components/auth/SignIn";
 import ArchiveDetail from "./components/archive/ArchiveDetail";
-import ArchiveEdit from "./components/archive/ArchiveEdit";
+import {ArchiveCreate, ArchiveEdit} from "./components/archive/ArchiveEdit";
 import {ArchiveKind} from "./common/Models";
 
 const routes = () => (
@@ -12,6 +12,9 @@ const routes = () => (
         <Switch>
             <Route exact path='/' component={Home}/>
             <Route exact path='/sign-in' component={SignIn}/>
+            <Route exact path={`/${ArchiveKind.Articles}/create`} component={ArchiveCreate}/>
+            <Route exact path={`/${ArchiveKind.Projects}/create`} component={ArchiveCreate}/>
+            <Route exact path={`/${ArchiveKind.Talks}/create`} component={ArchiveCreate}/>
             <Route path={`/${ArchiveKind.Articles}/:archiveId/edit`} component={ArchiveEdit}/>
             <Route path={`/${ArchiveKind.Projects}/:archiveId/edit`} component={ArchiveEdit}/>
             <Route path={`/${ArchiveKind.Talks}/:archiveId/edit`} component={ArchiveEdit}/>

@@ -1,11 +1,15 @@
-import { CallHistoryMethodAction, push as connectedPush } from 'connected-react-router'
+import { CallHistoryMethodAction, push, replace, goBack } from 'connected-react-router'
 
 interface IRouterActions {
     push: (route: string) => CallHistoryMethodAction;
+    replace: (route: string) => CallHistoryMethodAction;
+    pop: () => CallHistoryMethodAction;
 }
 
 export type RouterAction = CallHistoryMethodAction;
 
 export const RouterActions: IRouterActions = {
-    push: connectedPush
+    push: push,
+    replace: replace,
+    pop: goBack
 }
