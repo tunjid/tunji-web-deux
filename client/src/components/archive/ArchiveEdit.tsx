@@ -9,6 +9,7 @@ import { theme } from "../../styles/PersistentUi";
 import MEDitor from '@uiw/react-md-editor';
 import { ArchiveActions } from "../../actions/Archive";
 import { archiveSelector } from "./Common";
+import _ from 'lodash';
 
 const useStyles = makeStyles((theme) => createStyles({
         root: {
@@ -35,7 +36,7 @@ const useStyles = makeStyles((theme) => createStyles({
         descriptionSize: {
             fontSize: 30
         },
-        categories: {
+        chips: {
             display: 'flex',
             flexWrap: 'wrap',
             'align-items': 'center',
@@ -55,13 +56,50 @@ const useStyles = makeStyles((theme) => createStyles({
     }
 ));
 
+interface ChipChange {
+    text: string;
+    added: boolean;
+    isTag: boolean
+}
+
 const ArchiveEdit = () => {
     const classes = useStyles();
     const dispatch = useDispatch();
     const {isSignedIn, kind, archiveId, archive} = useSelector(archiveSelector('edit'), shallowEqual);
 
-    const onNewText = (markdown: string | undefined) => {
-        dispatch(ArchiveActions.editArchive({kind, body: markdown || ''}));
+    const onChipChanged = ({text, added, isTag}: ChipChange) => () => {
+        const existing = isTag ? archive.tags : archive.categories;
+        const newChips = added
+            ? _.uniq([...existing, text])
+            : existing.filter(item => item !== text)
+        const chipEdits = isTag
+            ? {tags: newChips}
+            : {categories: newChips}
+        dispatch(ArchiveActions.editArchive({
+            kind,
+            ...chipEdits
+        }));
+    };
+
+    const onTitleChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+        dispatch(ArchiveActions.editArchive({
+            kind,
+            title: event.target.value
+        }));
+    };
+
+    const onDescriptionChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+        dispatch(ArchiveActions.editArchive({
+            kind,
+            description: event.target.value
+        }));
+    };
+
+    const onBodyChanged = (markdown: string | undefined) => {
+        dispatch(ArchiveActions.editArchive({
+            kind,
+            body: markdown || ''
+        }));
     }
 
     useEffect(() => {
@@ -86,12 +124,25 @@ const ArchiveEdit = () => {
             <Typography className={classes.date} gutterBottom variant="subtitle1">
                 {archive?.created?.toDateString() || ''}
             </Typography>
-            <div className={classes.categories}>
-                {(archive?.categories || []).map((label) => <Chip
-                    key={label}
-                    label={label}
+
+            <div className={classes.chips}>
+                {(archive?.categories || []).map((text) => <Chip
+                    key={text}
+                    label={text}
                     color="secondary"
+                    onDelete={onChipChanged({text, added: false, isTag: false})}
                     style={{backgroundColor: '#4282F1'}}
+                    size="small"/>
+                )}
+            </div>
+
+            <div className={classes.chips}>
+                {(archive?.tags || []).map((text) => <Chip
+                    key={text}
+                    label={text}
+                    color="secondary"
+                    onDelete={onChipChanged({text, added: false, isTag: true})}
+                    style={{backgroundColor: theme.palette.secondary.dark}}
                     size="small"/>
                 )}
             </div>
@@ -102,11 +153,9 @@ const ArchiveEdit = () => {
                 size='medium'
                 label='Title'
                 value={archive.title}
-                onChange={(event) => dispatch(ArchiveActions.editArchive({kind, title: event.target.value}))}
+                onChange={onTitleChanged}
                 InputProps={{
-                    classes: {
-                        input: classes.titleSize,
-                    },
+                    classes: {input: classes.titleSize},
                     disableUnderline: true
                 }}
             />
@@ -117,11 +166,9 @@ const ArchiveEdit = () => {
                 size='medium'
                 label='Description'
                 value={archive.description}
-                onChange={(event) => dispatch(ArchiveActions.editArchive({kind, description: event.target.value}))}
+                onChange={onDescriptionChanged}
                 InputProps={{
-                    classes: {
-                        input: classes.descriptionSize,
-                    },
+                    classes: {input: classes.descriptionSize},
                     disableUnderline: true
                 }}
             />
@@ -129,21 +176,12 @@ const ArchiveEdit = () => {
             <div className={classes.editor}>
                 <MEDitor
                     value={archive.body || ''}
-                    onChange={onNewText}
+                    onChange={onBodyChanged}
                 />
             </div>
 
             {/*<MEDditor.Markdown source={value} />*/}
 
-            <div className={classes.categories}>
-                {(archive?.tags || []).map((label) => <Chip
-                    key={label}
-                    label={label}
-                    color="secondary"
-                    style={{backgroundColor: theme.palette.secondary.dark}}
-                    size="small"/>
-                )}
-            </div>
         </div>
     );
 }
