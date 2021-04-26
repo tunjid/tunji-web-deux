@@ -1,7 +1,7 @@
 import { ArchiveKind, ArchiveLike } from "../common/Models";
 import ApiService from "../rest/ApiService";
 import { AppThunk } from "./index";
-import onHttpResponse from "./Common";
+import { onSuccessOrSnackbar } from "./Common";
 import { RouterActions } from "./Router";
 import { SnackbarActions, SnackbarKind } from "./Snackbar";
 
@@ -65,40 +65,51 @@ export const ArchiveActions: IArchiveActions = {
     createArchive: (kind: ArchiveKind) => async (dispatch, getState) => {
         const state = getState();
         const edited = {...state.archives.kindToEditMap[kind]};
-        onHttpResponse(await ApiService.createArchive(edited), (created) => {
-            dispatch(RouterActions.replace(`/${created.kind}/${created.key}/edit`))
-        });
+        onSuccessOrSnackbar(
+            await ApiService.createArchive(edited),
+            dispatch,
+            (created) => {
+                dispatch(RouterActions.replace(`/${created.kind}/${created.key}/edit`))
+            });
     },
     readArchive: (request: FetchArchiveRequest) => async (dispatch) => {
-        onHttpResponse(await ApiService.readArchive(request.kind, request.id), (fetched) => {
-            const archive = {...fetched, created: new Date(fetched.created)};
-            dispatch(ArchiveActions.addArchive({archive, view: request.view}));
-        });
+        onSuccessOrSnackbar(
+            await ApiService.readArchive(request.kind, request.id),
+            dispatch,
+            (fetched) => {
+                const archive = {...fetched, created: new Date(fetched.created)};
+                dispatch(ArchiveActions.addArchive({archive, view: request.view}));
+            });
     },
     updateArchive: (kind: ArchiveKind) => async (dispatch, getState) => {
         const state = getState();
         const edited = state.archives.kindToEditMap[kind];
-        onHttpResponse(
+        onSuccessOrSnackbar(
             await ApiService.updateArchive(edited),
+            dispatch,
             (archive) => dispatch(SnackbarActions.enqueueSnackbar({
-                key: archive.key,
-                kind: SnackbarKind.Success,
-                title: 'Updated!'
-            })
-        ));
+                    key: archive.key,
+                    kind: SnackbarKind.Success,
+                    title: 'Updated!'
+                })
+            ));
     },
     deleteArchive: (kind: ArchiveKind) => async (dispatch, getState) => {
         const state = getState();
         const edited = state.archives.kindToEditMap[kind];
-        onHttpResponse(await ApiService.updateArchive(edited), () => {
-            dispatch(RouterActions.pop());
-        });
+        onSuccessOrSnackbar(
+            await ApiService.updateArchive(edited),
+            dispatch,
+            () => dispatch(RouterActions.pop()));
     },
     fetchArchives: (kind: ArchiveKind) => async (dispatch) => {
-        onHttpResponse(await ApiService.fetchArchives(kind), (fetched) => {
-            const archives = fetched.map((raw) => ({...raw, created: new Date(raw.created)}));
-            dispatch(ArchiveActions.addArchives(kind, archives));
-        });
+        onSuccessOrSnackbar(
+            await ApiService.fetchArchives(kind),
+            dispatch,
+            (fetched) => {
+                const archives = fetched.map((raw) => ({...raw, created: new Date(raw.created)}));
+                dispatch(ArchiveActions.addArchives(kind, archives));
+            });
     },
     addArchive: (response: FetchArchiveResponse) => ({
         type: ADD_ARCHIVE,
