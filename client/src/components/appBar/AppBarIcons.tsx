@@ -1,11 +1,11 @@
-import { Theme, useMediaQuery, useTheme } from "@material-ui/core";
+import { Theme } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { MoreVert } from "@material-ui/icons";
 import * as React from 'react';
 import { MenuRes } from "../../types/MenuRes";
-import { createSelector, OutputSelector } from "reselect";
+import { createSelector } from "reselect";
 import { StoreState } from "../../types";
 import { PersistentUiState } from "../../reducers/PersistentUi";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
