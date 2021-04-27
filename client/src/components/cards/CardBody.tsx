@@ -89,7 +89,7 @@ const CardBody = ({cardInfo}: Props) => {
                 </div>
                 <div className={classes.date}>
                     <Typography gutterBottom variant="caption" component="p">
-                        {`${cardInfo.readTime} MIN READ`}
+                        {cardInfo.readTime.toUpperCase()}
                     </Typography>
                 </div>
             </div>

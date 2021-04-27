@@ -11,6 +11,7 @@ import { CardInfo, CardStyle } from "../cards/CardInfo";
 import { ArchiveActions } from "../../actions/Archive";
 import { PersistentUiActions } from "../../actions/PersistentUi";
 import { useWidth } from "../../hooks/UseWidth";
+import { archiveDate, readTime } from "../archive/Common";
 
 const useStyles = makeStyles(() => createStyles({
         root: {
@@ -74,10 +75,10 @@ const HomeCards = () => {
         author: archive.author,
         spanCount: spanCount(index),
         thumbnail: archive.thumbnail || '',
-        date: archive.created.toDateString().split(' ').splice(1).join(' '),
+        date: archiveDate(archive.created),
         style: style(index),
         categories: archive.categories,
-        readTime: Math.ceil(archive.body.trim().split(/\s+/).length / 250),
+        readTime: readTime(archive.body),
     })
 
     const cards = archives.map(cardFromArchive);

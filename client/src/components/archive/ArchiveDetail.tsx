@@ -1,7 +1,7 @@
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import * as React from 'react';
 import { useEffect } from 'react';
-import { Chip } from "@material-ui/core";
+import { Avatar, Chip } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { PersistentUiActions } from "../../actions/PersistentUi";
@@ -9,7 +9,7 @@ import { theme } from "../../styles/PersistentUi";
 import CardMedia from "@material-ui/core/CardMedia";
 import Card from "@material-ui/core/Card";
 import ReactMarkdown from 'react-markdown'
-import { archiveSelector } from "./Common";
+import { archiveDate, archiveSelector, readTime } from "./Common";
 import { ArchiveActions } from "../../actions/Archive";
 import gfm from "remark-gfm";
 
@@ -18,14 +18,29 @@ const useStyles = makeStyles((theme) => createStyles({
             display: 'flex',
             'flex-direction': 'column',
             'align-items': 'center',
-            'justify-content': 'center',
-        },
-        date: {
-            'margin-top': theme.spacing(4),
-            'margin-bottom': theme.spacing(2),
         },
         title: {
-            margin: theme.spacing(2),
+            width: '50vw',
+            'margin-top': theme.spacing(1),
+            'margin-bottom': theme.spacing(1),
+        },
+        description: {
+            width: '50vw',
+            'margin-bottom': theme.spacing(1),
+        },
+        info: {
+            width: '50vw',
+            display: 'flex',
+            'align-items': 'flex-start',
+            'margin-top': theme.spacing(1),
+        },
+        infoChild: {
+            'margin-left': theme.spacing(1),
+            'margin-right': theme.spacing(1),
+        },
+        avatar: {
+            width: theme.spacing(3),
+            height: theme.spacing(3),
         },
         chips: {
             display: 'flex',
@@ -74,9 +89,6 @@ const ArchiveDetail = () => {
 
     return (
         <div className={classes.root}>
-            <Typography className={classes.date} gutterBottom variant="subtitle1">
-                {archive?.created?.toDateString() || ''}
-            </Typography>
             Categories
             <div className={classes.chips}>
                 {(archive?.categories || []).map((label) => <Chip
@@ -97,9 +109,26 @@ const ArchiveDetail = () => {
                     size="small"/>
                 )}
             </div>
-            <Typography className={classes.title} gutterBottom variant="h2">
+
+            <Typography className={classes.title} gutterBottom variant="h3">
                 {archive?.title || ''}
             </Typography>
+            <Typography className={classes.description} gutterBottom variant="h5">
+                {archive?.description || ''}
+            </Typography>
+
+            <div className={classes.info}>
+                <Avatar className={classes.avatar} src={archive.author.imageUrl}/>
+
+                <Typography className={classes.infoChild} component="p">
+                    {archive.author.fullName}
+                </Typography>
+
+                <Typography className={classes.infoChild} gutterBottom component="p" color="textSecondary">
+                    {`${archiveDate(archive?.created)} · ${readTime(archive?.body || '')}`}
+                </Typography>
+            </div>
+
             <Card className={classes.cardBackground} elevation={1}>
                 <CardMedia
                     className={classes.cardImage}
