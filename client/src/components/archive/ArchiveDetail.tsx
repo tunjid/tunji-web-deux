@@ -37,15 +37,15 @@ const useStyles = makeStyles((theme) => createStyles({
         },
         cardBackground: {
             height: '50vh',
-            width: '90vw',
+            width: '50vw',
             margin: theme.spacing(0.5),
         },
         cardImage: {
             height: '50vh',
-            width: '90vw',
+            width: '50vw',
         },
         archiveBody: {
-            width: '60vw',
+            width: '50vw',
         },
     }
 ));
