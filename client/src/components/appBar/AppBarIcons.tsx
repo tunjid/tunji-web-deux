@@ -11,6 +11,7 @@ import { PersistentUiState } from "../../reducers/PersistentUi";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { MENU_ROUTE, PersistentUiActions } from "../../actions/PersistentUi";
 import { RouterActions } from "../../actions/Router";
+import { useWidth } from "../../hooks/UseWidth";
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
     root: {
@@ -48,18 +49,6 @@ const selector: OutputSelector<StoreState, Props, (res: PersistentUiState) => Pr
         anchorEl: persistentUI.anchorEl,
     })
 );
-
-function useWidth(): string {
-    const theme = useTheme();
-    const keys = [...theme.breakpoints.keys].reverse();
-    return (
-        keys.reduce((output, key) => {
-            // eslint-disable-next-line react-hooks/rules-of-hooks
-            const matches = useMediaQuery(theme.breakpoints.up(key));
-            return !output && matches ? key : output;
-        }, '') || 'xs'
-    );
-}
 
 const AppBarIcons = () => {
     const classes = useStyles();

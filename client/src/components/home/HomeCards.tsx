@@ -10,6 +10,7 @@ import { ArchiveKind, ArchiveLike } from "../../common/Models";
 import { CardInfo, CardStyle } from "../cards/CardInfo";
 import { ArchiveActions } from "../../actions/Archive";
 import { PersistentUiActions } from "../../actions/PersistentUi";
+import { useWidth } from "../../hooks/UseWidth";
 
 const useStyles = makeStyles(() => createStyles({
         root: {
@@ -27,21 +28,8 @@ const useStyles = makeStyles(() => createStyles({
 
 interface Props {
     currentKind: ArchiveKind,
-    cards: CardInfo[];
+    archives: ArchiveLike[];
 }
-
-const cardFromArchive: (archive: ArchiveLike, index: number) => CardInfo = (archive, index) => ({
-    id: archive.key,
-    title: archive.title,
-    description: archive.description,
-    author: archive.author,
-    spanCount: index % 4 === 0 ? 6 : 2,
-    thumbnail: archive.thumbnail || '',
-    date: archive.created.toDateString().split(' ').splice(1).join(' '),
-    style: index % 4 === 0 ? CardStyle.horizontal : CardStyle.vertical,
-    categories: archive.categories,
-    readTime: Math.ceil(archive.body.trim().split(/\s+/).length / 250),
-})
 
 const archivesFromState: (state: StoreState) => ArchiveLike[] = (state: StoreState) => {
     const kind = state.home.selectedTab.kind;
@@ -53,7 +41,7 @@ const selector: OutputSelector<StoreState, Props, (res: StoreState) => Props> = 
     (state: StoreState) => {
         return {
             currentKind: state.home.selectedTab.kind,
-            cards: archivesFromState(state).map(cardFromArchive)
+            archives: archivesFromState(state)
         }
     }
 );
@@ -61,7 +49,38 @@ const selector: OutputSelector<StoreState, Props, (res: StoreState) => Props> = 
 const HomeCards = () => {
     const classes = useStyles();
     const dispatch = useDispatch();
-    const {currentKind, cards}: Props = useSelector(selector, shallowEqual);
+    const {currentKind, archives}: Props = useSelector(selector, shallowEqual);
+
+    const width = useWidth();
+    const isxSmallScreen = /xs/.test(width);
+    const isSmallScreen = /sm/.test(width);
+
+    const spanCount = (index: number) => {
+        if (isxSmallScreen) return 6;
+        else if (isSmallScreen) return index % 3 === 0 ? 6 : 3
+        else return index % 4 === 0 ? 6 : 2;
+    }
+
+    const style = (index: number) => {
+        if (isxSmallScreen) return CardStyle.vertical;
+        else if (isSmallScreen) return index % 3 === 0 ? CardStyle.horizontal : CardStyle.vertical
+        else return index % 4 === 0 ? CardStyle.horizontal : CardStyle.vertical;
+    }
+
+    const cardFromArchive: (archive: ArchiveLike, index: number) => CardInfo = (archive, index) => ({
+        id: archive.key,
+        title: archive.title,
+        description: archive.description,
+        author: archive.author,
+        spanCount: spanCount(index),
+        thumbnail: archive.thumbnail || '',
+        date: archive.created.toDateString().split(' ').splice(1).join(' '),
+        style: style(index),
+        categories: archive.categories,
+        readTime: Math.ceil(archive.body.trim().split(/\s+/).length / 250),
+    })
+
+    const cards = archives.map(cardFromArchive);
 
     useEffect(() => {
         dispatch(PersistentUiActions.modifyAppBar({menuItems: []}));
