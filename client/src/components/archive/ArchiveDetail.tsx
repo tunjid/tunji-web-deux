@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => createStyles({
         },
         title: {
             width: '50vw',
-            'margin-top': theme.spacing(1),
+            'margin-top': theme.spacing(3),
             'margin-bottom': theme.spacing(1),
         },
         description: {
@@ -33,6 +33,7 @@ const useStyles = makeStyles((theme) => createStyles({
             display: 'flex',
             'align-items': 'flex-start',
             'margin-top': theme.spacing(1),
+            'margin-bottom': theme.spacing(1),
         },
         infoChild: {
             'margin-left': theme.spacing(1),
@@ -43,12 +44,15 @@ const useStyles = makeStyles((theme) => createStyles({
             height: theme.spacing(3),
         },
         chips: {
+            width: '50vw',
             display: 'flex',
             flexWrap: 'wrap',
             'align-items': 'center',
             '& > *': {
                 margin: theme.spacing(0.5),
             },
+            'margin-top': theme.spacing(0.5),
+            'margin-bottom': theme.spacing(0.5),
         },
         cardBackground: {
             height: '50vh',
@@ -89,31 +93,10 @@ const ArchiveDetail = () => {
 
     return (
         <div className={classes.root}>
-            Categories
-            <div className={classes.chips}>
-                {(archive?.categories || []).map((label) => <Chip
-                    key={label}
-                    label={label}
-                    color="secondary"
-                    style={{backgroundColor: '#4282F1'}}
-                    size="small"/>
-                )}
-            </div>
-            Tags
-            <div className={classes.chips}>
-                {(archive?.tags || []).map((label) => <Chip
-                    key={label}
-                    label={label}
-                    color="secondary"
-                    style={{backgroundColor: theme.palette.secondary.dark}}
-                    size="small"/>
-                )}
-            </div>
-
             <Typography className={classes.title} gutterBottom variant="h3">
                 {archive?.title || ''}
             </Typography>
-            <Typography className={classes.description} gutterBottom variant="h5">
+            <Typography className={classes.description} color="textSecondary" gutterBottom variant="h5">
                 {archive?.description || ''}
             </Typography>
 
@@ -127,6 +110,18 @@ const ArchiveDetail = () => {
                 <Typography className={classes.infoChild} gutterBottom component="p" color="textSecondary">
                     {`${archiveDate(archive?.created)} · ${readTime(archive?.body || '')}`}
                 </Typography>
+            </div>
+
+
+            <div className={classes.chips}>
+                Categories:
+                {(archive?.categories || []).map((label) => <Chip
+                    key={label}
+                    label={label}
+                    color="secondary"
+                    style={{backgroundColor: '#4282F1'}}
+                    size="small"/>
+                )}
             </div>
 
             <Card className={classes.cardBackground} elevation={1}>
@@ -152,6 +147,17 @@ const ArchiveDetail = () => {
                     h6: ({node, ...props}) => (<h6{...props} style={{fontSize: '150%'}}/>),
                 }}
             />
+
+            <div className={classes.chips}>
+                Tags:
+                {(archive?.tags || []).map((label) => <Chip
+                    key={label}
+                    label={label}
+                    color="secondary"
+                    style={{backgroundColor: theme.palette.secondary.dark}}
+                    size="small"/>
+                )}
+            </div>
         </div>
     );
 }
