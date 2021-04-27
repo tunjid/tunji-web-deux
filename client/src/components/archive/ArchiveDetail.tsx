@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme) => createStyles({
         title: {
             margin: theme.spacing(2),
         },
-        categories: {
+        chips: {
             display: 'flex',
             flexWrap: 'wrap',
             'align-items': 'center',
@@ -77,12 +77,23 @@ const ArchiveDetail = () => {
             <Typography className={classes.date} gutterBottom variant="subtitle1">
                 {archive?.created?.toDateString() || ''}
             </Typography>
-            <div className={classes.categories}>
+            Categories
+            <div className={classes.chips}>
                 {(archive?.categories || []).map((label) => <Chip
                     key={label}
                     label={label}
                     color="secondary"
                     style={{backgroundColor: '#4282F1'}}
+                    size="small"/>
+                )}
+            </div>
+            Tags
+            <div className={classes.chips}>
+                {(archive?.tags || []).map((label) => <Chip
+                    key={label}
+                    label={label}
+                    color="secondary"
+                    style={{backgroundColor: theme.palette.secondary.dark}}
                     size="small"/>
                 )}
             </div>
@@ -101,7 +112,7 @@ const ArchiveDetail = () => {
                 remarkPlugins={[gfm]}
                 children={archive?.body || ''}
                 components={{
-                    img: ({node, ...props}) => (<img{...props} style={{ maxWidth: '10vw' }}/>),
+                    img: ({node, ...props}) => (<img{...props} style={{maxWidth: '10vw'}}/>),
                     p: ({node, ...props}) => (<p{...props} style={{fontSize: '150%'}}/>),
                     li: ({node, ...props}) => (<p{...props} style={{fontSize: '150%'}}/>),
                     h1: ({node, ...props}) => (<h1{...props} style={{fontSize: '150%'}}/>),
@@ -112,15 +123,6 @@ const ArchiveDetail = () => {
                     h6: ({node, ...props}) => (<h6{...props} style={{fontSize: '150%'}}/>),
                 }}
             />
-            <div className={classes.categories}>
-                {(archive?.tags || []).map((label) => <Chip
-                    key={label}
-                    label={label}
-                    color="secondary"
-                    style={{backgroundColor: theme.palette.secondary.dark}}
-                    size="small"/>
-                )}
-            </div>
         </div>
     );
 }
