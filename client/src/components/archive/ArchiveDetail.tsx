@@ -80,6 +80,7 @@ const ArchiveDetail = () => {
 
     useEffect(() => {
         dispatch(PersistentUiActions.modifyAppBar({
+            appBarTitle: `${kind.charAt(0).toUpperCase() + kind.slice(1, kind.length - 1)} Detail`,
             hasAppBarShadow: true,
             hasAppBarSpacer: true,
             appBarColor: theme.palette.primary.dark,

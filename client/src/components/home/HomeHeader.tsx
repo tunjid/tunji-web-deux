@@ -10,6 +10,7 @@ import { Tab, Tabs } from "@material-ui/core";
 import { HomeState, HomeTab } from "../../reducers/Home";
 import { HomeActions } from "../../actions/Home";
 import useEventListener from "../../hooks/UseEventListener";
+import { useEffect } from "react";
 
 const throttle = require('lodash/throttle');
 
@@ -30,6 +31,7 @@ const useStyles = makeStyles(() => createStyles({
 ));
 
 interface Props {
+    appBarTitle: string;
     appBarColor: string;
     hasAppBarShadow: boolean;
     onHomePage: boolean;
@@ -43,6 +45,7 @@ const selector: OutputSelector<StoreState, Props, (a: PersistentUiState, b: Home
     state => state.home,
     state => !!state.router.location.pathname,
     (persistentUI, home, onHomePage) => ({
+        appBarTitle: persistentUI.appBarTitle,
         appBarColor: persistentUI.appBarColor,
         hasAppBarShadow: persistentUI.hasAppBarShadow,
         tabsShow: persistentUI.tabsShow,
@@ -57,6 +60,7 @@ const HomeHeader = () => {
     const classes = useStyles();
     const dispatch = useDispatch();
     const {
+        appBarTitle,
         appBarColor,
         hasAppBarShadow,
         selectedTab,
@@ -87,6 +91,12 @@ const HomeHeader = () => {
     const scrollListener = () => throttle(onScroll, 100)();
 
     useEventListener('scroll', scrollListener);
+
+    useEffect(() => {
+        dispatch(PersistentUiActions.modifyAppBar({
+            appBarTitle: 'Home',
+        }));
+    }, [appBarTitle, dispatch])
 
     return (
         <div className={classes.root}>
