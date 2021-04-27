@@ -12,6 +12,7 @@ import { archiveSelector } from "./Common";
 import _ from 'lodash';
 import Card from "@material-ui/core/Card";
 import CardMedia from "@material-ui/core/CardMedia";
+import ChipInput from "./ChipInput";
 
 const useStyles = makeStyles((theme) => createStyles({
         root: {
@@ -44,10 +45,7 @@ const useStyles = makeStyles((theme) => createStyles({
         chips: {
             display: 'flex',
             flexWrap: 'wrap',
-            'align-items': 'center',
-            '& > *': {
-                margin: theme.spacing(0.5),
-            },
+            width: '90vw',
         },
         cardBackground: {
             height: '50vh',
@@ -81,7 +79,7 @@ const ArchiveCreateOrEdit = ({isCreating}: Props) => {
     const dispatch = useDispatch();
     const {isSignedIn, kind, archiveId, archive} = useSelector(archiveSelector('edit'), shallowEqual);
 
-    const onChipChanged = ({text, added, isTag}: ChipChange) => () => {
+    const onChipChanged = ({text, added, isTag}: ChipChange) => {
         const existing = isTag ? archive.tags : archive.categories;
         const newChips = added
             ? _.uniq([...existing, text])
@@ -153,28 +151,6 @@ const ArchiveCreateOrEdit = ({isCreating}: Props) => {
                 {archive?.created?.toDateString() || ''}
             </Typography>
 
-            <div className={classes.chips}>
-                {(archive?.categories || []).map((text) => <Chip
-                    key={text}
-                    label={text}
-                    color="secondary"
-                    onDelete={onChipChanged({text, added: false, isTag: false})}
-                    style={{backgroundColor: '#4282F1'}}
-                    size="small"/>
-                )}
-            </div>
-
-            <div className={classes.chips}>
-                {(archive?.tags || []).map((text) => <Chip
-                    key={text}
-                    label={text}
-                    color="secondary"
-                    onDelete={onChipChanged({text, added: false, isTag: true})}
-                    style={{backgroundColor: theme.palette.secondary.dark}}
-                    size="small"/>
-                )}
-            </div>
-
             <TextField
                 className={classes.title}
                 id="standard-basic"
@@ -199,6 +175,22 @@ const ArchiveCreateOrEdit = ({isCreating}: Props) => {
                     classes: {input: classes.descriptionSize},
                     disableUnderline: true
                 }}
+            />
+
+            <ChipInput
+                name='Categories: '
+                chips={archive?.categories}
+                chipColor={'#4282F1'}
+                onChipDeleted={(text) => onChipChanged({text, added: false, isTag: false})}
+                onChipAdded={(text) => onChipChanged({text, added: true, isTag: false})}
+            />
+
+            <ChipInput
+                name='Tags: '
+                chips={archive?.tags}
+                chipColor={theme.palette.secondary.dark}
+                onChipDeleted={(text) => onChipChanged({text, added: false, isTag: true})}
+                onChipAdded={(text) => onChipChanged({text, added: true, isTag: true})}
             />
 
             <TextField
