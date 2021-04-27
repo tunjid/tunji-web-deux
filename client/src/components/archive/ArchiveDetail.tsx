@@ -1,7 +1,7 @@
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import * as React from 'react';
 import { useEffect } from 'react';
-import { Avatar, Chip } from "@material-ui/core";
+import { Avatar, Chip, Theme } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { PersistentUiActions } from "../../actions/PersistentUi";
@@ -13,6 +13,13 @@ import { archiveDate, archiveSelector, readTime } from "./Common";
 import { ArchiveActions } from "../../actions/Archive";
 import gfm from "remark-gfm";
 
+const responsiveWidth = (theme: Theme) => ({
+    [theme.breakpoints.up('md')]: {
+        width: '50vw',
+    },
+    width: '80vw',
+});
+
 const useStyles = makeStyles((theme) => createStyles({
         root: {
             display: 'flex',
@@ -20,16 +27,16 @@ const useStyles = makeStyles((theme) => createStyles({
             'align-items': 'center',
         },
         title: {
-            width: '50vw',
+            ...responsiveWidth(theme),
             'margin-top': theme.spacing(3),
             'margin-bottom': theme.spacing(1),
         },
         description: {
-            width: '50vw',
+            ...responsiveWidth(theme),
             'margin-bottom': theme.spacing(1),
         },
         info: {
-            width: '50vw',
+            ...responsiveWidth(theme),
             display: 'flex',
             'align-items': 'flex-start',
             'margin-top': theme.spacing(1),
@@ -44,7 +51,7 @@ const useStyles = makeStyles((theme) => createStyles({
             height: theme.spacing(3),
         },
         chips: {
-            width: '50vw',
+            ...responsiveWidth(theme),
             display: 'flex',
             flexWrap: 'wrap',
             'align-items': 'center',
@@ -55,16 +62,16 @@ const useStyles = makeStyles((theme) => createStyles({
             'margin-bottom': theme.spacing(0.5),
         },
         cardBackground: {
+            ...responsiveWidth(theme),
             height: '50vh',
-            width: '50vw',
             margin: theme.spacing(0.5),
         },
         cardImage: {
+            ...responsiveWidth(theme),
             height: '50vh',
-            width: '50vw',
         },
         archiveBody: {
-            width: '50vw',
+            ...responsiveWidth(theme),
         },
     }
 ));
