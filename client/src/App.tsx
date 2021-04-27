@@ -17,6 +17,7 @@ import { ConnectedRouter } from 'connected-react-router'
 import { history } from "./reducers";
 import { SnackbarProvider } from "notistack";
 import SnackbarManager from "./containers/SnackbarManager";
+import MainFab from "./components/appBar/MainFab";
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
     root: {
@@ -29,7 +30,6 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     },
     routes: {
         position: 'relative',
-        'z-index': '100000',
         top: '-100px',
     }
 }));
@@ -73,6 +73,7 @@ const App = () => {
                         {appBarSpacer}
                         <Routes/>
                     </main>
+                    <MainFab/>
                 </ConnectedRouter>
                 </SnackbarProvider>
             </ThemeProvider>

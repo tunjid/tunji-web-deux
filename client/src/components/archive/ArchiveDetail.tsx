@@ -12,6 +12,7 @@ import ReactMarkdown from 'react-markdown'
 import { archiveDate, archiveSelector, readTime } from "./Common";
 import { ArchiveActions } from "../../actions/Archive";
 import gfm from "remark-gfm";
+import EditIcon from '@material-ui/icons/Edit';
 
 const responsiveWidth = (theme: Theme) => ({
     [theme.breakpoints.up('md')]: {
@@ -91,11 +92,12 @@ const ArchiveDetail = () => {
             hasAppBarShadow: true,
             hasAppBarSpacer: true,
             appBarColor: theme.palette.primary.dark,
-            menuItems: isSignedIn ? [{
+            fab: isSignedIn ? {
                 id: 'edit',
                 text: 'Edit',
+                icon: <EditIcon/>,
                 action: PersistentUiActions.menuRoute(`/${kind}/${archiveId}/edit`)
-            }] : []
+            } : undefined
         }));
     }, [archiveId, kind, isSignedIn, dispatch]);
 

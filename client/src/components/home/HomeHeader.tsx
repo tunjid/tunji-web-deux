@@ -1,7 +1,8 @@
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import * as React from 'react';
+import { useEffect } from 'react';
 import { theme } from "../../styles/PersistentUi";
-import { createSelector, OutputSelector } from "reselect";
+import { createSelector } from "reselect";
 import { StoreState } from "../../types";
 import { PersistentUiState } from "../../reducers/PersistentUi";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
@@ -10,7 +11,8 @@ import { Tab, Tabs } from "@material-ui/core";
 import { HomeState, HomeTab } from "../../reducers/Home";
 import { HomeActions } from "../../actions/Home";
 import useEventListener from "../../hooks/UseEventListener";
-import { useEffect } from "react";
+import { AuthState } from "../../reducers/Auth";
+import AddIcon from '@material-ui/icons/Add';
 
 const throttle = require('lodash/throttle');
 
@@ -36,21 +38,24 @@ interface Props {
     hasAppBarShadow: boolean;
     onHomePage: boolean;
     tabsShow: boolean;
+    isSignedIn: boolean;
     selectedTab: HomeTab;
     tabs: HomeTab[];
 }
 
-const selector: OutputSelector<StoreState, Props, (a: PersistentUiState, b: HomeState, c: boolean) => Props> = createSelector(
+const selector = createSelector<StoreState, PersistentUiState, HomeState, AuthState, boolean, Props>(
     state => state.persistentUI,
     state => state.home,
+    state => state.auth,
     state => !!state.router.location.pathname,
-    (persistentUI, home, onHomePage) => ({
+    (persistentUI, home, auth, onHomePage) => ({
         appBarTitle: persistentUI.appBarTitle,
         appBarColor: persistentUI.appBarColor,
         hasAppBarShadow: persistentUI.hasAppBarShadow,
         tabsShow: persistentUI.tabsShow,
         selectedTab: home.selectedTab,
         tabs: home.tabs,
+        isSignedIn: !!auth.signedInUser,
         onHomePage,
     })
 );
@@ -65,6 +70,7 @@ const HomeHeader = () => {
         hasAppBarShadow,
         selectedTab,
         onHomePage,
+        isSignedIn,
         tabs,
     }: Props = useSelector(selector, shallowEqual);
 
@@ -95,8 +101,14 @@ const HomeHeader = () => {
     useEffect(() => {
         dispatch(PersistentUiActions.modifyAppBar({
             appBarTitle: 'Home',
+            fab: isSignedIn ? {
+                id: 'create',
+                text: 'Create',
+                icon: <AddIcon/>,
+                action: PersistentUiActions.menuRoute(`/${selectedTab.kind}/create`)
+            } : undefined
         }));
-    }, [appBarTitle, dispatch])
+    }, [appBarTitle, isSignedIn, selectedTab.kind, dispatch])
 
     return (
         <div className={classes.root}>

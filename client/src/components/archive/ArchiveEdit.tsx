@@ -13,6 +13,8 @@ import _ from 'lodash';
 import Card from "@material-ui/core/Card";
 import CardMedia from "@material-ui/core/CardMedia";
 import ChipInput from "./ChipInput";
+import SaveIcon from '@material-ui/icons/Save';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 const useStyles = makeStyles((theme) => createStyles({
         root: {
@@ -127,14 +129,10 @@ const ArchiveCreateOrEdit = ({isCreating}: Props) => {
 
     useEffect(() => {
         const menuItems = [];
-        if (isSignedIn) menuItems.push({
-            id: isCreating ? 'create' : 'update',
-            text: isCreating ? 'Create' : 'Update',
-            action: isCreating ? ArchiveActions.createArchive(kind) : ArchiveActions.updateArchive(kind),
-        });
         if (!isCreating) menuItems.push({
             id: 'delete',
             text: 'Delete',
+            icon: <DeleteIcon/>,
             action: ArchiveActions.deleteArchive(kind),
         });
         dispatch(PersistentUiActions.modifyAppBar({
@@ -142,6 +140,12 @@ const ArchiveCreateOrEdit = ({isCreating}: Props) => {
             hasAppBarSpacer: true,
             appBarColor: theme.palette.primary.dark,
             menuItems,
+            fab: isSignedIn ? {
+                id: isCreating ? 'create' : 'update',
+                text: isCreating ? 'Create' : 'Update',
+                icon: <SaveIcon/>,
+                action: isCreating ? ArchiveActions.createArchive(kind) : ArchiveActions.updateArchive(kind),
+            } : undefined
         }));
     }, [kind, isCreating, isSignedIn, dispatch]);
 

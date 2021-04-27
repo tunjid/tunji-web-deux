@@ -10,6 +10,7 @@ export interface PersistentUiState {
     tabsShow: boolean;
     menuItems: MenuRes[];
     anchorEl?: HTMLElement;
+    fab?: MenuRes;
 }
 
 export function persistentUiReducer(state = {

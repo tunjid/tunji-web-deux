@@ -41,7 +41,7 @@ interface Props {
     anchorEl?: HTMLElement,
 }
 
-const selector: OutputSelector<StoreState, Props, (res: PersistentUiState) => Props> = createSelector(
+const selector = createSelector<StoreState, PersistentUiState, Props>(
     state => state.persistentUI,
     persistentUI => ({
         items: persistentUI.menuItems,
