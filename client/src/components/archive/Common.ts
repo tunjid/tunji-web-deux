@@ -7,8 +7,8 @@ import { ArchiveView } from "../../actions/Archive";
 export interface ArchiveProps {
     isSignedIn: boolean;
     kind: ArchiveKind;
-    archiveId: string;
-    archive: ArchiveLike;
+    archiveId?: string;
+    archive?: ArchiveLike;
 }
 
 export const archiveSelector:

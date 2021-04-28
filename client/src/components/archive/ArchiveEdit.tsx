@@ -82,7 +82,8 @@ const ArchiveCreateOrEdit = ({isCreating}: Props) => {
     const {isSignedIn, kind, archiveId, archive} = useSelector(archiveSelector('edit'), shallowEqual);
 
     const onChipChanged = ({text, added, isTag}: ChipChange) => {
-        const existing = isTag ? archive.tags : archive.categories;
+        const existing = isTag ? archive?.tags : archive?.categories;
+        if (!existing) return;
         const newChips = added
             ? _.uniq([...existing, text])
             : existing.filter(item => item !== text)
@@ -124,7 +125,7 @@ const ArchiveCreateOrEdit = ({isCreating}: Props) => {
     }
 
     useEffect(() => {
-        if (!isCreating) dispatch(ArchiveActions.readArchive({kind, view: "edit", id: archiveId}));
+        if (!isCreating && archiveId) dispatch(ArchiveActions.readArchive({kind, view: "edit", id: archiveId}));
     }, [archiveId, dispatch, isCreating, kind]);
 
     useEffect(() => {

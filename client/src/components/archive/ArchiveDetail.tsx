@@ -83,7 +83,7 @@ const ArchiveDetail = () => {
     const {isSignedIn, kind, archiveId, archive} = useSelector(archiveSelector('detail'), shallowEqual);
 
     useEffect(() => {
-        dispatch(ArchiveActions.readArchive({kind, view: "detail", id: archiveId}));
+       if(archiveId) dispatch(ArchiveActions.readArchive({kind, view: "detail", id: archiveId}));
     }, [archiveId, dispatch, kind]);
 
     useEffect(() => {
@@ -111,14 +111,14 @@ const ArchiveDetail = () => {
             </Typography>
 
             <div className={classes.info}>
-                <Avatar className={classes.avatar} src={archive.author.imageUrl}/>
+                <Avatar className={classes.avatar} src={archive?.author?.imageUrl}/>
 
                 <Typography className={classes.infoChild} component="p">
-                    {archive.author.fullName}
+                    {archive?.author?.fullName}
                 </Typography>
 
                 <Typography className={classes.infoChild} gutterBottom component="p" color="textSecondary">
-                    {`${archiveDate(archive?.created)} · ${readTime(archive?.body || '')}`}
+                    { archive ? `${archiveDate(archive?.created)} · ${readTime(archive?.body || '')}` : ''}
                 </Typography>
             </div>
 
