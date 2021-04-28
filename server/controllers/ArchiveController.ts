@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { ArchiveModel } from '../models/Archive';
 import { errorMessage, getErrorMessage } from './Common';
+import { ArchiveSummary } from '../../client/src/common/Models';
 
 interface ArchiveController {
     create: (res: Request, req: Response, next: NextFunction) => void;
@@ -126,10 +127,9 @@ const archiveController = (Model: ArchiveModel): ArchiveController => ({
                     titles: {$push: '$title'}
                 }
             }],
-            (error: any, result: any) => {
-                if (error) {
-                    return errorMessage(res, 'Error aggregating months', 500);
-                } else res.json(result);
+            (error: any, result: any[]) => {
+                if (error) return errorMessage(res, 'Error aggregating months', 500);
+                res.json(result.map<ArchiveSummary>(({_id, ...data}) => ({...data, dateInfo: _id})));
             }
         );
     },

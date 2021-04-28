@@ -20,6 +20,16 @@ export interface ArchiveLike {
     kind: ArchiveKind,
 }
 
+export interface DateInfo {
+    month: number;
+    year: number;
+}
+
+export interface ArchiveSummary {
+    titles: string[];
+    dateInfo: DateInfo;
+}
+
 export type Author = UserLike;
 
 export enum ArchiveKind {
