@@ -134,7 +134,7 @@ const archiveController = (Model: ArchiveModel): ArchiveController => ({
         );
     },
     hasAuthorization: (req: Request, res: Response, next: NextFunction) => {
-        if (req.archive.author.id !== req.user?.id) {
+        if (req.archive.author.id.toString() !== req.user?.id?.toString()) {
             return res.status(403).send({
                 message: 'User is not authorized'
             });
