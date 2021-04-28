@@ -1,27 +1,35 @@
-import { AxiosResponse } from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
 import { AppDispatch } from "./index";
 import { SnackbarActions, SnackbarKind } from "./Snackbar";
 
 const emptyCallback = () => {
 };
 
-export const onHttpResponse = <T>(
-    response: AxiosResponse<T>,
+interface ApiError {
+    message: string
+}
+
+export const onHttpResponse = async <T>(
+    request: Promise<AxiosResponse<T>>,
     onSuccess: (item: T) => void,
-    onError: (response: AxiosResponse<T>) => void = emptyCallback) => {
-    const status = response.status;
-    if (status >= 200 && status < 400) onSuccess(response.data)
-    else onError(response);
+    onError: (response: AxiosError<ApiError>) => void = emptyCallback) => {
+    try {
+        const response = await request;
+        onSuccess(response.data)
+    } catch (err: any) {
+        if (axios.isAxiosError(err)) onError(err)
+        else console.log('Unknown error')
+    }
 };
 
-export const onSuccessOrSnackbar = <T>(
-    response: AxiosResponse<T>,
+export const onSuccessOrSnackbar = async <T>(
+    request: Promise<AxiosResponse<T>>,
     dispatch: AppDispatch,
     onSuccess: (item: T) => void) => {
-    onHttpResponse(response, onSuccess, (response) => {
-        const error = response.data as  any;
-        const status = `status: ${response.status}`;
-        const message = `${error.message || 'Unknown error'} ${status}`
+    await onHttpResponse(request, onSuccess, (error) => {
+        const response = error.response;
+        const status = `status: ${response?.status}`;
+        const message = `${response?.data?.message || 'Unknown error'} ${status}`
         dispatch(SnackbarActions.enqueueSnackbar({
             title: message,
             kind: SnackbarKind.Error,

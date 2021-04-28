@@ -65,51 +65,56 @@ export const ArchiveActions: IArchiveActions = {
     createArchive: (kind: ArchiveKind) => async (dispatch, getState) => {
         const state = getState();
         const edited = {...state.archives.kindToEditMap[kind]};
-        onSuccessOrSnackbar(
-            await ApiService.createArchive(edited),
+        await onSuccessOrSnackbar(
+            ApiService.createArchive(edited),
             dispatch,
             (created) => {
                 dispatch(RouterActions.replace(`/${created.kind}/${created.key}/edit`))
-            });
+            }
+        );
     },
     readArchive: (request: FetchArchiveRequest) => async (dispatch) => {
-        onSuccessOrSnackbar(
-            await ApiService.readArchive(request.kind, request.id),
+        await onSuccessOrSnackbar(
+            ApiService.readArchive(request.kind, request.id),
             dispatch,
             (fetched) => {
                 const archive = {...fetched, created: new Date(fetched.created)};
                 dispatch(ArchiveActions.addArchive({archive, view: request.view}));
-            });
+            }
+        );
     },
     updateArchive: (kind: ArchiveKind) => async (dispatch, getState) => {
         const state = getState();
         const edited = state.archives.kindToEditMap[kind];
-        onSuccessOrSnackbar(
-            await ApiService.updateArchive(edited),
+        await onSuccessOrSnackbar(
+            ApiService.updateArchive(edited),
             dispatch,
             (archive) => dispatch(SnackbarActions.enqueueSnackbar({
                     key: archive.key,
                     kind: SnackbarKind.Success,
                     title: 'Updated!'
                 })
-            ));
+            )
+        );
     },
     deleteArchive: (kind: ArchiveKind) => async (dispatch, getState) => {
         const state = getState();
         const edited = state.archives.kindToEditMap[kind];
-        onSuccessOrSnackbar(
-            await ApiService.updateArchive(edited),
+        await onSuccessOrSnackbar(
+            ApiService.updateArchive(edited),
             dispatch,
-            () => dispatch(RouterActions.pop()));
+            () => dispatch(RouterActions.pop())
+        );
     },
     fetchArchives: (kind: ArchiveKind) => async (dispatch) => {
-        onSuccessOrSnackbar(
-            await ApiService.fetchArchives(kind),
+        await onSuccessOrSnackbar(
+            ApiService.fetchArchives(kind),
             dispatch,
             (fetched) => {
                 const archives = fetched.map((raw) => ({...raw, created: new Date(raw.created)}));
                 dispatch(ArchiveActions.addArchives(kind, archives));
-            });
+            }
+        );
     },
     addArchive: (response: FetchArchiveResponse) => ({
         type: ADD_ARCHIVE,

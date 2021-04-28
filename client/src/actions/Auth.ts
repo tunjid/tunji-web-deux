@@ -1,6 +1,7 @@
 import { UserLike } from "../common/Models";
 import ApiService from "../rest/ApiService";
 import { AppThunk } from "./index";
+import { onSuccessOrSnackbar } from "./Common";
 
 export const SET_USER = 'SET_USER';
 
@@ -24,18 +25,18 @@ interface IAuthActions {
 
 export const AuthActions: IAuthActions = {
     fetchSession: () => async (dispatch) => {
-        const response = await ApiService.session();
-        const status = response.status;
-        if (status < 200 || status > 399) return;
-
-        dispatch(AuthActions.setUser(response.data));
+        await onSuccessOrSnackbar(
+            ApiService.session(),
+            dispatch,
+            (fetched) => dispatch(AuthActions.setUser(fetched))
+        );
     },
     signIn: (args: SignInArgs) => async (dispatch) => {
-        const response = await ApiService.signIn(args);
-        const status = response.status;
-        if (status < 200 || status > 399) return;
-
-        dispatch(AuthActions.setUser(response.data));
+        await onSuccessOrSnackbar(
+            ApiService.signIn(args),
+            dispatch,
+            (fetched) => dispatch(AuthActions.setUser(fetched))
+        );
     },
     setUser: (user: UserLike) => ({
         type: SET_USER,
