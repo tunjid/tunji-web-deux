@@ -11,17 +11,28 @@ import { ArchiveSearchOptions, ArchiveState } from "../../reducers/Archive";
 import { RouterState } from "connected-react-router";
 import { theme } from "../../styles/PersistentUi";
 import { ArchiveActions } from "../../actions/Archive";
+import Typography from "@material-ui/core/Typography";
+import { Divider } from "@material-ui/core";
+import _ from 'lodash';
 
-const useStyles = makeStyles(() => createStyles({
+const useStyles = makeStyles((theme) => createStyles({
         root: {
             display: 'flex',
             'flex-direction': 'row',
+            'justify-content': 'center'
         },
         cards: {
-            width: '80%',
+            width: 'auto',
             position: 'relative',
         },
-        gutter: {},
+        gutter: {
+            'margin-top': theme.spacing(4),
+            'margin-bottom': theme.spacing(4),
+        },
+        gutterDivider: {
+            'margin-top': theme.spacing(2),
+            'margin-bottom': theme.spacing(2),
+        },
     }
 ));
 
@@ -49,7 +60,9 @@ const selector = createSelector<StoreState, RouterState, ArchiveState, Props>(
 const Home = () => {
     const classes = useStyles();
     const dispatch = useDispatch();
-    const {kind, summaries}: Props = useSelector(selector, shallowEqual);
+    const {kind, summaries, archives}: Props = useSelector(selector, shallowEqual);
+
+    const categories = _.uniq(_.flatten(archives.map(archive => archive.categories)));
 
     useEffect(() => {
         dispatch(PersistentUiActions.modifyAppBar({
@@ -64,13 +77,13 @@ const Home = () => {
         dispatch(ArchiveActions.archiveSummaries(kind));
     }, [kind, dispatch]);
 
+    const categoryNodes = categories.map(category => {
+        return <p key={category}>{category}</p>
+    });
+
     const summaryNodes = summaries.map(({dateInfo, titles}) => {
         const date = new Date(dateInfo.year, dateInfo.month);
-        return (
-            <div key={JSON.stringify(dateInfo)}>
-                <p>{`${date.toDateString()} (${titles.length})`}</p>
-            </div>
-        )
+        return <p key={JSON.stringify(dateInfo)}>{`${date.toDateString()} (${titles.length})`}</p>
     });
 
     return (
@@ -79,6 +92,16 @@ const Home = () => {
                 <HomeCards/>
             </div>
             <div className={classes.gutter}>
+                <Typography  gutterBottom variant="h5">
+                    Categories
+                </Typography>
+                {categoryNodes}
+
+                <Divider className={classes.gutterDivider}/>
+
+                <Typography  gutterBottom variant="h5">
+                    Timeline
+                </Typography>
                 {summaryNodes}
             </div>
             <div/>
