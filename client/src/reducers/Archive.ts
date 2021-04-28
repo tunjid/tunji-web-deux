@@ -2,28 +2,32 @@ import { ADD_ARCHIVE, ADD_ARCHIVES, ArchiveAction, EDIT_ARCHIVE } from '../actio
 import _ from 'lodash';
 import { ArchiveKind, ArchiveLike, EmptyArchive } from "../common/Models";
 
+export interface ArchiveSearchOptions {
+    from?: Date
+    to?: Date
+}
+
 export interface ArchiveState {
     kindToEditMap: { [key in ArchiveKind]: ArchiveLike };
     kindToDetailMap: { [key in ArchiveKind]: ArchiveLike };
     kindToArchivesMap: { [key in ArchiveKind]: ArchiveLike[] };
+    searchOptionsMap: Record<ArchiveKind, ArchiveSearchOptions>;
+}
+
+export const DefaultSearchOptions: ArchiveSearchOptions = {}
+
+function reduceKind<T>(item: T): { [key in ArchiveKind]: T } {
+    return Object.values(ArchiveKind)
+        .reduce<{ [key in ArchiveKind]: T }>((reduced, key) => {
+        return {...reduced, [key]: Array.isArray(item) ? [...item] : {...item}};
+    }, {} as { [key in ArchiveKind]: T });
 }
 
 const archiveReducer = (state = {
-    kindToEditMap: {
-        [ArchiveKind.Articles]: EmptyArchive,
-        [ArchiveKind.Projects]: EmptyArchive,
-        [ArchiveKind.Talks]: EmptyArchive,
-    },
-    kindToDetailMap: {
-        [ArchiveKind.Articles]: EmptyArchive,
-        [ArchiveKind.Projects]: EmptyArchive,
-        [ArchiveKind.Talks]: EmptyArchive,
-    },
-    kindToArchivesMap: {
-        [ArchiveKind.Articles]: [] as ArchiveLike[],
-        [ArchiveKind.Projects]: [] as ArchiveLike[],
-        [ArchiveKind.Talks]: [] as ArchiveLike[],
-    },
+    kindToEditMap: reduceKind(EmptyArchive),
+    kindToDetailMap: reduceKind(EmptyArchive),
+    kindToArchivesMap: reduceKind([] as ArchiveLike[]),
+    searchOptionsMap: reduceKind(DefaultSearchOptions),
 }, action: ArchiveAction) => {
     switch (action.type) {
         case ADD_ARCHIVE: {

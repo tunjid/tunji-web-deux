@@ -6,12 +6,16 @@ import SignIn from "./components/auth/SignIn";
 import ArchiveDetail from "./components/archive/ArchiveDetail";
 import {ArchiveCreate, ArchiveEdit} from "./components/archive/ArchiveEdit";
 import {ArchiveKind} from "./common/Models";
+import ArchiveList from "./components/archive/ArchiveList";
 
 const routes = () => (
     <ScrollToTop>
         <Switch>
             <Route exact path='/' component={Home}/>
             <Route exact path='/sign-in' component={SignIn}/>
+            <Route exact path={`/${ArchiveKind.Articles}`} component={ArchiveList}/>
+            <Route exact path={`/${ArchiveKind.Projects}`} component={ArchiveList}/>
+            <Route exact path={`/${ArchiveKind.Talks}`} component={ArchiveList}/>
             <Route exact path={`/${ArchiveKind.Articles}/create`} component={ArchiveCreate}/>
             <Route exact path={`/${ArchiveKind.Projects}/create`} component={ArchiveCreate}/>
             <Route exact path={`/${ArchiveKind.Talks}/create`} component={ArchiveCreate}/>

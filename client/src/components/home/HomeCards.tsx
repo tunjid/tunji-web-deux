@@ -20,7 +20,7 @@ const useStyles = makeStyles(() => createStyles({
             justifyContent: 'space-around',
         },
         gridList: {
-            width: `80vw`,
+            width: `80%`,
             "height": 'auto',
             "overflowY": 'auto',
         },
