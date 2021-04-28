@@ -10,8 +10,8 @@ export default function (app: Express, model: ArchiveModel): void {
     const routeName = `${modelPath}s`;
     const paramName = `${modelPath}Id`;
 
-    app.route(`/api/${routeName}/archives`)
-        .get(archives.archives);
+    app.route(`/api/${routeName}/summary`)
+        .get(archives.summary);
 
     app.route(`/api/${routeName}/recentTags`)
         .get(archives.tagsOrCategories);

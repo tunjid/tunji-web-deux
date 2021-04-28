@@ -10,7 +10,7 @@ interface ArchiveController {
     remove: (res: Request, req: Response, next: NextFunction) => void;
     byId: (res: Request, req: Response, next: NextFunction, id: string) => void;
     find: (res: Request, req: Response, next: NextFunction) => void;
-    archives: (res: Request, req: Response, next: NextFunction) => void;
+    summary: (res: Request, req: Response, next: NextFunction) => void;
     tagsOrCategories: (res: Request, req: Response, next: NextFunction) => void;
     hasAuthorization: (res: Request, req: Response, next: NextFunction) => void;
 }
@@ -118,7 +118,7 @@ const archiveController = (Model: ArchiveModel): ArchiveController => ({
             });
         } else return errorMessage(res, 'Must pick a tag or category', 400);
     },
-    archives: (req, res) => {
+    summary: (req, res) => {
         Model.aggregate(
             [{
                 $group: {
