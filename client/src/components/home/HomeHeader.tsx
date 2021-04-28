@@ -1,6 +1,5 @@
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import * as React from 'react';
-import { useEffect } from 'react';
 import { theme } from "../../styles/PersistentUi";
 import { createSelector } from "reselect";
 import { StoreState } from "../../types";
@@ -12,7 +11,6 @@ import { HomeState, HomeTab } from "../../reducers/Home";
 import { HomeActions } from "../../actions/Home";
 import useEventListener from "../../hooks/UseEventListener";
 import { AuthState } from "../../reducers/Auth";
-import AddIcon from '@material-ui/icons/Add';
 
 const throttle = require('lodash/throttle');
 
@@ -33,7 +31,6 @@ const useStyles = makeStyles(() => createStyles({
 ));
 
 interface Props {
-    appBarTitle: string;
     appBarColor: string;
     hasAppBarShadow: boolean;
     onHomePage: boolean;
@@ -49,7 +46,6 @@ const selector = createSelector<StoreState, PersistentUiState, HomeState, AuthSt
     state => state.auth,
     state => !!state.router.location.pathname,
     (persistentUI, home, auth, onHomePage) => ({
-        appBarTitle: persistentUI.appBarTitle,
         appBarColor: persistentUI.appBarColor,
         hasAppBarShadow: persistentUI.hasAppBarShadow,
         tabsShow: persistentUI.tabsShow,
@@ -65,12 +61,10 @@ const HomeHeader = () => {
     const classes = useStyles();
     const dispatch = useDispatch();
     const {
-        appBarTitle,
         appBarColor,
         hasAppBarShadow,
         selectedTab,
         onHomePage,
-        isSignedIn,
         tabs,
     }: Props = useSelector(selector, shallowEqual);
 
@@ -88,7 +82,6 @@ const HomeHeader = () => {
         if (hasTopState === currentlyAtTop) return;
 
         dispatch(PersistentUiActions.modifyAppBar({
-            hasAppBarSpacer: false,
             hasAppBarShadow: !currentlyAtTop,
             appBarColor: currentlyAtTop ? transparent : theme.palette.secondary.main,
         }));
@@ -97,18 +90,6 @@ const HomeHeader = () => {
     const scrollListener = () => throttle(onScroll, 100)();
 
     useEventListener('scroll', scrollListener);
-
-    useEffect(() => {
-        dispatch(PersistentUiActions.modifyAppBar({
-            appBarTitle: 'Home',
-            fab: isSignedIn ? {
-                id: 'create',
-                text: 'Create',
-                icon: <AddIcon/>,
-                action: PersistentUiActions.menuRoute(`/${selectedTab.kind}/create`)
-            } : undefined
-        }));
-    }, [appBarTitle, isSignedIn, selectedTab.kind, dispatch])
 
     return (
         <div className={classes.root}>
