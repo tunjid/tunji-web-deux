@@ -101,7 +101,7 @@ export const ArchiveActions: IArchiveActions = {
         const state = getState();
         const edited = state.archives.kindToEditMap[kind];
         await onSuccessOrSnackbar(
-            ApiService.updateArchive(edited),
+            ApiService.deleteArchive(edited),
             dispatch,
             () => dispatch(RouterActions.pop())
         );
