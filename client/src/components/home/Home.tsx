@@ -11,14 +11,39 @@ import { createSelector } from "reselect";
 import { StoreState } from "../../types";
 import { PersistentUiState } from "../../reducers/PersistentUi";
 import { AuthState } from "../../reducers/Auth";
+import Fab from "@material-ui/core/Fab";
 
-const useStyles = makeStyles(() => createStyles({
-        root: {},
+const useStyles = makeStyles((theme) => createStyles({
+        root: {
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'flex-start',
+            alignItems: 'center',
+        },
+        header: {
+            width: '100vw',
+        },
         cards: {
             position: 'relative',
             top: '-10vh',
             'z-index': '1000',
         },
+        topFab: {
+            position: 'relative',
+            top: '-10vh',
+            margin: theme.spacing(1),
+        },
+        topFabHyperlink: {
+            color: '#000000',
+            'text-decoration': 'none',
+        },
+    bottomFab: {
+        margin: theme.spacing(1),
+    },
+    bottomFabHyperlink: {
+        color: '#FFFFFF',
+        'text-decoration': 'none',
+    },
     }
 ));
 
@@ -28,12 +53,11 @@ interface Props {
     selectedTab: HomeTab;
 }
 
-const selector = createSelector<StoreState, PersistentUiState, HomeState, AuthState, boolean, Props>(
+const selector = createSelector<StoreState, PersistentUiState, HomeState, AuthState, Props>(
     state => state.persistentUI,
     state => state.home,
     state => state.auth,
-    state => !!state.router.location.pathname,
-    (persistentUI, home, auth, onHomePage) => ({
+    (persistentUI, home, auth) => ({
         appBarTitle: persistentUI.appBarTitle,
         selectedTab: home.selectedTab,
         isSignedIn: !!auth.signedInUser,
@@ -67,9 +91,27 @@ const Home = () => {
     return (
         <div className={classes.root}>
             <HomeHeader/>
+            <Fab
+                className={classes.topFab}
+                variant="extended"
+                color="secondary"
+                size="small"
+                aria-label="add"
+            >
+                <a className={classes.topFabHyperlink} href={selectedTab.kind}>{`All ${selectedTab.kind}`}</a>
+            </Fab>
             <div className={classes.cards}>
                 <HomeCards/>
             </div>
+            <Fab
+                className={classes.bottomFab}
+                variant="extended"
+                color="primary"
+                size="small"
+                aria-label="add"
+            >
+                <a className={classes.bottomFabHyperlink} href={selectedTab.kind}>{`All ${selectedTab.kind}`}</a>
+            </Fab>
         </div>
     );
 }

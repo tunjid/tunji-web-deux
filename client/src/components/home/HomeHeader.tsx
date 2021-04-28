@@ -17,6 +17,7 @@ const throttle = require('lodash/throttle');
 const useStyles = makeStyles(() => createStyles({
         root: {
             background: 'linear-gradient(to bottom, #083042, #083042)',
+            width: '100vw',
             minHeight: '50vh',
         },
         tabs: {

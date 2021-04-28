@@ -15,7 +15,10 @@ export const theme = createMuiTheme({
         fontFamily: [
             '"Muli"',
             'sans-serif'
-        ].join(',')
+        ].join(','),
+        button: {
+            textTransform: "none"
+        },
     }
 });
 
