@@ -24,9 +24,9 @@ export interface FetchArchiveResponse {
     archive: ArchiveLike;
 }
 
-export interface ArchivePayload {
+export interface ArchivePayload<T> {
     kind: ArchiveKind;
-    archives: ArchiveLike[];
+    item: T;
 }
 
 export interface AddArchive {
@@ -41,7 +41,7 @@ export interface EditArchive {
 
 export interface AddArchives {
     type: typeof ADD_ARCHIVES;
-    payload: ArchivePayload;
+    payload: ArchivePayload<ArchiveLike[]>;
 }
 
 export interface SaveArchive {
@@ -51,7 +51,7 @@ export interface SaveArchive {
 
 export interface UpdateArchiveSummary {
     type: typeof UPDATE_ARCHIVE_SUMMARY;
-    summaries: ArchiveSummary[];
+    payload: ArchivePayload<ArchiveSummary[]>;
 }
 
 export type ArchiveAction = AddArchive | EditArchive | AddArchives | SaveArchive | UpdateArchiveSummary;
@@ -60,8 +60,8 @@ interface IArchiveActions {
     fetchArchives: (kind: ArchiveKind) => AppThunk
     editArchive: (edits: Partial<ArchiveLike>) => EditArchive
     addArchive: (response: FetchArchiveResponse) => AddArchive
-    addArchives: (kind: ArchiveKind, archives: ArchiveLike[]) => AddArchives
-    updateArchiveSummaries: (summaries: ArchiveSummary[]) => UpdateArchiveSummary
+    addArchives: (payload: ArchivePayload<ArchiveLike[]>) => AddArchives
+    updateArchiveSummaries: (payload: ArchivePayload<ArchiveSummary[]>) => UpdateArchiveSummary
     createArchive: (kind: ArchiveKind) => AppThunk
     readArchive: (request: FetchArchiveRequest) => AppThunk
     updateArchive: (kind: ArchiveKind) => AppThunk
@@ -120,7 +120,7 @@ export const ArchiveActions: IArchiveActions = {
             dispatch,
             (fetched) => {
                 const archives = fetched.map((raw) => ({...raw, created: new Date(raw.created)}));
-                dispatch(ArchiveActions.addArchives(kind, archives));
+                dispatch(ArchiveActions.addArchives({kind, item: archives}));
             }
         );
     },
@@ -128,7 +128,7 @@ export const ArchiveActions: IArchiveActions = {
         await onSuccessOrSnackbar(
             ApiService.archiveSummaries(kind),
             dispatch,
-            (fetched) => dispatch(ArchiveActions.updateArchiveSummaries(fetched))
+            (fetched) => dispatch(ArchiveActions.updateArchiveSummaries({kind, item: fetched}))
         );
     },
     addArchive: (response: FetchArchiveResponse) => ({
@@ -139,12 +139,12 @@ export const ArchiveActions: IArchiveActions = {
         type: EDIT_ARCHIVE,
         edits
     }),
-    addArchives: (kind: ArchiveKind, archives: ArchiveLike[]) => ({
+    addArchives: (payload: ArchivePayload<ArchiveLike[]>) => ({
         type: ADD_ARCHIVES,
-        payload: {kind, archives}
+        payload
     }),
-    updateArchiveSummaries: (summaries: ArchiveSummary[]) => ({
+    updateArchiveSummaries: (payload: ArchivePayload<ArchiveSummary[]>) => ({
         type: UPDATE_ARCHIVE_SUMMARY,
-        summaries
+        payload
     }),
 }

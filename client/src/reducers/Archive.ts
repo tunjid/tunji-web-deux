@@ -1,4 +1,4 @@
-import { ADD_ARCHIVE, ADD_ARCHIVES, ArchiveAction, EDIT_ARCHIVE } from '../actions/Archive';
+import { ADD_ARCHIVE, ADD_ARCHIVES, ArchiveAction, EDIT_ARCHIVE, UPDATE_ARCHIVE_SUMMARY } from '../actions/Archive';
 import _ from 'lodash';
 import { ArchiveKind, ArchiveLike, ArchiveSummary, EmptyArchive } from "../common/Models";
 
@@ -62,7 +62,7 @@ const archiveReducer = (state = {
             const existingArray = state.kindToArchivesMap[kind];
             const updatedArray = _.sortBy(
                 _.unionBy(
-                    action.payload.archives,
+                    action.payload.item,
                     existingArray,
                     (archive) => archive.key
                 ),
@@ -75,8 +75,18 @@ const archiveReducer = (state = {
                 kindToArchivesMap: updatedArchives,
             }
         }
+        case UPDATE_ARCHIVE_SUMMARY: {
+            const kind = action.payload.kind;
+            const updatedSummaries = {...state.summariesMap, [kind]: action.payload.item};
+            return {
+                ...state,
+                summariesMap: updatedSummaries,
+            }
+        }
+        default: {
+            return state;
+        }
     }
-    return state;
 }
 
 
