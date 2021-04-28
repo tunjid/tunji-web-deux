@@ -1,4 +1,4 @@
-import { ArchiveKind, ArchiveLike } from "../common/Models";
+import { ArchiveKind, ArchiveLike, ArchiveSummary } from "../common/Models";
 import ApiService from "../rest/ApiService";
 import { AppThunk } from "./index";
 import { onSuccessOrSnackbar } from "./Common";
@@ -9,6 +9,7 @@ export const ADD_ARCHIVE = 'ADD_ARCHIVE';
 export const EDIT_ARCHIVE = 'EDIT_ARCHIVE';
 export const ADD_ARCHIVES = 'ADD_ARCHIVES';
 export const SAVE_ARCHIVE = 'SAVE_ARCHIVE';
+export const UPDATE_ARCHIVE_SUMMARY = 'UPDATE_ARCHIVE_SUMMARY';
 
 export type ArchiveView = 'detail' | 'edit';
 
@@ -48,17 +49,24 @@ export interface SaveArchive {
     archive: ArchiveLike;
 }
 
-export type ArchiveAction = AddArchive | EditArchive | AddArchives | SaveArchive;
+export interface UpdateArchiveSummary {
+    type: typeof UPDATE_ARCHIVE_SUMMARY;
+    summaries: ArchiveSummary[];
+}
+
+export type ArchiveAction = AddArchive | EditArchive | AddArchives | SaveArchive | UpdateArchiveSummary;
 
 interface IArchiveActions {
     fetchArchives: (kind: ArchiveKind) => AppThunk
     editArchive: (edits: Partial<ArchiveLike>) => EditArchive
     addArchive: (response: FetchArchiveResponse) => AddArchive
     addArchives: (kind: ArchiveKind, archives: ArchiveLike[]) => AddArchives
+    updateArchiveSummaries: (summaries: ArchiveSummary[]) => UpdateArchiveSummary
     createArchive: (kind: ArchiveKind) => AppThunk
     readArchive: (request: FetchArchiveRequest) => AppThunk
     updateArchive: (kind: ArchiveKind) => AppThunk
     deleteArchive: (kind: ArchiveKind) => AppThunk
+    archiveSummaries: (kind: ArchiveKind) => AppThunk
 }
 
 export const ArchiveActions: IArchiveActions = {
@@ -116,6 +124,13 @@ export const ArchiveActions: IArchiveActions = {
             }
         );
     },
+    archiveSummaries: (kind: ArchiveKind) => async (dispatch) => {
+        await onSuccessOrSnackbar(
+            ApiService.archiveSummaries(kind),
+            dispatch,
+            (fetched) => dispatch(ArchiveActions.updateArchiveSummaries(fetched))
+        );
+    },
     addArchive: (response: FetchArchiveResponse) => ({
         type: ADD_ARCHIVE,
         payload: response
@@ -127,5 +142,9 @@ export const ArchiveActions: IArchiveActions = {
     addArchives: (kind: ArchiveKind, archives: ArchiveLike[]) => ({
         type: ADD_ARCHIVES,
         payload: {kind, archives}
+    }),
+    updateArchiveSummaries: (summaries: ArchiveSummary[]) => ({
+        type: UPDATE_ARCHIVE_SUMMARY,
+        summaries
     }),
 }
