@@ -16,13 +16,10 @@ import { archiveDate, readTime } from "../archive/Common";
 const useStyles = makeStyles(() => createStyles({
         root: {
             display: 'flex',
-            position: 'relative',
             justifyContent: 'space-around',
         },
         gridList: {
             width: `80%`,
-            "height": 'auto',
-            "overflowY": 'auto',
         },
     }
 ));

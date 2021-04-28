@@ -12,9 +12,9 @@ import { RouterState } from "connected-react-router";
 import { theme } from "../../styles/PersistentUi";
 
 const useStyles = makeStyles(() => createStyles({
-        root: {
-        },
+        root: {},
         cards: {
+            width: '80%',
             position: 'relative',
         },
         gutter: {},
