@@ -65,7 +65,7 @@ const CardBody = ({cardInfo}: Props) => {
     const classes = useStyles();
 
     return (
-        <a className={classes.root} href={`/${cardInfo.kind}/${cardInfo.id}`}>
+        <div className={classes.root}>
             <div className={classes.metadata}>
                 <ChipInput
                     name=''
@@ -100,7 +100,7 @@ const CardBody = ({cardInfo}: Props) => {
                     </Typography>
                 </div>
             </div>
-        </a>
+        </div>
     );
 }
 
