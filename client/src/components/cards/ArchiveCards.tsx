@@ -13,6 +13,7 @@ import { PersistentUiActions } from "../../actions/PersistentUi";
 import { useWidth } from "../../hooks/UseWidth";
 import { archiveDate, readTime } from "../archive/Common";
 import { ArchiveState } from "../../reducers/Archive";
+import _ from 'lodash';
 
 const useStyles = makeStyles(() => createStyles({
         root: {
@@ -26,12 +27,6 @@ const useStyles = makeStyles(() => createStyles({
     }
 ));
 
-interface ArchiveSearchOptions {
-    category?: string,
-    from?: Date
-    to?: Date
-}
-
 interface Props {
     kind: ArchiveKind,
     queryParams?: Record<string, string>,
@@ -42,18 +37,22 @@ interface State {
     archives: ArchiveLike[];
 }
 
-const selector = (kind: ArchiveKind, options: ArchiveSearchOptions = {}) => createSelector<StoreState, ArchiveState, State>(
+const selector = (kind: ArchiveKind, queryParams: Record<string, string> = {}) => createSelector<StoreState, ArchiveState, State>(
     state => state.archives,
-    (archiveState) => ({
-        currentKind: kind,
-        archives: archiveState.kindToArchivesMap[kind]
-    })
+    (archiveState) => {
+        const {category} = queryParams;
+        const archives = archiveState.kindToArchivesMap[kind];
+        return ({
+            currentKind: kind,
+            archives: category ? archives.filter(archive => archive.categories.indexOf(category) > -1) : archives
+        });
+    }
 );
 
-const ArchiveCards = ({kind}: Props) => {
+const ArchiveCards = ({kind, queryParams}: Props) => {
     const classes = useStyles();
     const dispatch = useDispatch();
-    const {currentKind, archives}: State = useSelector(selector(kind), shallowEqual);
+    const {currentKind, archives}: State = useSelector(selector(kind, queryParams), shallowEqual);
 
     const width = useWidth();
     const isxSmallScreen = /xs/.test(width);
