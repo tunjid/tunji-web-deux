@@ -128,7 +128,10 @@ export const ArchiveActions: IArchiveActions = {
         await onSuccessOrSnackbar(
             ApiService.archiveSummaries(kind),
             dispatch,
-            (fetched) => dispatch(ArchiveActions.updateArchiveSummaries({kind, item: fetched}))
+            (fetched) => dispatch(ArchiveActions.updateArchiveSummaries({kind, item: fetched.map(item => {
+                    // Mongo aggregation pipeline does not 0 index months.
+                    return {...item, dateInfo: {...item.dateInfo, month: item.dateInfo.month - 1}};
+                })}))
         );
     },
     addArchive: (response: FetchArchiveResponse) => ({

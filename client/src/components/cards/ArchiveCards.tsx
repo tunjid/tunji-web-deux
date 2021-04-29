@@ -13,7 +13,6 @@ import { PersistentUiActions } from "../../actions/PersistentUi";
 import { useWidth } from "../../hooks/UseWidth";
 import { archiveDate, readTime } from "../archive/Common";
 import { ArchiveState } from "../../reducers/Archive";
-import _ from 'lodash';
 
 const useStyles = makeStyles(() => createStyles({
         root: {
@@ -40,11 +39,18 @@ interface State {
 const selector = (kind: ArchiveKind, queryParams: Record<string, string> = {}) => createSelector<StoreState, ArchiveState, State>(
     state => state.archives,
     (archiveState) => {
-        const {category} = queryParams;
-        const archives = archiveState.kindToArchivesMap[kind];
+        const {category, dateInfo} = queryParams;
+        const splitDate = dateInfo ? dateInfo.split('-') : [];
+        const {year, month} = {year: parseInt(splitDate[0]), month: parseInt(splitDate[1])}
+        let archives = archiveState.kindToArchivesMap[kind];
+        archives = category ? archives.filter(archive => archive.categories.indexOf(category) > -1) : archives
+        archives = isNaN(year) && isNaN(month)
+            ? archives
+            : archives.filter(archive => archive.created.getFullYear() === year && archive.created.getMonth() === month);
+
         return ({
             currentKind: kind,
-            archives: category ? archives.filter(archive => archive.categories.indexOf(category) > -1) : archives
+            archives
         });
     }
 );
