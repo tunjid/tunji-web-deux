@@ -15,6 +15,10 @@ const useStyles = makeStyles((theme: Theme) =>
                 margin: theme.spacing(0.5),
             },
         },
+        chipAnchor: {
+            'color': 'inherit',
+            'text-decoration': 'none',
+        },
         input: {
             marginLeft: theme.spacing(2),
             flex: 1,
@@ -35,7 +39,7 @@ interface ChipEditor {
     onChipAdded: (chip: string) => void
 }
 
-export interface State {
+export interface Props {
     name: string,
     chips?: string[],
     type: ChipType,
@@ -43,7 +47,7 @@ export interface State {
     editor?: ChipEditor
 }
 
-export default function ChipInput({name, chips, type, editor}: State) {
+export default function ChipInput({name, chips, type, kind, editor}: Props) {
     const classes = useStyles();
 
     const [textValue, setText] = useState('');
@@ -79,13 +83,16 @@ export default function ChipInput({name, chips, type, editor}: State) {
     return (
         <div className={classes.root}>
             {name}
-            {(chips || []).map((text) => <Chip
-                key={text}
-                label={text}
-                color="secondary"
-                onDelete={deleteChip?.(text)}
-                style={{backgroundColor: chipColor}}
-                size="small"/>
+            {(chips || []).map((text) =>
+                <a className={classes.chipAnchor} href={`/${kind}/?category=${text}`}>
+                    <Chip
+                        key={text}
+                        label={text}
+                        color="secondary"
+                        onDelete={deleteChip?.(text)}
+                        style={{backgroundColor: chipColor}}
+                        size="small"/>
+                </a>
             )}
 
             {editField}

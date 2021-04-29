@@ -7,7 +7,7 @@ import { PersistentUiActions } from "../../actions/PersistentUi";
 import { createSelector } from "reselect";
 import { StoreState } from "../../types";
 import { ArchiveKind, ArchiveLike, ArchiveSummary } from "../../common/Models";
-import { ArchiveSearchOptions, ArchiveState } from "../../reducers/Archive";
+import { ArchiveState } from "../../reducers/Archive";
 import { RouterState } from "connected-react-router";
 import { theme } from "../../styles/PersistentUi";
 import { ArchiveActions } from "../../actions/Archive";
@@ -40,7 +40,7 @@ interface State {
     kind: ArchiveKind,
     archives: ArchiveLike[];
     summaries: ArchiveSummary[];
-    searchOptions: ArchiveSearchOptions;
+    queryParams: Record<string, string>;
 }
 
 const selector = createSelector<StoreState, RouterState, ArchiveState, State>(
@@ -52,7 +52,7 @@ const selector = createSelector<StoreState, RouterState, ArchiveState, State>(
             kind,
             summaries: archiveState.summariesMap[kind],
             archives: archiveState.kindToArchivesMap[kind],
-            searchOptions: archiveState.searchOptionsMap[kind],
+            queryParams: routerState.location.query,
         }
     }
 );

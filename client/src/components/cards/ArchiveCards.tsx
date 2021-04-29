@@ -1,7 +1,7 @@
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import * as React from 'react';
 import { useEffect } from 'react';
-import { createSelector, OutputSelector } from "reselect";
+import { createSelector } from "reselect";
 import { StoreState } from "../../types";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import ArchiveCard from "../cards/ArchiveCard";
@@ -26,8 +26,17 @@ const useStyles = makeStyles(() => createStyles({
     }
 ));
 
+interface ArchiveSearchOptions {
+    category?: string,
+    from?: Date
+    to?: Date
+}
+
+const DefaultSearchOptions: ArchiveSearchOptions = {}
+
 interface Props {
-    kind: ArchiveKind
+    kind: ArchiveKind,
+    searchOptions?: ArchiveSearchOptions,
 }
 
 interface State {
