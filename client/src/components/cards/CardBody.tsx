@@ -9,6 +9,8 @@ const useStyles = makeStyles((theme) => createStyles({
         padding: theme.spacing(1),
         display: 'flex',
         flexDirection: 'column',
+        'color': 'inherit',
+        'text-decoration': 'none',
     },
     metadata: {
         display: 'flex',
@@ -59,7 +61,7 @@ const CardBody = ({cardInfo}: Props) => {
     const classes = useStyles();
 
     return (
-        <div className={classes.root}>
+        <a className={classes.root} href={`/${cardInfo.kind}/${cardInfo.id}`}>
             <div className={classes.metadata}>
                 <div className={classes.chips}>
                     {cardInfo.categories.map((label) => <Chip
@@ -97,7 +99,7 @@ const CardBody = ({cardInfo}: Props) => {
                     </Typography>
                 </div>
             </div>
-        </div>
+        </a>
     );
 }
 

@@ -1,4 +1,4 @@
-import { UserLike } from "../../common/Models";
+import { ArchiveKind, UserLike } from "../../common/Models";
 
 export enum CardStyle {
     horizontal = "horizontal",
@@ -14,6 +14,7 @@ export interface CardInfo {
     spanCount: number;
     readTime: string;
     categories: string[];
+    kind: ArchiveKind,
     style: CardStyle;
     author: UserLike;
 }

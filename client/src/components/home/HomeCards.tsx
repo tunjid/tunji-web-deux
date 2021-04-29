@@ -68,6 +68,7 @@ const HomeCards = () => {
 
     const cardFromArchive: (archive: ArchiveLike, index: number) => CardInfo = (archive, index) => ({
         id: archive.key,
+        kind: archive.kind,
         title: archive.title,
         description: archive.description,
         author: archive.author,
