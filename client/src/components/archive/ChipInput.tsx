@@ -8,10 +8,9 @@ import { ArchiveKind } from "../../common/Models";
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         root: {
-            padding: '2px 4px',
             display: 'flex',
+            flexWrap: 'wrap',
             alignItems: 'center',
-            width: '90vw',
             '& > *': {
                 margin: theme.spacing(0.5),
             },

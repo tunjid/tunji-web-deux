@@ -2,6 +2,8 @@ import { createStyles, makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import { Avatar, Chip } from "@material-ui/core";
 import { CardInfo } from "./CardInfo";
+import ChipInput, { ChipType } from "../archive/ChipInput";
+import * as React from "react";
 
 const useStyles = makeStyles((theme) => createStyles({
     root: {
@@ -14,11 +16,13 @@ const useStyles = makeStyles((theme) => createStyles({
     },
     metadata: {
         display: 'flex',
+        flexWrap: 'nowrap',
+        flexDirection: 'row',
         'align-items': 'center',
         'justify-content': 'space-between',
         margin: theme.spacing(0.5),
     },
-    chips: {
+    avatarRow: {
         display: 'flex',
         flexWrap: 'wrap',
         'align-items': 'center',
@@ -63,15 +67,12 @@ const CardBody = ({cardInfo}: Props) => {
     return (
         <a className={classes.root} href={`/${cardInfo.kind}/${cardInfo.id}`}>
             <div className={classes.metadata}>
-                <div className={classes.chips}>
-                    {cardInfo.categories.map((label) => <Chip
-                        key={label}
-                        label={label}
-                        color="secondary"
-                        style={{backgroundColor: '#4282F1'}}
-                        size="small"/>
-                    )}
-                </div>
+                <ChipInput
+                    name=''
+                    type={ChipType.Category}
+                    kind={cardInfo.kind}
+                    chips={cardInfo.categories}
+                />
                 <div className={classes.date}>
                     <Typography gutterBottom variant="caption" component="p">
                         {cardInfo.date}
@@ -87,7 +88,7 @@ const CardBody = ({cardInfo}: Props) => {
                 </Typography>
             </div>
             <div className={classes.authorRow}>
-                <div className={classes.chips}>
+                <div className={classes.avatarRow}>
                     <Avatar className={classes.avatar} src={cardInfo.author.imageUrl}/>
                     <Typography variant="body1" color="textSecondary" component="p">
                         {cardInfo.author.fullName}
