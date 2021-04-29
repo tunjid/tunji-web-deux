@@ -4,6 +4,7 @@ import { Avatar } from "@material-ui/core";
 import { ArchiveCardInfo } from "./ArchiveCardInfo";
 import ChipInput, { ChipType } from "../archive/ChipInput";
 import * as React from "react";
+import { horizontalMargin, verticalMargin } from "../../styles/Common";
 
 const useStyles = makeStyles((theme) => createStyles({
     root: {
@@ -34,21 +35,17 @@ const useStyles = makeStyles((theme) => createStyles({
         display: 'flex',
     },
     description: {
-        'margin-left': theme.spacing(0.5),
-        'margin-right': theme.spacing(0.5),
+        ...horizontalMargin(theme.spacing(0.5)),
     },
     titleColumn: {
-        'margin-left': theme.spacing(0.5),
-        'margin-right': theme.spacing(0.5),
-        'margin-top': theme.spacing(1),
-        'margin-bottom': theme.spacing(1),
+        ...horizontalMargin(theme.spacing(0.5)),
+        ...verticalMargin(theme.spacing(0.5)),
     },
     authorRow: {
         display: 'flex',
         'align-items': 'center',
         'justify-content': 'space-between',
-        'margin-left': theme.spacing(0.5),
-        'margin-right': theme.spacing(0.5),
+        ...horizontalMargin(theme.spacing(0.5)),
         'margin-top': 'auto',
     },
     avatar: {

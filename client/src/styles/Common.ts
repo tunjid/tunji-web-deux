@@ -14,6 +14,11 @@ export const StylelessAnchor = {
     'text-decoration': 'none',
 }
 
+export const horizontalMargin = (size: number) => ({
+    'margin-left': size,
+    'margin-right': size,
+});
+
 export const verticalMargin = (size: number) => ({
     'margin-top': size,
     'margin-bottom': size,
