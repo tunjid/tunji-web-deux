@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { createSelector, OutputSelector } from "reselect";
 import { StoreState } from "../../types";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
-import AppCard from "./HomeCard";
+import AppCard from "../cards/AppCard";
 import { GridList, GridListTile } from "@material-ui/core";
 import { ArchiveKind, ArchiveLike } from "../../common/Models";
 import { CardInfo, CardStyle } from "../cards/CardInfo";
