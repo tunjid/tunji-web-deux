@@ -12,6 +12,7 @@ import { ArchiveActions } from "../../actions/Archive";
 import { PersistentUiActions } from "../../actions/PersistentUi";
 import { useWidth } from "../../hooks/UseWidth";
 import { archiveDate, readTime } from "../archive/Common";
+import { ArchiveState } from "../../reducers/Archive";
 
 const useStyles = makeStyles(() => createStyles({
         root: {
@@ -25,30 +26,27 @@ const useStyles = makeStyles(() => createStyles({
     }
 ));
 
+interface Props {
+    kind: ArchiveKind
+}
+
 interface State {
     currentKind: ArchiveKind,
     archives: ArchiveLike[];
 }
 
-const archivesFromState: (state: StoreState) => ArchiveLike[] = (state: StoreState) => {
-    const kind = state.home.selectedTab.kind;
-    return state.archives.kindToArchivesMap[kind];
-};
-
-const selector: OutputSelector<StoreState, State, (res: StoreState) => State> = createSelector(
-    state => state,
-    (state: StoreState) => {
-        return {
-            currentKind: state.home.selectedTab.kind,
-            archives: archivesFromState(state)
-        }
-    }
+const selector = (kind: ArchiveKind) => createSelector<StoreState, ArchiveState, State>(
+    state => state.archives,
+    (archiveState) => ({
+        currentKind: kind,
+        archives: archiveState.kindToArchivesMap[kind]
+    })
 );
 
-const ArchiveCards = () => {
+const ArchiveCards = ({kind}: Props) => {
     const classes = useStyles();
     const dispatch = useDispatch();
-    const {currentKind, archives}: State = useSelector(selector, shallowEqual);
+    const {currentKind, archives}: State = useSelector(selector(kind), shallowEqual);
 
     const width = useWidth();
     const isxSmallScreen = /xs/.test(width);

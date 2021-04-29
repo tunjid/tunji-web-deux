@@ -90,7 +90,7 @@ const Home = () => {
     return (
         <div className={classes.root}>
             <div className={classes.cards}>
-                <ArchiveCards/>
+                <ArchiveCards kind={kind}/>
             </div>
             <div className={classes.gutter}>
                 <Typography gutterBottom variant="h5">

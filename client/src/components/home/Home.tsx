@@ -101,7 +101,7 @@ const Home = () => {
                 <a className={classes.topFabHyperlink} href={selectedTab.kind}>{`All ${selectedTab.kind}`}</a>
             </Fab>
             <div className={classes.cards}>
-                <ArchiveCards/>
+                <ArchiveCards kind={selectedTab.kind}/>
             </div>
             <Fab
                 className={classes.bottomFab}
