@@ -2,7 +2,7 @@ import { createStyles, makeStyles } from '@material-ui/core/styles';
 import * as React from 'react';
 import { useEffect } from 'react';
 import HomeHeader from "./HomeHeader";
-import HomeCards from "./HomeCards";
+import ArchiveCards from "../cards/ArchiveCards";
 import { PersistentUiActions } from "../../actions/PersistentUi";
 import AddIcon from "@material-ui/icons/Add";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
@@ -101,7 +101,7 @@ const Home = () => {
                 <a className={classes.topFabHyperlink} href={selectedTab.kind}>{`All ${selectedTab.kind}`}</a>
             </Fab>
             <div className={classes.cards}>
-                <HomeCards/>
+                <ArchiveCards/>
             </div>
             <Fab
                 className={classes.bottomFab}

@@ -1,7 +1,7 @@
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import * as React from 'react';
 import { useEffect } from 'react';
-import HomeCards from "../home/HomeCards";
+import ArchiveCards from "../cards/ArchiveCards";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { PersistentUiActions } from "../../actions/PersistentUi";
 import { createSelector } from "reselect";
@@ -90,7 +90,7 @@ const Home = () => {
     return (
         <div className={classes.root}>
             <div className={classes.cards}>
-                <HomeCards/>
+                <ArchiveCards/>
             </div>
             <div className={classes.gutter}>
                 <Typography gutterBottom variant="h5">

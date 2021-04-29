@@ -4,10 +4,10 @@ import { useEffect } from 'react';
 import { createSelector, OutputSelector } from "reselect";
 import { StoreState } from "../../types";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
-import AppCard from "../cards/AppCard";
+import ArchiveCard from "../cards/ArchiveCard";
 import { GridList, GridListTile } from "@material-ui/core";
 import { ArchiveKind, ArchiveLike } from "../../common/Models";
-import { CardInfo, CardStyle } from "../cards/CardInfo";
+import { ArchiveCardInfo, CardStyle } from "./ArchiveCardInfo";
 import { ArchiveActions } from "../../actions/Archive";
 import { PersistentUiActions } from "../../actions/PersistentUi";
 import { useWidth } from "../../hooks/UseWidth";
@@ -45,7 +45,7 @@ const selector: OutputSelector<StoreState, Props, (res: StoreState) => Props> = 
     }
 );
 
-const HomeCards = () => {
+const ArchiveCards = () => {
     const classes = useStyles();
     const dispatch = useDispatch();
     const {currentKind, archives}: Props = useSelector(selector, shallowEqual);
@@ -66,7 +66,7 @@ const HomeCards = () => {
         else return index % 4 === 0 ? CardStyle.horizontal : CardStyle.vertical;
     }
 
-    const cardFromArchive: (archive: ArchiveLike, index: number) => CardInfo = (archive, index) => ({
+    const cardFromArchive: (archive: ArchiveLike, index: number) => ArchiveCardInfo = (archive, index) => ({
         id: archive.key,
         kind: archive.kind,
         title: archive.title,
@@ -97,7 +97,7 @@ const HomeCards = () => {
             >
                 {cards.map((card) => (
                     <GridListTile key={card.id} cols={card.spanCount || 2}>
-                        <AppCard kind={currentKind} cardInfo={card}/>
+                        <ArchiveCard kind={currentKind} cardInfo={card}/>
                     </GridListTile>
                 ))}
             </GridList>
@@ -105,4 +105,4 @@ const HomeCards = () => {
     );
 }
 
-export default HomeCards;
+export default ArchiveCards;

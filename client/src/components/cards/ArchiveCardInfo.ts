@@ -5,7 +5,7 @@ export enum CardStyle {
     vertical = "vertical",
 }
 
-export interface CardInfo {
+export interface ArchiveCardInfo {
     id: string;
     title: string;
     description: string;

@@ -1,10 +1,10 @@
 import { createStyles, makeStyles } from "@material-ui/core/styles";
-import { CardInfo, CardStyle } from "../cards/CardInfo";
+import { ArchiveCardInfo, CardStyle } from "./ArchiveCardInfo";
 import { ArchiveKind } from "../../common/Models";
 import React, { HTMLAttributes } from "react";
 import Card from "@material-ui/core/Card";
 import CardMedia from "@material-ui/core/CardMedia";
-import CardBody from "../cards/CardBody";
+import ArchiveCardBody from "./ArchiveCardBody";
 
 const useStyles = makeStyles(() => createStyles({
         root: {
@@ -46,10 +46,10 @@ const useStyles = makeStyles(() => createStyles({
 
 interface Props extends HTMLAttributes<any> {
     kind: ArchiveKind,
-    cardInfo: CardInfo
+    cardInfo: ArchiveCardInfo
 }
 
-export default function AppCard({kind, cardInfo}: Props) {
+export default function ArchiveCard({kind, cardInfo}: Props) {
     const classes = useStyles();
     const isHorizontal = cardInfo.style === CardStyle.horizontal;
     const link = `/${kind}/${cardInfo.id}`;
@@ -65,7 +65,7 @@ export default function AppCard({kind, cardInfo}: Props) {
                     />
                 </a>
                 <a className={classes.body} href={link}>
-                    <CardBody cardInfo={cardInfo}/>
+                    <ArchiveCardBody cardInfo={cardInfo}/>
                 </a>
             </Card>
         </div>

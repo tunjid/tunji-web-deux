@@ -1,7 +1,7 @@
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import { Avatar, Chip } from "@material-ui/core";
-import { CardInfo } from "./CardInfo";
+import { Avatar } from "@material-ui/core";
+import { ArchiveCardInfo } from "./ArchiveCardInfo";
 import ChipInput, { ChipType } from "../archive/ChipInput";
 import * as React from "react";
 
@@ -58,10 +58,10 @@ const useStyles = makeStyles((theme) => createStyles({
 }));
 
 interface Props {
-    cardInfo: CardInfo
+    cardInfo: ArchiveCardInfo
 }
 
-const CardBody = ({cardInfo}: Props) => {
+const ArchiveCardBody = ({cardInfo}: Props) => {
     const classes = useStyles();
 
     return (
@@ -104,4 +104,4 @@ const CardBody = ({cardInfo}: Props) => {
     );
 }
 
-export default CardBody;
+export default ArchiveCardBody;
