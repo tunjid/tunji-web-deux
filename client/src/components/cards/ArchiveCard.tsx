@@ -44,12 +44,12 @@ const useStyles = makeStyles(() => createStyles({
     }
 ));
 
-interface Props extends HTMLAttributes<any> {
+interface State extends HTMLAttributes<any> {
     kind: ArchiveKind,
     cardInfo: ArchiveCardInfo
 }
 
-export default function ArchiveCard({kind, cardInfo}: Props) {
+export default function ArchiveCard({kind, cardInfo}: State) {
     const classes = useStyles();
     const isHorizontal = cardInfo.style === CardStyle.horizontal;
     const link = `/${kind}/${cardInfo.id}`;

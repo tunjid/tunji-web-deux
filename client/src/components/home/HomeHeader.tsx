@@ -31,7 +31,7 @@ const useStyles = makeStyles(() => createStyles({
     }
 ));
 
-interface Props {
+interface State {
     appBarColor: string;
     hasAppBarShadow: boolean;
     onHomePage: boolean;
@@ -41,7 +41,7 @@ interface Props {
     tabs: HomeTab[];
 }
 
-const selector = createSelector<StoreState, PersistentUiState, HomeState, AuthState, boolean, Props>(
+const selector = createSelector<StoreState, PersistentUiState, HomeState, AuthState, boolean, State>(
     state => state.persistentUI,
     state => state.home,
     state => state.auth,
@@ -67,7 +67,7 @@ const HomeHeader = () => {
         selectedTab,
         onHomePage,
         tabs,
-    }: Props = useSelector(selector, shallowEqual);
+    }: State = useSelector(selector, shallowEqual);
 
     const onScroll = () => {
         const transparent = '#00000000'

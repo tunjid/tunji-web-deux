@@ -57,11 +57,11 @@ const useStyles = makeStyles((theme) => createStyles({
     },
 }));
 
-interface Props {
+interface State {
     cardInfo: ArchiveCardInfo
 }
 
-const ArchiveCardBody = ({cardInfo}: Props) => {
+const ArchiveCardBody = ({cardInfo}: State) => {
     const classes = useStyles();
 
     return (

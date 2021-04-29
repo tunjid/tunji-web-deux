@@ -35,13 +35,13 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     },
 }));
 
-interface Props {
+interface State {
     items: MenuRes[];
     hasOverflow: boolean;
     anchorEl?: HTMLElement,
 }
 
-const selector = createSelector<StoreState, PersistentUiState, Props>(
+const selector = createSelector<StoreState, PersistentUiState, State>(
     state => state.persistentUI,
     persistentUI => ({
         items: persistentUI.menuItems,
@@ -56,7 +56,7 @@ const AppBarIcons = () => {
     const {
         items,
         hasOverflow,
-    }: Props = useSelector(selector, shallowEqual);
+    }: State = useSelector(selector, shallowEqual);
 
     const width = useWidth();
     const isSmallScreen = /xs|sm/.test(width);

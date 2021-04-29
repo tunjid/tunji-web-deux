@@ -2,13 +2,13 @@ import {Location} from 'history';
 import {Component} from 'react'
 import {withRouter} from 'react-router-dom'
 
-interface Props {
+interface State {
     location: Location
 }
 
-class ScrollToTop extends Component<Props> {
-    componentDidUpdate(prevProps: Props) {
-        if (this.props.location.pathname !== prevProps.location.pathname) {
+class ScrollToTop extends Component<State> {
+    componentDidUpdate(prevState: State) {
+        if (this.props.location.pathname !== prevState.location.pathname) {
             window.scrollTo(0, 0);
         }
         else if (this.props.location.hash) {

@@ -62,14 +62,14 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     }
 }));
 
-interface Props {
+interface State {
     appBarTitle: string;
     appBarColor: string;
     hasAppBarShadow: boolean;
     signedInUser?: UserLike
 }
 
-const selector = createSelector<StoreState, PersistentUiState, Props>(
+const selector = createSelector<StoreState, PersistentUiState, State>(
     state => state.persistentUI,
     persistentUI => ({
         appBarTitle: persistentUI.appBarTitle,
@@ -85,7 +85,7 @@ const MainAppBar = () => {
         appBarTitle,
         appBarColor,
         hasAppBarShadow,
-    }: Props = useSelector(selector, shallowEqual);
+    }: State = useSelector(selector, shallowEqual);
 
     const appBarStyle = {backgroundColor: appBarColor, boxShadow: hasAppBarShadow ? undefined : 'none'};
 

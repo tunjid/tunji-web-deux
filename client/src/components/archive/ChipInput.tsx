@@ -35,7 +35,7 @@ interface ChipEditor {
     onChipAdded: (chip: string) => void
 }
 
-export interface Props {
+export interface State {
     name: string,
     chips?: string[],
     type: ChipType,
@@ -43,7 +43,7 @@ export interface Props {
     editor?: ChipEditor
 }
 
-export default function ChipInput({name, chips, type, editor}: Props) {
+export default function ChipInput({name, chips, type, editor}: State) {
     const classes = useStyles();
 
     const [textValue, setText] = useState('');

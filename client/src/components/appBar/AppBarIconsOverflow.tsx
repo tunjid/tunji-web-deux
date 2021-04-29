@@ -9,12 +9,12 @@ import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { MENU_ROUTE, PersistentUiActions } from "../../actions/PersistentUi";
 import { RouterActions } from "../../actions/Router";
 
-interface Props {
+interface State {
     items: MenuRes[];
     anchorEl?: HTMLElement,
 }
 
-const selector: OutputSelector<StoreState, Props, (res: PersistentUiState) => Props> = createSelector(
+const selector: OutputSelector<StoreState, State, (res: PersistentUiState) => State> = createSelector(
     state => state.persistentUI,
     persistentUI => ({
         items: persistentUI.menuItems.splice(2, persistentUI.menuItems.length),
@@ -27,7 +27,7 @@ const AppBarIconsOverflow = () => {
     const {
         items,
         anchorEl,
-    }: Props = useSelector(selector, shallowEqual);
+    }: State = useSelector(selector, shallowEqual);
 
     const onMenuItemClicked = (item: MenuRes) => {
         if (item.action.type === MENU_ROUTE) dispatch(RouterActions.push(item.action.route));

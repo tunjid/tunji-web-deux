@@ -25,7 +25,7 @@ const useStyles = makeStyles(() => createStyles({
     }
 ));
 
-interface Props {
+interface State {
     currentKind: ArchiveKind,
     archives: ArchiveLike[];
 }
@@ -35,7 +35,7 @@ const archivesFromState: (state: StoreState) => ArchiveLike[] = (state: StoreSta
     return state.archives.kindToArchivesMap[kind];
 };
 
-const selector: OutputSelector<StoreState, Props, (res: StoreState) => Props> = createSelector(
+const selector: OutputSelector<StoreState, State, (res: StoreState) => State> = createSelector(
     state => state,
     (state: StoreState) => {
         return {
@@ -48,7 +48,7 @@ const selector: OutputSelector<StoreState, Props, (res: StoreState) => Props> = 
 const ArchiveCards = () => {
     const classes = useStyles();
     const dispatch = useDispatch();
-    const {currentKind, archives}: Props = useSelector(selector, shallowEqual);
+    const {currentKind, archives}: State = useSelector(selector, shallowEqual);
 
     const width = useWidth();
     const isxSmallScreen = /xs/.test(width);

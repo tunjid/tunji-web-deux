@@ -47,13 +47,13 @@ const useStyles = makeStyles((theme) => createStyles({
     }
 ));
 
-interface Props {
+interface State {
     appBarTitle: string;
     isSignedIn: boolean;
     selectedTab: HomeTab;
 }
 
-const selector = createSelector<StoreState, PersistentUiState, HomeState, AuthState, Props>(
+const selector = createSelector<StoreState, PersistentUiState, HomeState, AuthState, State>(
     state => state.persistentUI,
     state => state.home,
     state => state.auth,
@@ -72,7 +72,7 @@ const Home = () => {
         appBarTitle,
         selectedTab,
         isSignedIn,
-    }: Props = useSelector(selector, shallowEqual);
+    }: State = useSelector(selector, shallowEqual);
 
 
     useEffect(() => {

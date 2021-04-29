@@ -36,14 +36,14 @@ const useStyles = makeStyles((theme) => createStyles({
     }
 ));
 
-interface Props {
+interface State {
     kind: ArchiveKind,
     archives: ArchiveLike[];
     summaries: ArchiveSummary[];
     searchOptions: ArchiveSearchOptions;
 }
 
-const selector = createSelector<StoreState, RouterState, ArchiveState, Props>(
+const selector = createSelector<StoreState, RouterState, ArchiveState, State>(
     state => state.router,
     state => state.archives,
     (routerState, archiveState) => {
@@ -60,7 +60,7 @@ const selector = createSelector<StoreState, RouterState, ArchiveState, Props>(
 const Home = () => {
     const classes = useStyles();
     const dispatch = useDispatch();
-    const {kind, summaries, archives}: Props = useSelector(selector, shallowEqual);
+    const {kind, summaries, archives}: State = useSelector(selector, shallowEqual);
 
     const categories = _.uniq(_.flatten(archives.map(archive => archive.categories)));
 

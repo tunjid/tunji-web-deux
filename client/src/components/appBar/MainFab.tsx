@@ -29,11 +29,11 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 
-interface Props {
+interface State {
     menu?: MenuRes
 }
 
-const selector = createSelector<StoreState, PersistentUiState, Props>(
+const selector = createSelector<StoreState, PersistentUiState, State>(
     state => state.persistentUI,
     persistentUI => ({
         menu: persistentUI.fab

@@ -1,5 +1,5 @@
 import { ArchiveKind, ArchiveLike, UserLike } from "../../common/Models";
-import { createSelector, OutputSelector } from "reselect";
+import { createSelector } from "reselect";
 import { StoreState } from "../../types";
 import { ArchiveState } from "../../reducers/Archive";
 import { ArchiveView } from "../../actions/Archive";
@@ -12,16 +12,14 @@ export const responsiveWidth = (theme: Theme) => ({
     width: '80vw',
 });
 
-export interface ArchiveProps {
+export interface ArchiveResourceProps {
     isSignedIn: boolean;
     kind: ArchiveKind;
     archiveId?: string;
     archive?: ArchiveLike;
 }
 
-export const archiveSelector:
-    (archiveViewType: ArchiveView) => OutputSelector<StoreState, ArchiveProps, (a: UserLike, b: string[], c: ArchiveState) => ArchiveProps>
-    = (archiveViewType) => createSelector(
+export const archiveSelector = (archiveViewType: ArchiveView) => createSelector<StoreState, UserLike | undefined, string[], ArchiveState, ArchiveResourceProps>(
     state => state.auth.signedInUser,
     state => state.router.location.pathname.split('/'),
     state => state.archives,
