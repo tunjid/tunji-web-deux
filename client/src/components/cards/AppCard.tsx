@@ -17,13 +17,13 @@ const useStyles = makeStyles(() => createStyles({
             display: 'flex',
             minHeight: '20vh',
         },
-        horizontalImage: {
-            width: '60vw',
-        },
         verticalRoot: {
             height: '100%',
             display: 'flex',
             flexDirection: 'column',
+        },
+        horizontalImage: {
+            width: '60vw',
         },
         verticalImage: {
             minHeight: 200,
