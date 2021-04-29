@@ -36,4 +36,7 @@ export const archiveSelector = (archiveViewType: ArchiveView) => createSelector<
 
 export const readTime = (text: String) => `${Math.ceil(text.trim().split(/\s+/).length / 250)} min read`
 
-export const archiveDate = (date: Date) => date.toDateString().split(' ').splice(1).join(' ')
+export const archiveDate = (date: Date) => date.toDateString().split(' ').splice(1).join(' ');
+
+export const ShortMonthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+

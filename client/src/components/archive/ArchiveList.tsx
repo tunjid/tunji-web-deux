@@ -15,6 +15,7 @@ import Typography from "@material-ui/core/Typography";
 import { Divider } from "@material-ui/core";
 import _ from 'lodash';
 import { StylelessAnchor, verticalMargin } from "../../styles/Common";
+import { archiveDate, ShortMonthNames } from "./Common";
 
 const useStyles = makeStyles((theme) => createStyles({
         root: {
@@ -88,11 +89,11 @@ const ArchiveList = () => {
         return <a className={classes.gutterLink} key={category} href={`/${kind}/?category=${category}`}>{category}</a>
     });
 
-    const summaryNodes = summaries.map(({dateInfo, titles}) => {
-        const date = new Date(dateInfo.year, dateInfo.month);
-        return <a className={classes.gutterLink}
-                  key={JSON.stringify(dateInfo)}>{`${date.toDateString()} (${titles.length})`}</a>
-    });
+    const summaryNodes = summaries.map(({dateInfo, titles}) =>
+        <a className={classes.gutterLink}
+           key={JSON.stringify(dateInfo)}>{`${ShortMonthNames[dateInfo.month]} ${dateInfo.year} (${titles.length})`}
+        </a>
+    );
 
     return (
         <div className={classes.root}>

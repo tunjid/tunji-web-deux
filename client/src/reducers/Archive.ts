@@ -68,7 +68,14 @@ const archiveReducer = (state = {
         }
         case UPDATE_ARCHIVE_SUMMARY: {
             const kind = action.payload.kind;
-            const updatedSummaries = {...state.summariesMap, [kind]: action.payload.item};
+            const updatedSummaries = {
+                ...state.summariesMap,
+                [kind]: _.sortBy(
+                    action.payload.item,
+                    (summary) => -summary.dateInfo.year,
+                    (summary) => -summary.dateInfo.month,
+                )
+            };
             return {
                 ...state,
                 summariesMap: updatedSummaries,
