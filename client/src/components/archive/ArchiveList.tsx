@@ -57,10 +57,10 @@ const selector = createSelector<StoreState, RouterState, ArchiveState, State>(
     }
 );
 
-const Home = () => {
+const ArchiveList = () => {
     const classes = useStyles();
     const dispatch = useDispatch();
-    const {kind, summaries, archives}: State = useSelector(selector, shallowEqual);
+    const {kind, summaries, archives, queryParams}: State = useSelector(selector, shallowEqual);
 
     const categories = _.uniq(_.flatten(archives.map(archive => archive.categories)));
 
@@ -90,7 +90,7 @@ const Home = () => {
     return (
         <div className={classes.root}>
             <div className={classes.cards}>
-                <ArchiveCards kind={kind}/>
+                <ArchiveCards kind={kind} queryParams={queryParams}/>
             </div>
             <div className={classes.gutter}>
                 <Typography gutterBottom variant="h5">
@@ -110,4 +110,4 @@ const Home = () => {
     );
 }
 
-export default Home;
+export default ArchiveList;

@@ -32,11 +32,9 @@ interface ArchiveSearchOptions {
     to?: Date
 }
 
-const DefaultSearchOptions: ArchiveSearchOptions = {}
-
 interface Props {
     kind: ArchiveKind,
-    searchOptions?: ArchiveSearchOptions,
+    queryParams?: Record<string, string>,
 }
 
 interface State {
@@ -44,7 +42,7 @@ interface State {
     archives: ArchiveLike[];
 }
 
-const selector = (kind: ArchiveKind) => createSelector<StoreState, ArchiveState, State>(
+const selector = (kind: ArchiveKind, options: ArchiveSearchOptions = {}) => createSelector<StoreState, ArchiveState, State>(
     state => state.archives,
     (archiveState) => ({
         currentKind: kind,
