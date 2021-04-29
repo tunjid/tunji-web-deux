@@ -1,7 +1,7 @@
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import * as React from 'react';
 import { useEffect } from 'react';
-import { Avatar, Chip, Theme } from "@material-ui/core";
+import { Avatar, Theme } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { PersistentUiActions } from "../../actions/PersistentUi";
@@ -13,6 +13,7 @@ import { archiveDate, archiveSelector, readTime } from "./Common";
 import { ArchiveActions } from "../../actions/Archive";
 import gfm from "remark-gfm";
 import EditIcon from '@material-ui/icons/Edit';
+import ChipInput, { ChipType } from "./ChipInput";
 
 const responsiveWidth = (theme: Theme) => ({
     [theme.breakpoints.up('md')]: {
@@ -51,14 +52,11 @@ const useStyles = makeStyles((theme) => createStyles({
             width: theme.spacing(3),
             height: theme.spacing(3),
         },
-        chips: {
+        chipContainer: {
             ...responsiveWidth(theme),
             display: 'flex',
             flexWrap: 'wrap',
             'align-items': 'center',
-            '& > *': {
-                margin: theme.spacing(0.5),
-            },
             'margin-top': theme.spacing(0.5),
             'margin-bottom': theme.spacing(0.5),
         },
@@ -83,7 +81,7 @@ const ArchiveDetail = () => {
     const {isSignedIn, kind, archiveId, archive} = useSelector(archiveSelector('detail'), shallowEqual);
 
     useEffect(() => {
-       if(archiveId) dispatch(ArchiveActions.readArchive({kind, view: "detail", id: archiveId}));
+        if (archiveId) dispatch(ArchiveActions.readArchive({kind, view: "detail", id: archiveId}));
     }, [archiveId, dispatch, kind]);
 
     useEffect(() => {
@@ -118,20 +116,18 @@ const ArchiveDetail = () => {
                 </Typography>
 
                 <Typography className={classes.infoChild} gutterBottom component="p" color="textSecondary">
-                    { archive ? `${archiveDate(archive?.created)} · ${readTime(archive?.body || '')}` : ''}
+                    {archive ? `${archiveDate(archive?.created)} · ${readTime(archive?.body || '')}` : ''}
                 </Typography>
             </div>
 
 
-            <div className={classes.chips}>
-                Categories:
-                {(archive?.categories || []).map((label) => <Chip
-                    key={label}
-                    label={label}
-                    color="secondary"
-                    style={{backgroundColor: '#4282F1'}}
-                    size="small"/>
-                )}
+            <div className={classes.chipContainer}>
+                <ChipInput
+                    name='Categories: '
+                    type={ChipType.Category}
+                    kind={archive?.kind}
+                    chips={archive?.categories}
+                />
             </div>
 
             <Card className={classes.cardBackground} elevation={1}>
@@ -158,15 +154,13 @@ const ArchiveDetail = () => {
                 }}
             />
 
-            <div className={classes.chips}>
-                Tags:
-                {(archive?.tags || []).map((label) => <Chip
-                    key={label}
-                    label={label}
-                    color="secondary"
-                    style={{backgroundColor: theme.palette.secondary.dark}}
-                    size="small"/>
-                )}
+            <div className={classes.chipContainer}>
+                <ChipInput
+                    name='Tags: '
+                    type={ChipType.Tag}
+                    kind={archive?.kind}
+                    chips={archive?.tags}
+                />
             </div>
         </div>
     );
