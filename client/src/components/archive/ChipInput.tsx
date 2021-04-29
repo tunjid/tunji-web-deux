@@ -3,6 +3,7 @@ import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import InputBase from '@material-ui/core/InputBase';
 import { Chip } from "@material-ui/core";
 import { theme } from "../../styles/PersistentUi";
+import { ArchiveKind } from "../../common/Models";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -10,7 +11,7 @@ const useStyles = makeStyles((theme: Theme) =>
             padding: '2px 4px',
             display: 'flex',
             alignItems: 'center',
-            width:'90vw',
+            width: '90vw',
             '& > *': {
                 margin: theme.spacing(0.5),
             },
@@ -25,30 +26,56 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 
-export interface Props {
-    name: string,
-    chips?: string[],
-    chipColor?: string,
+export enum ChipType {
+    Category = 'category',
+    Tag = 'Tag'
+}
+
+interface ChipEditor {
     onChipDeleted: (chip: string) => void
     onChipAdded: (chip: string) => void
 }
 
-export default function ChipInput({name, chips, chipColor, onChipDeleted, onChipAdded}: Props) {
+export interface Props {
+    name: string,
+    chips?: string[],
+    type: ChipType,
+    kind?: ArchiveKind,
+    editor?: ChipEditor
+}
+
+export default function ChipInput({name, chips, type, editor}: Props) {
     const classes = useStyles();
 
     const [textValue, setText] = useState('');
 
-    const deleteChip = (text: string) => () => {
-        onChipDeleted(text);
-    };
+    const chipColor = type === ChipType.Category ? '#4282F1' : theme.palette.secondary.dark;
+    const {onChipDeleted, onChipAdded} = editor || {}
 
-    const addChip: React.KeyboardEventHandler<HTMLInputElement | HTMLTextAreaElement> = (event) => {
-        if (event.key === 'Enter') {
-            event.preventDefault();
-            onChipAdded(textValue);
-            setText('');
+    const deleteChip = onChipDeleted
+        ? (text: string) => () => onChipDeleted(text)
+        : undefined;
+
+    const addChip: React.KeyboardEventHandler<HTMLInputElement | HTMLTextAreaElement> | undefined = onChipAdded
+        ? (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                onChipAdded(textValue);
+                setText('');
+            }
         }
-    };
+        : undefined;
+
+    const editField = editor
+        ? <InputBase
+            className={classes.input}
+            placeholder="Add item"
+            value={textValue}
+            onChange={(e) => setText(e.target.value)}
+            onKeyDown={addChip}
+            inputProps={{'aria-label': 'search google maps'}}
+        />
+        : undefined;
 
     return (
         <div className={classes.root}>
@@ -57,19 +84,12 @@ export default function ChipInput({name, chips, chipColor, onChipDeleted, onChip
                 key={text}
                 label={text}
                 color="secondary"
-                onDelete={deleteChip(text)}
-                style={{backgroundColor: chipColor || theme.palette.secondary.dark}}
+                onDelete={deleteChip?.(text)}
+                style={{backgroundColor: chipColor}}
                 size="small"/>
             )}
 
-            <InputBase
-                className={classes.input}
-                placeholder="Add item"
-                value={textValue}
-                onChange={(e) => setText(e.target.value)}
-                onKeyDown={addChip}
-                inputProps={{'aria-label': 'search google maps'}}
-            />
+            {editField}
         </div>
     );
 }

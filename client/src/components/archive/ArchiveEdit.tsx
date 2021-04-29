@@ -12,7 +12,7 @@ import { archiveSelector } from "./Common";
 import _ from 'lodash';
 import Card from "@material-ui/core/Card";
 import CardMedia from "@material-ui/core/CardMedia";
-import ChipInput from "./ChipInput";
+import ChipInput, { ChipType } from "./ChipInput";
 import SaveIcon from '@material-ui/icons/Save';
 import DeleteIcon from '@material-ui/icons/Delete';
 
@@ -185,17 +185,23 @@ const ArchiveCreateOrEdit = ({isCreating}: Props) => {
             <ChipInput
                 name='Categories: '
                 chips={archive?.categories}
-                chipColor={'#4282F1'}
-                onChipDeleted={(text) => onChipChanged({text, added: false, isTag: false})}
-                onChipAdded={(text) => onChipChanged({text, added: true, isTag: false})}
+                type={ChipType.Category}
+                kind={archive?.kind}
+                editor={{
+                    onChipDeleted: (text) => onChipChanged({text, added: false, isTag: false}),
+                    onChipAdded: (text) => onChipChanged({text, added: true, isTag: false})
+                }}
             />
 
             <ChipInput
                 name='Tags: '
                 chips={archive?.tags}
-                chipColor={theme.palette.secondary.dark}
-                onChipDeleted={(text) => onChipChanged({text, added: false, isTag: true})}
-                onChipAdded={(text) => onChipChanged({text, added: true, isTag: true})}
+                type={ChipType.Tag}
+                kind={archive?.kind}
+                editor={{
+                    onChipDeleted: (text) => onChipChanged({text, added: false, isTag: true}),
+                    onChipAdded: (text) => onChipChanged({text, added: true, isTag: true})
+                }}
             />
 
             <TextField
