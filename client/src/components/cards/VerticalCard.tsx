@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme) => createStyles({
         flexDirection: 'column',
     },
     media: {
-        minHeight: 140,
+        minHeight: 200,
     },
     info: {
         display: 'flex',

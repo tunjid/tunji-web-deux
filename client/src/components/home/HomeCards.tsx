@@ -20,7 +20,7 @@ const useStyles = makeStyles(() => createStyles({
         },
         gridList: {
             width: `80%`,
-            maxWidth: '1080px'
+            maxWidth: '1200px'
         },
     }
 ));

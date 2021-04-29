@@ -67,6 +67,7 @@ const Home = () => {
     useEffect(() => {
         dispatch(PersistentUiActions.modifyAppBar({
                 appBarColor: theme.palette.primary.main,
+                appBarTitle: kind,
                 hasAppBarSpacer: true,
                 menuItems: []
             }
@@ -92,14 +93,14 @@ const Home = () => {
                 <HomeCards/>
             </div>
             <div className={classes.gutter}>
-                <Typography  gutterBottom variant="h5">
+                <Typography gutterBottom variant="h5">
                     Categories
                 </Typography>
                 {categoryNodes}
 
                 <Divider className={classes.gutterDivider}/>
 
-                <Typography  gutterBottom variant="h5">
+                <Typography gutterBottom variant="h5">
                     Timeline
                 </Typography>
                 {summaryNodes}
