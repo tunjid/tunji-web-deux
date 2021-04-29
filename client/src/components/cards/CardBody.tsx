@@ -1,10 +1,15 @@
 import { createStyles, makeStyles } from '@material-ui/core/styles';
-import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import { Avatar, Chip } from "@material-ui/core";
 import { CardInfo } from "./CardInfo";
 
 const useStyles = makeStyles((theme) => createStyles({
+    root: {
+        height: '100%',
+        padding: theme.spacing(1),
+        display: 'flex',
+        flexDirection: 'column',
+    },
     metadata: {
         display: 'flex',
         'align-items': 'center',
@@ -38,8 +43,7 @@ const useStyles = makeStyles((theme) => createStyles({
         'justify-content': 'space-between',
         'margin-left': theme.spacing(0.5),
         'margin-right': theme.spacing(0.5),
-        'margin-top': theme.spacing(2),
-        'margin-bottom': theme.spacing(1),
+        'margin-top': 'auto',
     },
     avatar: {
         width: theme.spacing(3),
@@ -55,7 +59,7 @@ const CardBody = ({cardInfo}: Props) => {
     const classes = useStyles();
 
     return (
-        <CardContent>
+        <div className={classes.root}>
             <div className={classes.metadata}>
                 <div className={classes.chips}>
                     {cardInfo.categories.map((label) => <Chip
@@ -93,7 +97,7 @@ const CardBody = ({cardInfo}: Props) => {
                     </Typography>
                 </div>
             </div>
-        </CardContent>
+        </div>
     );
 }
 

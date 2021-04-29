@@ -11,7 +11,7 @@ export interface CardInfo {
     description: string;
     thumbnail: string;
     date?: string;
-    spanCount?: number;
+    spanCount: number;
     readTime: string;
     categories: string[];
     style: CardStyle;

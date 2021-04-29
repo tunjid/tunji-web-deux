@@ -1,6 +1,5 @@
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
-import CardActionArea from '@material-ui/core/CardActionArea';
 import CardMedia from '@material-ui/core/CardMedia';
 import { CardInfo } from "./CardInfo";
 import CardBody from "./CardBody";
@@ -8,10 +7,12 @@ import CardBody from "./CardBody";
 
 const useStyles = makeStyles((theme) => createStyles({
     root: {
+        height: '100%',
         display: 'flex',
+        flexDirection: 'column',
     },
     media: {
-        height: 140,
+        minHeight: 140,
     },
     info: {
         display: 'flex',
@@ -39,14 +40,12 @@ const VerticalCard = ({cardInfo, onClick}: Props) => {
 
     return (
         <Card className={classes.root} onClick={onClick}>
-            <CardActionArea>
-                <CardMedia
-                    className={classes.media}
-                    image={cardInfo.thumbnail}
-                    title={cardInfo.title}
-                />
-                <CardBody cardInfo={cardInfo}/>
-            </CardActionArea>
+            <CardMedia
+                className={classes.media}
+                image={cardInfo.thumbnail}
+                title={cardInfo.title}
+            />
+            <CardBody cardInfo={cardInfo}/>
         </Card>
     );
 }

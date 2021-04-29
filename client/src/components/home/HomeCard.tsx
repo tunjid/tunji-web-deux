@@ -5,15 +5,17 @@ import { CardInfo, CardStyle } from "../cards/CardInfo";
 import { ArchiveKind } from "../../common/Models";
 import { RouterActions } from "../../actions/Router";
 import { useDispatch } from "react-redux";
+import { HTMLAttributes } from "react";
 
 const useStyles = makeStyles(() => createStyles({
         root: {
-            margin: '8px',
+            padding: '8px',
+            height: '100%'
         },
     }
 ));
 
-interface Props {
+interface Props extends HTMLAttributes<any> {
     kind: ArchiveKind,
     cardInfo: CardInfo
 }
