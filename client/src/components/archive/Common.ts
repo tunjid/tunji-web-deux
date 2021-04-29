@@ -3,6 +3,14 @@ import { createSelector, OutputSelector } from "reselect";
 import { StoreState } from "../../types";
 import { ArchiveState } from "../../reducers/Archive";
 import { ArchiveView } from "../../actions/Archive";
+import { Theme } from "@material-ui/core";
+
+export const responsiveWidth = (theme: Theme) => ({
+    [theme.breakpoints.up('md')]: {
+        width: '50vw',
+    },
+    width: '80vw',
+});
 
 export interface ArchiveProps {
     isSignedIn: boolean;

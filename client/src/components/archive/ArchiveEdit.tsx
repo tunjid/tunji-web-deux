@@ -8,7 +8,7 @@ import { PersistentUiActions } from "../../actions/PersistentUi";
 import { theme } from "../../styles/PersistentUi";
 import MEDitor from '@uiw/react-md-editor';
 import { ArchiveActions } from "../../actions/Archive";
-import { archiveSelector } from "./Common";
+import { archiveSelector, responsiveWidth } from "./Common";
 import _ from 'lodash';
 import Card from "@material-ui/core/Card";
 import CardMedia from "@material-ui/core/CardMedia";
@@ -18,50 +18,46 @@ import DeleteIcon from '@material-ui/icons/Delete';
 
 const useStyles = makeStyles((theme) => createStyles({
         root: {
+            ...responsiveWidth(theme),
+            marginLeft: 'auto',
+            marginRight: 'auto',
             display: 'flex',
             'flex-direction': 'column',
             'align-items': 'center',
-            'justify-content': 'center',
         },
         date: {
             'margin-top': theme.spacing(4),
             'margin-bottom': theme.spacing(2),
         },
         title: {
-            width: '90vw',
+            ...responsiveWidth(theme),
             margin: theme.spacing(1),
-        },
-        titleSize: {
-            fontSize: 50
         },
         description: {
-            width: '90vw',
+            ...responsiveWidth(theme),
             margin: theme.spacing(1),
         },
-        descriptionSize: {
-            fontSize: 30
+        chips: {
+            alignSelf: 'flex-start',
+            display: 'flex',
+            'flex-direction': 'column',
         },
         headerImageSize: {
             fontSize: 14
         },
-        chips: {
-            display: 'flex',
-            flexWrap: 'wrap',
-            width: '90vw',
-        },
         cardBackground: {
+            ...responsiveWidth(theme),
             height: '50vh',
-            width: '90vw',
             margin: theme.spacing(0.5),
         },
         editor: {
-            width: '90vw',
+            ...responsiveWidth(theme),
             'max-width': '800',
             margin: theme.spacing(0.5),
         },
         cardImage: {
+            ...responsiveWidth(theme),
             height: '50vh',
-            width: '90vw',
         },
     }
 ));
@@ -161,10 +157,11 @@ const ArchiveCreateOrEdit = ({isCreating}: Props) => {
                 id="standard-basic"
                 size='medium'
                 label='Title'
+                multiline
+                rowsMax={Infinity}
                 value={archive?.title}
                 onChange={onTitleChanged}
                 InputProps={{
-                    classes: {input: classes.titleSize},
                     disableUnderline: true
                 }}
             />
@@ -177,32 +174,32 @@ const ArchiveCreateOrEdit = ({isCreating}: Props) => {
                 value={archive?.description}
                 onChange={onDescriptionChanged}
                 InputProps={{
-                    classes: {input: classes.descriptionSize},
                     disableUnderline: true
                 }}
             />
 
-            <ChipInput
-                name='Categories: '
-                chips={archive?.categories}
-                type={ChipType.Category}
-                kind={archive?.kind}
-                editor={{
-                    onChipDeleted: (text) => onChipChanged({text, added: false, isTag: false}),
-                    onChipAdded: (text) => onChipChanged({text, added: true, isTag: false})
-                }}
-            />
-
-            <ChipInput
-                name='Tags: '
-                chips={archive?.tags}
-                type={ChipType.Tag}
-                kind={archive?.kind}
-                editor={{
-                    onChipDeleted: (text) => onChipChanged({text, added: false, isTag: true}),
-                    onChipAdded: (text) => onChipChanged({text, added: true, isTag: true})
-                }}
-            />
+            <div className={classes.chips}>
+                <ChipInput
+                    name='Categories: '
+                    chips={archive?.categories}
+                    type={ChipType.Category}
+                    kind={archive?.kind}
+                    editor={{
+                        onChipDeleted: (text) => onChipChanged({text, added: false, isTag: false}),
+                        onChipAdded: (text) => onChipChanged({text, added: true, isTag: false})
+                    }}
+                />
+                <ChipInput
+                    name='Tags: '
+                    chips={archive?.tags}
+                    type={ChipType.Tag}
+                    kind={archive?.kind}
+                    editor={{
+                        onChipDeleted: (text) => onChipChanged({text, added: false, isTag: true}),
+                        onChipAdded: (text) => onChipChanged({text, added: true, isTag: true})
+                    }}
+                />
+            </div>
 
             <TextField
                 className={classes.description}

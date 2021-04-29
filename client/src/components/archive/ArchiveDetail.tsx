@@ -9,18 +9,11 @@ import { theme } from "../../styles/PersistentUi";
 import CardMedia from "@material-ui/core/CardMedia";
 import Card from "@material-ui/core/Card";
 import ReactMarkdown from 'react-markdown'
-import { archiveDate, archiveSelector, readTime } from "./Common";
+import { archiveDate, archiveSelector, readTime, responsiveWidth } from "./Common";
 import { ArchiveActions } from "../../actions/Archive";
 import gfm from "remark-gfm";
 import EditIcon from '@material-ui/icons/Edit';
 import ChipInput, { ChipType } from "./ChipInput";
-
-const responsiveWidth = (theme: Theme) => ({
-    [theme.breakpoints.up('md')]: {
-        width: '50vw',
-    },
-    width: '80vw',
-});
 
 const useStyles = makeStyles((theme) => createStyles({
         root: {
