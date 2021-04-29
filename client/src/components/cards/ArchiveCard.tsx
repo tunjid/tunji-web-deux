@@ -5,6 +5,7 @@ import React, { HTMLAttributes } from "react";
 import Card from "@material-ui/core/Card";
 import CardMedia from "@material-ui/core/CardMedia";
 import ArchiveCardBody from "./ArchiveCardBody";
+import { StylelessAnchor } from "../../styles/Common";
 
 const useStyles = makeStyles(() => createStyles({
         root: {
@@ -36,9 +37,8 @@ const useStyles = makeStyles(() => createStyles({
             minHeight: 200,
         },
         body: {
+            ...StylelessAnchor,
             height: '100%',
-            'color': 'inherit',
-            'text-decoration': 'none',
             minWidth: 200,
         },
     }

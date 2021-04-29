@@ -4,6 +4,7 @@ import InputBase from '@material-ui/core/InputBase';
 import { Chip } from "@material-ui/core";
 import { theme } from "../../styles/PersistentUi";
 import { ArchiveKind } from "../../common/Models";
+import { StylelessAnchor } from "../../styles/Common";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -16,8 +17,7 @@ const useStyles = makeStyles((theme: Theme) =>
             },
         },
         chipAnchor: {
-            'color': 'inherit',
-            'text-decoration': 'none',
+            ...StylelessAnchor,
         },
         input: {
             marginLeft: theme.spacing(2),

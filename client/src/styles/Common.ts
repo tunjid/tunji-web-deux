@@ -8,3 +8,13 @@ export const common = {
         marginBottom: '32px',
     }
 };
+
+export const StylelessAnchor = {
+    'color': 'inherit',
+    'text-decoration': 'none',
+}
+
+export const verticalMargin = (size: number) => ({
+    'margin-top': size,
+    'margin-bottom': size,
+});

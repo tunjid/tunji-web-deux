@@ -14,6 +14,7 @@ import { ArchiveActions } from "../../actions/Archive";
 import Typography from "@material-ui/core/Typography";
 import { Divider } from "@material-ui/core";
 import _ from 'lodash';
+import { StylelessAnchor, verticalMargin } from "../../styles/Common";
 
 const useStyles = makeStyles((theme) => createStyles({
         root: {
@@ -26,12 +27,17 @@ const useStyles = makeStyles((theme) => createStyles({
             position: 'relative',
         },
         gutter: {
-            'margin-top': theme.spacing(4),
-            'margin-bottom': theme.spacing(4),
+            display: 'flex',
+            flexDirection: 'column',
+            ...verticalMargin(theme.spacing(4)),
+        },
+        gutterLink: {
+            ...StylelessAnchor,
+            ...verticalMargin(theme.spacing(1)),
+            textDecoration: 'underline',
         },
         gutterDivider: {
-            'margin-top': theme.spacing(2),
-            'margin-bottom': theme.spacing(2),
+            ...verticalMargin(theme.spacing(2)),
         },
     }
 ));
@@ -79,12 +85,13 @@ const ArchiveList = () => {
     }, [kind, dispatch]);
 
     const categoryNodes = categories.map(category => {
-        return <p key={category}>{category}</p>
+        return <a className={classes.gutterLink} key={category} href={`/${kind}/?category=${category}`}>{category}</a>
     });
 
     const summaryNodes = summaries.map(({dateInfo, titles}) => {
         const date = new Date(dateInfo.year, dateInfo.month);
-        return <p key={JSON.stringify(dateInfo)}>{`${date.toDateString()} (${titles.length})`}</p>
+        return <a className={classes.gutterLink}
+                  key={JSON.stringify(dateInfo)}>{`${date.toDateString()} (${titles.length})`}</a>
     });
 
     return (
