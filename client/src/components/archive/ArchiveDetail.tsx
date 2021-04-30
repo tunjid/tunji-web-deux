@@ -9,12 +9,13 @@ import { theme } from "../../styles/PersistentUi";
 import CardMedia from "@material-ui/core/CardMedia";
 import Card from "@material-ui/core/Card";
 import ReactMarkdown from 'react-markdown'
-import { archiveDate, archiveSelector, readTime, responsiveWidth } from "./Common";
+import { archiveDate, archiveSelector, capitalizeFirst, readTime, responsiveWidth } from "./Common";
 import { ArchiveActions } from "../../actions/Archive";
 import gfm from "remark-gfm";
 import EditIcon from '@material-ui/icons/Edit';
 import ChipInput, { ChipType } from "./ChipInput";
 import { horizontalMargin, verticalMargin } from "../../styles/Common";
+import { Helmet } from "react-helmet";
 
 const useStyles = makeStyles((theme) => createStyles({
         root: {
@@ -77,7 +78,7 @@ const ArchiveDetail = () => {
 
     useEffect(() => {
         dispatch(PersistentUiActions.modifyAppBar({
-            appBarTitle: `${kind.charAt(0).toUpperCase() + kind.slice(1, kind.length - 1)} Detail`,
+            appBarTitle: `${capitalizeFirst(kind).slice(0, -1)} Detail`,
             hasAppBarShadow: true,
             hasAppBarSpacer: true,
             appBarColor: theme.palette.primary.dark,
@@ -92,6 +93,10 @@ const ArchiveDetail = () => {
 
     return (
         <div className={classes.root}>
+            <Helmet>
+                <title>{archive?.title}</title>
+                <meta name="description" content={archive?.description}/>
+            </Helmet>
             <Typography className={classes.title} gutterBottom variant="h3">
                 {archive?.title || ''}
             </Typography>

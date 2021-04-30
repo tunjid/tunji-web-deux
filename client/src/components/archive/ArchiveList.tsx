@@ -15,7 +15,8 @@ import Typography from "@material-ui/core/Typography";
 import { Divider } from "@material-ui/core";
 import _ from 'lodash';
 import { StylelessAnchor, verticalMargin } from "../../styles/Common";
-import { ShortMonthNames } from "./Common";
+import { capitalizeFirst, ShortMonthNames } from "./Common";
+import { Helmet } from "react-helmet";
 
 const useStyles = makeStyles((theme) => createStyles({
         root: {
@@ -69,12 +70,13 @@ const ArchiveList = () => {
     const dispatch = useDispatch();
     const {kind, summaries, archives, queryParams}: State = useSelector(selector, shallowEqual);
 
+    const title = `Tunji's ${capitalizeFirst(kind)}`;
     const categories = _.uniq(_.flatten(archives.map(archive => archive.categories)));
 
     useEffect(() => {
         dispatch(PersistentUiActions.modifyAppBar({
                 appBarColor: theme.palette.primary.main,
-                appBarTitle: kind,
+                appBarTitle: capitalizeFirst(kind),
                 hasAppBarSpacer: true,
                 menuItems: []
             }
@@ -105,6 +107,10 @@ const ArchiveList = () => {
 
     return (
         <div className={classes.root}>
+            <Helmet>
+                <title>{title}</title>
+                <meta name="description" content={title}/>
+            </Helmet>
             <div className={classes.cards}>
                 <ArchiveCards kind={kind} queryParams={queryParams}/>
             </div>

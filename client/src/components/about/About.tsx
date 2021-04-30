@@ -9,6 +9,7 @@ import { responsiveWidth } from "../archive/Common";
 import gfm from "remark-gfm";
 import { Avatar } from "@material-ui/core";
 import { verticalMargin } from "../../styles/Common";
+import { Helmet } from "react-helmet";
 
 const useStyles = makeStyles((theme) => createStyles({
         root: {
@@ -80,8 +81,11 @@ const About = () => {
 
     return (
         <div className={classes.root}>
+            <Helmet>
+                <title>About | Adetunji Dahunsi</title>
+                <meta name="description" content="About Tunji" />
+            </Helmet>
             <Avatar className={classes.avatar} src={'https://pbs.twimg.com/profile_images/1368773620386922502/XN6-njLn_400x400.jpg'}/>
-
             <ReactMarkdown
                 className={classes.body}
                 remarkPlugins={[gfm]}

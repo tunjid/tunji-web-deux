@@ -43,5 +43,7 @@ export const readTime = (text: String) => `${Math.ceil(text.trim().split(/\s+/).
 
 export const archiveDate = (date: Date) => date.toDateString().split(' ').splice(1).join(' ');
 
+export const capitalizeFirst = (string: string) => string.charAt(0).toUpperCase() + string.slice(1, string.length);
+
 export const ShortMonthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 

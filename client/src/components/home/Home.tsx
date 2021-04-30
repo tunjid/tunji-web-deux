@@ -13,6 +13,7 @@ import { PersistentUiState } from "../../reducers/PersistentUi";
 import { AuthState } from "../../reducers/Auth";
 import Fab from "@material-ui/core/Fab";
 import { RouterActions } from "../../actions/Router";
+import {Helmet} from "react-helmet";
 
 const useStyles = makeStyles((theme) => createStyles({
         root: {
@@ -78,7 +79,7 @@ const Home = () => {
 
     useEffect(() => {
         dispatch(PersistentUiActions.modifyAppBar({
-            appBarTitle: 'Home',
+            appBarTitle: 'Tunji\'s web corner',
             hasAppBarSpacer: false,
             menuItems: [{
                 id: 'about',
@@ -96,6 +97,10 @@ const Home = () => {
 
     return (
         <div className={classes.root}>
+            <Helmet>
+                <title>Adetunji Dahunsi</title>
+                <meta name="description" content="Tunji's web corner" />
+            </Helmet>
             <HomeHeader/>
             <Fab
                 className={classes.topFab}
