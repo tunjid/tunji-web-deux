@@ -102,11 +102,6 @@ const MainAppBar = () => {
                         classes.menuButton
                     )}>
                 </IconButton>
-                <Avatar
-                    onClick={() => dispatch(RouterActions.push('/'))}
-                    className={classes.avatar}
-                    src={'https://pbs.twimg.com/profile_images/1368773620386922502/XN6-njLn_400x400.jpg'}
-                />
                 <Typography
                     component="h1"
                     variant="h6"
