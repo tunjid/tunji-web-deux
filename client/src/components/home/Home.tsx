@@ -12,6 +12,7 @@ import { StoreState } from "../../types";
 import { PersistentUiState } from "../../reducers/PersistentUi";
 import { AuthState } from "../../reducers/Auth";
 import Fab from "@material-ui/core/Fab";
+import { RouterActions } from "../../actions/Router";
 
 const useStyles = makeStyles((theme) => createStyles({
         root: {
@@ -37,13 +38,13 @@ const useStyles = makeStyles((theme) => createStyles({
             color: '#000000',
             'text-decoration': 'none',
         },
-    bottomFab: {
-        margin: theme.spacing(1),
-    },
-    bottomFabHyperlink: {
-        color: '#FFFFFF',
-        'text-decoration': 'none',
-    },
+        bottomFab: {
+            margin: theme.spacing(1),
+        },
+        bottomFabHyperlink: {
+            color: '#FFFFFF',
+            'text-decoration': 'none',
+        },
     }
 ));
 
@@ -79,6 +80,11 @@ const Home = () => {
         dispatch(PersistentUiActions.modifyAppBar({
             appBarTitle: 'Home',
             hasAppBarSpacer: false,
+            menuItems: [{
+                id: 'about',
+                text: 'About',
+                action: RouterActions.push('/about'),
+            }],
             fab: isSignedIn ? {
                 id: 'create',
                 text: 'Create',
