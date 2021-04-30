@@ -1,4 +1,4 @@
-import { Avatar, Theme } from "@material-ui/core";
+import { Theme } from "@material-ui/core";
 import AppBar from "@material-ui/core/AppBar";
 import IconButton from "@material-ui/core/IconButton";
 import { createStyles, makeStyles } from '@material-ui/core/styles';
@@ -6,13 +6,14 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import classNames from "classnames";
 import * as React from "react";
-import { shallowEqual, useDispatch, useSelector } from "react-redux";
+import { shallowEqual, useSelector } from "react-redux";
 import AppBarIcons from "../../components/appBar/AppBarIcons";
 import { StoreState } from "../../types";
 import { PersistentUiState } from "../../reducers/PersistentUi";
 import { createSelector } from 'reselect'
 import { UserLike } from "../../common/Models";
-import { RouterActions } from "../../actions/Router";
+import CircleIcon from "@material-ui/icons/RadioButtonUnchecked";
+import { horizontalMargin, StylelessAnchor } from "../../styles/Common";
 
 const drawerWidth = 240;
 
@@ -56,9 +57,9 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     title: {
         flexGrow: 1,
     },
-    avatar: {
-        'margin-left': theme.spacing(2),
-        'margin-right': theme.spacing(2),
+    homeIcon: {
+        ...StylelessAnchor,
+        ...horizontalMargin(theme.spacing(2)),
     }
 }));
 
@@ -66,6 +67,7 @@ interface State {
     appBarTitle: string;
     appBarColor: string;
     hasAppBarShadow: boolean;
+    hasHomeIcon: boolean;
     signedInUser?: UserLike
 }
 
@@ -74,20 +76,22 @@ const selector = createSelector<StoreState, PersistentUiState, State>(
     persistentUI => ({
         appBarTitle: persistentUI.appBarTitle,
         appBarColor: persistentUI.appBarColor,
+        hasHomeIcon: persistentUI.hasHomeIcon,
         hasAppBarShadow: persistentUI.hasAppBarShadow,
     })
 );
 
 const MainAppBar = () => {
     const classes = useStyles();
-    const dispatch = useDispatch();
     const {
         appBarTitle,
         appBarColor,
+        hasHomeIcon,
         hasAppBarShadow,
     }: State = useSelector(selector, shallowEqual);
 
     const appBarStyle = {backgroundColor: appBarColor, boxShadow: hasAppBarShadow ? undefined : 'none'};
+    const backToHome = hasHomeIcon ? <a className={classes.homeIcon} href={'/'}><CircleIcon/></a> : undefined;
 
     return (
         <AppBar
@@ -102,6 +106,7 @@ const MainAppBar = () => {
                         classes.menuButton
                     )}>
                 </IconButton>
+                {backToHome}
                 <Typography
                     component="h1"
                     variant="h6"

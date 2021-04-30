@@ -7,7 +7,7 @@ export interface PersistentUiState {
     hasAppBarSpacer: boolean;
     hasAppBarShadow: boolean;
     hasAppBarHeader: boolean;
-    tabsShow: boolean;
+    hasHomeIcon: boolean;
     menuItems: MenuRes[];
     anchorEl?: HTMLElement;
     fab?: MenuRes;
@@ -19,7 +19,7 @@ export function persistentUiReducer(state = {
     hasAppBarSpacer: false,
     hasAppBarShadow: false,
     hasAppBarHeader: true,
-    tabsShow: true,
+    hasHomeIcon: false,
     menuItems: [] as MenuRes[],
 }, action: PersistentUiAction): PersistentUiState {
     switch (action.type) {

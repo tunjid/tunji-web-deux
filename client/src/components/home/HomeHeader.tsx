@@ -35,7 +35,6 @@ interface State {
     appBarColor: string;
     hasAppBarShadow: boolean;
     onHomePage: boolean;
-    tabsShow: boolean;
     isSignedIn: boolean;
     selectedTab: HomeTab;
     tabs: HomeTab[];
@@ -49,7 +48,6 @@ const selector = createSelector<StoreState, PersistentUiState, HomeState, AuthSt
     (persistentUI, home, auth, onHomePage) => ({
         appBarColor: persistentUI.appBarColor,
         hasAppBarShadow: persistentUI.hasAppBarShadow,
-        tabsShow: persistentUI.tabsShow,
         selectedTab: home.selectedTab,
         tabs: home.tabs,
         isSignedIn: !!auth.signedInUser,

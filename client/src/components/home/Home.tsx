@@ -5,6 +5,7 @@ import HomeHeader from "./HomeHeader";
 import ArchiveCards from "../cards/ArchiveCards";
 import { PersistentUiActions } from "../../actions/PersistentUi";
 import AddIcon from "@material-ui/icons/Add";
+import PhoneIcon from "@material-ui/icons/Phone";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { HomeState, HomeTab } from "../../reducers/Home";
 import { createSelector } from "reselect";
@@ -84,6 +85,7 @@ const Home = () => {
             menuItems: [{
                 id: 'about',
                 text: 'About',
+                icon: <PhoneIcon/>,
                 action: RouterActions.push('/about'),
             }],
             fab: isSignedIn ? {
