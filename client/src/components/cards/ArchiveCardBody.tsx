@@ -4,7 +4,7 @@ import { Avatar } from "@material-ui/core";
 import { ArchiveCardInfo } from "./ArchiveCardInfo";
 import ChipInput, { ChipType } from "../archive/ChipInput";
 import * as React from "react";
-import { horizontalMargin, verticalMargin } from "../../styles/Common";
+import { horizontalMargin, StylelessAnchor, verticalMargin } from "../../styles/Common";
 
 const useStyles = makeStyles((theme) => createStyles({
     root: {
@@ -38,6 +38,7 @@ const useStyles = makeStyles((theme) => createStyles({
         ...horizontalMargin(theme.spacing(0.5)),
     },
     titleColumn: {
+        ...StylelessAnchor,
         ...horizontalMargin(theme.spacing(0.5)),
         ...verticalMargin(theme.spacing(0.5)),
     },
@@ -76,14 +77,14 @@ const ArchiveCardBody = ({cardInfo}: State) => {
                     </Typography>
                 </div>
             </div>
-            <div className={classes.titleColumn}>
+            <a className={classes.titleColumn} href={`/${cardInfo.kind}/${cardInfo.id}`}>
                 <Typography gutterBottom variant="h5">
                     {cardInfo.title}
                 </Typography>
                 <Typography variant="body1" color="textPrimary">
                     {cardInfo.description}
                 </Typography>
-            </div>
+            </a>
             <div className={classes.authorRow}>
                 <div className={classes.avatarRow}>
                     <Avatar className={classes.avatar} src={cardInfo.author.imageUrl}/>

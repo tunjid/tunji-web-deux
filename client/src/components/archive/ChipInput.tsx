@@ -84,9 +84,12 @@ export default function ChipInput({name, chips, type, kind, editor}: Props) {
         <div className={classes.root}>
             {name}
             {(chips || []).map((text) =>
-                <a className={classes.chipAnchor} href={`/${kind}/?category=${text}`}>
+                <a
+                    className={classes.chipAnchor}
+                    href={`/${kind}/?category=${text}`}
+                    key={text}
+                >
                     <Chip
-                        key={text}
                         label={text}
                         color="secondary"
                         onDelete={deleteChip?.(text)}
