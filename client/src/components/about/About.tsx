@@ -46,7 +46,7 @@ Some things I've done:
 5. Dabbled in home automation.
 6. Tried my hand at a startup.
 
-This website is my latest attempt and learning the web frontend flavor du jour after the original Angular in the 2010's.
+This website is my latest attempt at learning the web frontend flavor du jour after the original Angular in the 2010's.
 
 # Socials
 
