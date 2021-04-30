@@ -78,6 +78,7 @@ const ArchiveCards = ({kind, queryParams}: Props) => {
 
     const cardFromArchive: (archive: ArchiveLike, index: number) => ArchiveCardInfo = (archive, index) => ({
         id: archive.key,
+        link: archive.link,
         kind: archive.kind,
         title: archive.title,
         description: archive.description,

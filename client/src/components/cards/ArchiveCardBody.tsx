@@ -77,7 +77,7 @@ const ArchiveCardBody = ({cardInfo}: State) => {
                     </Typography>
                 </div>
             </div>
-            <a className={classes.titleColumn} href={`/${cardInfo.kind}/${cardInfo.id}`}>
+            <a className={classes.titleColumn} href={`/${cardInfo.kind}/${cardInfo.link}`}>
                 <Typography gutterBottom variant="h5">
                     {cardInfo.title}
                 </Typography>

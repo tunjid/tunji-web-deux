@@ -55,7 +55,7 @@ export default function ArchiveCard({kind, cardInfo}: State) {
         <div className={classes.root}>
             <Card className={isHorizontal ? classes.horizontalRoot : classes.verticalRoot}>
                 <a className={isHorizontal ? classes.horizontalMedia : classes.verticalMedia}
-                   href={`/${kind}/${cardInfo.id}`}>
+                   href={`/${kind}/${cardInfo.link}`}>
                     <CardMedia
                         className={isHorizontal ? classes.horizontalImage : classes.verticalImage}
                         image={cardInfo.thumbnail}

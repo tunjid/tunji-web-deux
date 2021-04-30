@@ -7,6 +7,7 @@ export enum CardStyle {
 
 export interface ArchiveCardInfo {
     id: string;
+    link: string;
     title: string;
     description: string;
     thumbnail: string;

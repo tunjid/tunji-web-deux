@@ -8,6 +8,7 @@ export interface UserLike {
 
 export interface ArchiveLike {
     key: string,
+    link: string;
     title: string;
     body: string;
     description: string;
@@ -48,6 +49,7 @@ export const EmptyUser: UserLike = {
 
 export const EmptyArchive: ArchiveLike = {
     key: '',
+    link: '',
     title: '',
     body: '',
     description: '',

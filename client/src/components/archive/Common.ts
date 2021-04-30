@@ -25,10 +25,17 @@ export const archiveSelector = (archiveViewType: ArchiveView) => createSelector<
     state => state.archives,
     (signedInUser, pathSegments, archiveState) => {
         const kind = pathSegments[1] as ArchiveKind;
+        let archiveId: string;
+        if (archiveViewType === 'edit') {
+            archiveId = pathSegments[2];
+        } else {
+            const linkSplit = pathSegments[pathSegments.length - 1].split('-');
+            archiveId = linkSplit[linkSplit.length - 1];
+        }
         return {
             isSignedIn: signedInUser !== undefined,
             kind,
-            archiveId: pathSegments[2],
+            archiveId,
             archive: archiveViewType === 'detail' ? archiveState.kindToDetailMap[kind] : archiveState.kindToEditMap[kind]
         };
     }
