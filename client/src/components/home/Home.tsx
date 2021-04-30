@@ -80,7 +80,7 @@ const Home = () => {
 
     useEffect(() => {
         dispatch(PersistentUiActions.modifyAppBar({
-            appBarTitle: 'Tunji\'s web corner',
+            appBarTitle: 'Tunji\'s corner of the web',
             hasAppBarSpacer: false,
             hasHomeIcon: false,
             menuItems: [{
