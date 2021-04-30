@@ -29,7 +29,7 @@ export const ArchiveSchema = {
     created: {type: Date, default: Date.now}
 };
 
-export default function archiveModel<D extends Document, M extends Model<D>>(name: string, schema: Schema<D, M>): M {
+export default function archiveModel<D extends ArchiveDocument, M extends Model<D>>(name: string, schema: Schema<D, M>): M {
     schema.virtual('key')
         .get(function (this: D) {
             return this._id;
@@ -38,6 +38,11 @@ export default function archiveModel<D extends Document, M extends Model<D>>(nam
     schema.virtual('kind')
         .get(function (this: D) {
             return `${name.toLowerCase()}s`;
+        });
+
+    schema.virtual('link')
+        .get(function (this: D) {
+            return `${this.title.replace(/ /g, '-')}-${this._id}`.toLowerCase();
         });
 
     schema.set('toJSON', {
