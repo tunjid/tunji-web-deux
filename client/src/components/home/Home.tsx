@@ -82,6 +82,7 @@ const Home = () => {
         dispatch(PersistentUiActions.modifyAppBar({
             appBarTitle: 'Tunji\'s web corner',
             hasAppBarSpacer: false,
+            hasHomeIcon: false,
             menuItems: [{
                 id: 'about',
                 text: 'About',

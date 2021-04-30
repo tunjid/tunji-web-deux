@@ -78,6 +78,7 @@ const ArchiveList = () => {
                 appBarColor: theme.palette.primary.main,
                 appBarTitle: capitalizeFirst(kind),
                 hasAppBarSpacer: true,
+                hasHomeIcon: true,
                 menuItems: []
             }
         ));

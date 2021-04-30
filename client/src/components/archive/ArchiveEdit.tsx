@@ -133,6 +133,7 @@ const ArchiveCreateOrEdit = ({isCreating}: Props) => {
             action: ArchiveActions.deleteArchive(kind),
         });
         dispatch(PersistentUiActions.modifyAppBar({
+            hasHomeIcon: true,
             hasAppBarShadow: true,
             hasAppBarSpacer: true,
             appBarColor: theme.palette.primary.dark,

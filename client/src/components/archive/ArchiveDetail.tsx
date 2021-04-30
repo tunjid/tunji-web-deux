@@ -81,6 +81,7 @@ const ArchiveDetail = () => {
             appBarTitle: `${capitalizeFirst(kind).slice(0, -1)} Detail`,
             hasAppBarShadow: true,
             hasAppBarSpacer: true,
+            hasHomeIcon: true,
             appBarColor: theme.palette.primary.dark,
             fab: isSignedIn ? {
                 id: 'edit',

@@ -72,6 +72,7 @@ const About = () => {
     useEffect(() => {
         dispatch(PersistentUiActions.modifyAppBar({
             appBarTitle: 'About',
+            hasHomeIcon: true,
             hasAppBarShadow: true,
             hasAppBarSpacer: true,
             appBarColor: theme.palette.primary.dark,
