@@ -19,12 +19,12 @@ const routes = () => (
             <Route exact path={`/${ArchiveKind.Articles}/:archiveId/edit`} component={ArchiveEdit}/>
             <Route exact path={`/${ArchiveKind.Projects}/:archiveId/edit`} component={ArchiveEdit}/>
             <Route exact path={`/${ArchiveKind.Talks}/:archiveId/edit`} component={ArchiveEdit}/>
-            <Route exact path={`/${ArchiveKind.Articles}/:archiveId`} component={ArchiveDetail}/>
-            <Route exact path={`/${ArchiveKind.Projects}/:archiveId`} component={ArchiveDetail}/>
-            <Route exact path={`/${ArchiveKind.Talks}/:archiveId`} component={ArchiveDetail}/>
-            <Route path={`/${ArchiveKind.Articles}`} component={ArchiveList}/>
-            <Route path={`/${ArchiveKind.Projects}`} component={ArchiveList}/>
-            <Route path={`/${ArchiveKind.Talks}`} component={ArchiveList}/>
+            <Route exact path={`/${ArchiveKind.Articles}`} component={ArchiveList}/>
+            <Route exact path={`/${ArchiveKind.Projects}`} component={ArchiveList}/>
+            <Route exact path={`/${ArchiveKind.Talks}`} component={ArchiveList}/>
+            <Route path={`/${ArchiveKind.Articles}/:archiveId`} component={ArchiveDetail}/>
+            <Route path={`/${ArchiveKind.Projects}/:archiveId`} component={ArchiveDetail}/>
+            <Route path={`/${ArchiveKind.Talks}/:archiveId`} component={ArchiveDetail}/>
         </Switch>
     </ScrollToTop>
 )
