@@ -14,12 +14,13 @@ import { ArchiveActions } from "../../actions/Archive";
 import gfm from "remark-gfm";
 import EditIcon from '@material-ui/icons/Edit';
 import ChipInput, { ChipType } from "./ChipInput";
+import { horizontalMargin, verticalMargin } from "../../styles/Common";
 
 const useStyles = makeStyles((theme) => createStyles({
         root: {
             display: 'flex',
-            'flex-direction': 'column',
-            'align-items': 'center',
+            flexDirection: 'column',
+            alignItems: 'center',
         },
         title: {
             ...responsiveWidth(theme),
@@ -32,14 +33,12 @@ const useStyles = makeStyles((theme) => createStyles({
         },
         info: {
             ...responsiveWidth(theme),
+            ...verticalMargin(theme.spacing(1)),
             display: 'flex',
-            'align-items': 'flex-start',
-            'margin-top': theme.spacing(1),
-            'margin-bottom': theme.spacing(1),
+            alignItems: 'flex-start',
         },
         infoChild: {
-            'margin-left': theme.spacing(1),
-            'margin-right': theme.spacing(1),
+            ...horizontalMargin(theme.spacing(1)),
         },
         avatar: {
             width: theme.spacing(3),
@@ -47,11 +46,10 @@ const useStyles = makeStyles((theme) => createStyles({
         },
         chipContainer: {
             ...responsiveWidth(theme),
+            ...verticalMargin(theme.spacing(0.5)),
             display: 'flex',
             flexWrap: 'wrap',
-            'align-items': 'center',
-            'margin-top': theme.spacing(0.5),
-            'margin-bottom': theme.spacing(0.5),
+            alignItems: 'center',
         },
         cardBackground: {
             ...responsiveWidth(theme),
