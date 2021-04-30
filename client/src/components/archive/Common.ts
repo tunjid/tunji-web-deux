@@ -19,19 +19,17 @@ export interface ArchiveResourceProps {
     archive?: ArchiveLike;
 }
 
-export const archiveSelector = (archiveViewType: ArchiveView) => createSelector<StoreState, UserLike | undefined, string[], ArchiveState, ArchiveResourceProps>(
+export const archiveSelector = (archiveViewType: ArchiveView) => createSelector<StoreState, UserLike | undefined, string, ArchiveState, ArchiveResourceProps>(
     state => state.auth.signedInUser,
-    state => state.router.location.pathname.split('/'),
+    state => state.router.location.pathname,
     state => state.archives,
-    (signedInUser, pathSegments, archiveState) => {
+    (signedInUser, pathname, archiveState) => {
+        const pathSegments = pathname.split('/').filter(segment => segment !== 'edit');
+        const lastSegment = pathSegments[pathSegments.length - 1];
+        const linkSplit = lastSegment.split('-');
         const kind = pathSegments[1] as ArchiveKind;
-        let archiveId: string;
-        if (archiveViewType === 'edit') {
-            archiveId = pathSegments[2];
-        } else {
-            const linkSplit = pathSegments[pathSegments.length - 1].split('-');
-            archiveId = linkSplit[linkSplit.length - 1];
-        }
+        const archiveId = linkSplit[linkSplit.length - 1];
+
         return {
             isSignedIn: signedInUser !== undefined,
             kind,
