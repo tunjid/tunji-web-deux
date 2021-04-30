@@ -56,8 +56,18 @@ export interface UpdateArchiveSummary {
 
 export type ArchiveAction = AddArchive | EditArchive | AddArchives | SaveArchive | UpdateArchiveSummary;
 
+export type ArchivesQuery = Record<string, string>;
+
+export const yearAndMonthParam = (queryParams: ArchivesQuery) => {
+    const {dateInfo} = queryParams;
+    const splitDate = dateInfo ? dateInfo.split('-') : [];
+    const {year, month} = {year: parseInt(splitDate[0]), month: parseInt(splitDate[1])}
+
+    return isNaN(year) && isNaN(month) ? undefined : {year, month}
+}
+
 interface IArchiveActions {
-    fetchArchives: (kind: ArchiveKind) => AppThunk
+    fetchArchives: (payload: ArchivePayload<ArchivesQuery>) => AppThunk
     editArchive: (edits: Partial<ArchiveLike>) => EditArchive
     addArchive: (response: FetchArchiveResponse) => AddArchive
     addArchives: (payload: ArchivePayload<ArchiveLike[]>) => AddArchives
@@ -114,13 +124,13 @@ export const ArchiveActions: IArchiveActions = {
             () => dispatch(RouterActions.pop())
         );
     },
-    fetchArchives: (kind: ArchiveKind) => async (dispatch) => {
+    fetchArchives: (payload: ArchivePayload<ArchivesQuery>) => async (dispatch) => {
         await onSuccessOrSnackbar(
-            ApiService.fetchArchives(kind),
+            ApiService.fetchArchives(payload),
             dispatch,
             (fetched) => {
                 const archives = fetched.map((raw) => ({...raw, created: new Date(raw.created)}));
-                dispatch(ArchiveActions.addArchives({kind, item: archives}));
+                dispatch(ArchiveActions.addArchives({kind: payload.kind, item: archives}));
             }
         );
     },
