@@ -1,7 +1,7 @@
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import { ArchiveCardInfo, CardStyle } from "./ArchiveCardInfo";
 import { ArchiveKind } from "../../common/Models";
-import React, { HTMLAttributes } from "react";
+import React from "react";
 import Card from "@material-ui/core/Card";
 import CardMedia from "@material-ui/core/CardMedia";
 import ArchiveCardBody from "./ArchiveCardBody";
@@ -12,6 +12,7 @@ const useStyles = makeStyles(() => createStyles({
             height: '100%'
         },
         horizontalRoot: {
+            height: '100%',
             display: 'flex',
             minHeight: '20vh',
         },
@@ -31,9 +32,10 @@ const useStyles = makeStyles(() => createStyles({
             width: '60vw',
             maxWidth: '100%',
             height: '100%',
+            minHeight: 240,
         },
         verticalImage: {
-            minHeight: 200,
+            minHeight: 220,
         },
         body: {
             height: '100%',
@@ -42,7 +44,7 @@ const useStyles = makeStyles(() => createStyles({
     }
 ));
 
-interface State extends HTMLAttributes<any> {
+interface State {
     kind: ArchiveKind,
     cardInfo: ArchiveCardInfo
 }
