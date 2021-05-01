@@ -1,7 +1,7 @@
 import { UserLike } from "../common/Models";
 import ApiService from "../rest/ApiService";
 import { AppThunk } from "./index";
-import { onSuccessOrSnackbar } from "./Common";
+import { onHttpResponse, onSuccessOrSnackbar } from "./Common";
 
 export const SET_USER = 'SET_USER';
 
@@ -25,9 +25,8 @@ interface IAuthActions {
 
 export const AuthActions: IAuthActions = {
     fetchSession: () => async (dispatch) => {
-        await onSuccessOrSnackbar(
+        await onHttpResponse(
             ApiService.session(),
-            dispatch,
             (fetched) => dispatch(AuthActions.setUser(fetched))
         );
     },
