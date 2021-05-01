@@ -55,7 +55,14 @@ const App: () => Express = () => {
     });
 
     // Session and passport initialization
-    app.use(helmet());
+    app.use(helmet({
+        contentSecurityPolicy: {
+            directives: {
+                ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+                'img-src': ['\'self\'', 'https:']
+            },
+        }
+    }));
     app.use(session);
     app.use(passport.initialize());
     app.use(passport.session());
@@ -75,7 +82,10 @@ const App: () => Express = () => {
 
     app.all(
         '/*',
-        (req: Request, res: Response) => res.sendFile(path.join(__dirname, '../..', 'client/build/index.html'))
+        (req: Request, res: Response) => {
+            const indexPath = path.join(__dirname, '../../../', 'build', 'client', 'index.html');
+            res.sendFile(indexPath);
+        }
     );
 
 // catch 404 and forward to error handler
