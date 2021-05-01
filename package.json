@@ -1,6 +1,6 @@
 {
   "name": "tunji-web-deux-server",
-  "version": "1.0.0",
+  "version": "1.0.0-alpha01",
   "private": true,
   "scripts": {
     "build-client": "cd client; yarn install; npm run build; cd ..;",
@@ -45,6 +45,7 @@
     "nodemailer": "6.5.0",
     "passport": "^0.4.1",
     "passport-local": "^1.0.0",
+    "pm2": "^4.5.6",
     "serve-favicon": "^2.5.0"
   },
   "devDependencies": {
