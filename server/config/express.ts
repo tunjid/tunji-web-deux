@@ -21,7 +21,7 @@ import { Article } from '../models/ArticleSchema';
 import { Project } from '../models/ProjectSchema';
 import { Talk } from '../models/TalkSchema';
 
-const App : () => Express = () => {
+const App: () => Express = () => {
     // Initialize Express app
     const app: Express = ExpressApp();
 
@@ -39,17 +39,9 @@ const App : () => Express = () => {
     app.use('/', ExpressApp.static(path.join(__dirname, '../../client')));
 
     app.use(cors({
-        origin: (origin, callback) => {
-            // allow requests with no origin
-            // (like mobile apps or curl requests)
-            if(!origin) return callback(null, true);
-            if(config.corsAllowedOrigins.indexOf(origin) === -1){
-                const msg = 'The CORS policy for this site does not ' +
-                    'allow access from the specified Origin.';
-                return callback(new Error(msg), false);
-            }
-            return callback(null, true);
-        }
+        credentials: true,
+        preflightContinue: true,
+        origin: (origin, callback) => callback(null, config.corsAllowedOrigins),
     }));
 
     if (config.serverEnvironment === 'production') app.use(compress());
