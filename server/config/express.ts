@@ -2,6 +2,7 @@ import ExpressApp, { Express, NextFunction, Request, Response } from 'express';
 import bodyParser from 'body-parser';
 import compress from 'compression';
 import cookieParser from 'cookie-parser';
+import cors from 'cors';
 import morgan from 'morgan';
 import passport from 'passport';
 import path from 'path';
@@ -36,6 +37,8 @@ const App : () => Express = () => {
 
     // Set the static files location
     app.use('/', ExpressApp.static(path.join(__dirname, '../../client')));
+
+    app.use(cors);
 
     if (config.serverEnvironment === 'production') app.use(compress());
     else app.use(morgan('dev'));
