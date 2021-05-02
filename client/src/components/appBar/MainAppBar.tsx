@@ -14,6 +14,7 @@ import { createSelector } from 'reselect'
 import { UserLike } from "../../common/Models";
 import HomeIcon from "@material-ui/icons/Home";
 import { horizontalMargin, StylelessAnchor } from "../../styles/Common";
+import { Link } from "react-router-dom";
 
 const drawerWidth = 240;
 
@@ -91,7 +92,7 @@ const MainAppBar = () => {
     }: State = useSelector(selector, shallowEqual);
 
     const appBarStyle = {backgroundColor: appBarColor, boxShadow: hasAppBarShadow ? undefined : 'none'};
-    const backToHome = hasHomeIcon ? <a className={classes.homeIcon} href={'/'}><HomeIcon/></a> : undefined;
+    const backToHome = hasHomeIcon ? <Link className={classes.homeIcon} to={'/'}><HomeIcon/></Link> : undefined;
 
     return (
         <AppBar

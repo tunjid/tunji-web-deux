@@ -8,8 +8,12 @@ import ReactMarkdown from 'react-markdown'
 import { responsiveWidth } from "../archive/Common";
 import gfm from "remark-gfm";
 import { Avatar } from "@material-ui/core";
-import { verticalMargin } from "../../styles/Common";
+import { horizontalMargin, StylelessAnchor, verticalMargin } from "../../styles/Common";
 import { Helmet } from "react-helmet";
+import EmailIcon from '@material-ui/icons/Email';
+import TwitterIcon from '@material-ui/icons/Twitter';
+import GitHubIcon from '@material-ui/icons/GitHub';
+import { MarkdownComponents } from "../../common/Markdown";
 
 const useStyles = makeStyles((theme) => createStyles({
         root: {
@@ -25,6 +29,16 @@ const useStyles = makeStyles((theme) => createStyles({
             width: '200px',
             height: '200px',
         },
+        socials: {
+            ...responsiveWidth(theme),
+            '& > *': {
+                ...horizontalMargin(theme.spacing(1)),
+            },
+            display: 'flex'
+        },
+        socialIcons: {
+            ...StylelessAnchor
+        }
     }
 ));
 
@@ -43,14 +57,11 @@ Some things I've done:
 3. Haggled with product managers on pushing delivery of a feature in the short term to better scale in the long term.
 4. Worked with low level apis for live video streaming, and made them consumable them in a high level API.
 5. Worked across the full stack from the backend to both web and mobile frontend clients.
-5. Dabbled in home automation.
-6. Tried my hand at a startup.
+6. Performed manufacturing research and a little embedded programming.
+7. Dabbled in home automation.
+8. Tried my hand at a startup.
 
 This website is my latest attempt at learning the web frontend flavor du jour after the original Angular in the 2010's.
-
-# Socials
-
-I retweet a lot of football related things [here](https://twitter.com/Tunji_D).
 
 # People I really cannot thank enough:
 
@@ -60,7 +71,9 @@ I retweet a lot of football related things [here](https://twitter.com/Tunji_D).
 * Alex Grabski
 * Adam McNeilly
 * Lola Odelola
+* Izzy Oji
 * Ron Fessler
+* Micheal Pardon
 * Matt Chowning
 * Ben Yesley
 `
@@ -72,10 +85,11 @@ const About = () => {
     useEffect(() => {
         dispatch(PersistentUiActions.modifyAppBar({
             appBarTitle: 'About',
+            appBarColor: theme.palette.primary.dark,
             hasHomeIcon: true,
             hasAppBarShadow: true,
             hasAppBarSpacer: true,
-            appBarColor: theme.palette.primary.dark,
+            menuItems: [],
             fab: undefined
         }));
     }, [dispatch]);
@@ -84,24 +98,40 @@ const About = () => {
         <div className={classes.root}>
             <Helmet>
                 <title>About | Adetunji Dahunsi</title>
-                <meta name="description" content="About Tunji" />
+                <meta name="description" content="About Tunji"/>
             </Helmet>
-            <Avatar className={classes.avatar} src={'https://pbs.twimg.com/profile_images/1368773620386922502/XN6-njLn_400x400.jpg'}/>
+            <Avatar
+                className={classes.avatar}
+                src={'https://pbs.twimg.com/profile_images/1368773620386922502/XN6-njLn_400x400.jpg'}
+            />
+            <div className={classes.socials}>
+                <a className={classes.socialIcons}
+                   href='mailto:tjdah100@gmail.com'
+                   target="_blank"
+                   rel="noreferrer"
+                >
+                    <EmailIcon/>
+                </a>
+                <a className={classes.socialIcons}
+                   href='https://twitter.com/Tunji_D'
+                   target="_blank"
+                   rel="noreferrer"
+                >
+                    <TwitterIcon/>
+                </a>
+                <a className={classes.socialIcons}
+                   href='https://github.com/tunjid'
+                   target="_blank"
+                   rel="noreferrer"
+                >
+                    <GitHubIcon/>
+                </a>
+            </div>
             <ReactMarkdown
                 className={classes.body}
                 remarkPlugins={[gfm]}
                 children={body}
-                components={{
-                    img: ({node, ...props}) => (<img{...props} style={{maxWidth: '10vw'}}/>),
-                    p: ({node, ...props}) => (<p{...props} style={{fontSize: '150%'}}/>),
-                    li: ({node, ...props}) => (<p{...props} style={{fontSize: '150%'}}/>),
-                    h1: ({node, ...props}) => (<h1{...props} style={{fontSize: '150%'}}/>),
-                    h2: ({node, ...props}) => (<h2{...props} style={{fontSize: '150%'}}/>),
-                    h3: ({node, ...props}) => (<h3{...props} style={{fontSize: '150%'}}/>),
-                    h4: ({node, ...props}) => (<h4{...props} style={{fontSize: '150%'}}/>),
-                    h5: ({node, ...props}) => (<h5{...props} style={{fontSize: '150%'}}/>),
-                    h6: ({node, ...props}) => (<h6{...props} style={{fontSize: '150%'}}/>),
-                }}
+                components={MarkdownComponents}
             />
         </div>
     );

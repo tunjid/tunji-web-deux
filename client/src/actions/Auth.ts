@@ -2,6 +2,7 @@ import { UserLike } from "../common/Models";
 import ApiService from "../rest/ApiService";
 import { AppThunk } from "./index";
 import { onHttpResponse, onSuccessOrSnackbar } from "./Common";
+import { RouterActions } from "./Router";
 
 export const SET_USER = 'SET_USER';
 
@@ -34,7 +35,10 @@ export const AuthActions: IAuthActions = {
         await onSuccessOrSnackbar(
             ApiService.signIn(args),
             dispatch,
-            (fetched) => dispatch(AuthActions.setUser(fetched))
+            (fetched) => {
+                dispatch(AuthActions.setUser(fetched));
+                dispatch(RouterActions.push('/'));
+            }
         );
     },
     setUser: (user: UserLike) => ({

@@ -7,10 +7,12 @@ import { PersistentUiState } from "../../reducers/PersistentUi";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { PersistentUiActions } from "../../actions/PersistentUi";
 import { Tab, Tabs } from "@material-ui/core";
-import { HomeState, HomeTab } from "../../reducers/Home";
+import { HomeState } from "../../reducers/Home";
 import { HomeActions } from "../../actions/Home";
 import useEventListener from "../../hooks/UseEventListener";
 import { AuthState } from "../../reducers/Auth";
+import { ArchiveKind } from "../../common/Models";
+import { capitalizeFirst } from "../archive/Common";
 
 const throttle = require('lodash/throttle');
 
@@ -36,8 +38,8 @@ interface State {
     hasAppBarShadow: boolean;
     onHomePage: boolean;
     isSignedIn: boolean;
-    selectedTab: HomeTab;
-    tabs: HomeTab[];
+    selectedTab: ArchiveKind;
+    tabs: ArchiveKind[];
 }
 
 const selector = createSelector<StoreState, PersistentUiState, HomeState, AuthState, boolean, State>(
@@ -94,15 +96,13 @@ const HomeHeader = () => {
         <div className={classes.root}>
             <Tabs
                 className={classes.tabs}
-                value={selectedTab.index}
-                onChange={(_: any, index: number) => {
-                    dispatch(HomeActions.selectTab(tabs[index]))
-                }}
+                value={tabs.indexOf(selectedTab)}
+                onChange={(_: any, index: number) => dispatch(HomeActions.selectTab(tabs[index]))}
                 indicatorColor="secondary"
                 textColor="secondary"
                 centered
             >
-                {tabs.map((item: HomeTab) => <Tab className={classes.tab} key={item.kind} label={item.text}/>)}
+                {tabs.map((item: ArchiveKind) => <Tab className={classes.tab} key={item} label={capitalizeFirst(item)}/>)}
             </Tabs>
         </div>
     );

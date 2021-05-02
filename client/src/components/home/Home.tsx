@@ -7,7 +7,7 @@ import { PersistentUiActions } from "../../actions/PersistentUi";
 import AddIcon from "@material-ui/icons/Add";
 import PhoneIcon from "@material-ui/icons/Phone";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
-import { HomeState, HomeTab } from "../../reducers/Home";
+import { HomeState } from "../../reducers/Home";
 import { createSelector } from "reselect";
 import { StoreState } from "../../types";
 import { PersistentUiState } from "../../reducers/PersistentUi";
@@ -15,6 +15,8 @@ import { AuthState } from "../../reducers/Auth";
 import Fab from "@material-ui/core/Fab";
 import { RouterActions } from "../../actions/Router";
 import {Helmet} from "react-helmet";
+import { ArchiveKind } from "../../common/Models";
+import {Link} from 'react-router-dom'
 
 const useStyles = makeStyles((theme) => createStyles({
         root: {
@@ -53,7 +55,7 @@ const useStyles = makeStyles((theme) => createStyles({
 interface State {
     appBarTitle: string;
     isSignedIn: boolean;
-    selectedTab: HomeTab;
+    selectedTab: ArchiveKind;
 }
 
 const selector = createSelector<StoreState, PersistentUiState, HomeState, AuthState, State>(
@@ -93,10 +95,10 @@ const Home = () => {
                 id: 'create',
                 text: 'Create',
                 icon: <AddIcon/>,
-                action: PersistentUiActions.menuRoute(`/${selectedTab.kind}/create`)
+                action: PersistentUiActions.menuRoute(`/${selectedTab}/create`)
             } : undefined
         }));
-    }, [appBarTitle, isSignedIn, selectedTab.kind, dispatch])
+    }, [appBarTitle, isSignedIn, selectedTab, dispatch])
 
     return (
         <div className={classes.root}>
@@ -112,10 +114,10 @@ const Home = () => {
                 size="small"
                 aria-label="add"
             >
-                <a className={classes.topFabHyperlink} href={selectedTab.kind}>{`All ${selectedTab.kind}`}</a>
+                <Link className={classes.topFabHyperlink} to={`/${selectedTab}`}>{`All ${selectedTab}`}</Link>
             </Fab>
             <div className={classes.cards}>
-                <ArchiveCards kind={selectedTab.kind}/>
+                <ArchiveCards kind={selectedTab}/>
             </div>
             <Fab
                 className={classes.bottomFab}
@@ -124,7 +126,7 @@ const Home = () => {
                 size="small"
                 aria-label="add"
             >
-                <a className={classes.bottomFabHyperlink} href={selectedTab.kind}>{`All ${selectedTab.kind}`}</a>
+                <Link className={classes.bottomFabHyperlink} to={`/${selectedTab}`}>{`All ${selectedTab}`}</Link>
             </Fab>
         </div>
     );
