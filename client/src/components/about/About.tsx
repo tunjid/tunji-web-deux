@@ -8,8 +8,11 @@ import ReactMarkdown from 'react-markdown'
 import { responsiveWidth } from "../archive/Common";
 import gfm from "remark-gfm";
 import { Avatar } from "@material-ui/core";
-import { verticalMargin } from "../../styles/Common";
+import { horizontalMargin, StylelessAnchor, verticalMargin } from "../../styles/Common";
 import { Helmet } from "react-helmet";
+import EmailIcon from '@material-ui/icons/Email';
+import TwitterIcon from '@material-ui/icons/Twitter';
+import GitHubIcon from '@material-ui/icons/GitHub';
 
 const useStyles = makeStyles((theme) => createStyles({
         root: {
@@ -25,6 +28,16 @@ const useStyles = makeStyles((theme) => createStyles({
             width: '200px',
             height: '200px',
         },
+        socials: {
+            ...responsiveWidth(theme),
+            '& > *': {
+                ...horizontalMargin(theme.spacing(1)),
+            },
+            display: 'flex'
+        },
+        socialIcons: {
+            ...StylelessAnchor
+        }
     }
 ));
 
@@ -43,15 +56,11 @@ Some things I've done:
 3. Haggled with product managers on pushing delivery of a feature in the short term to better scale in the long term.
 4. Worked with low level apis for live video streaming, and made them consumable them in a high level API.
 5. Worked across the full stack from the backend to both web and mobile frontend clients.
-6. Performed manufacturing research and a  little embedded programming.
+6. Performed manufacturing research and a little embedded programming.
 7. Dabbled in home automation.
 8. Tried my hand at a startup.
 
 This website is my latest attempt at learning the web frontend flavor du jour after the original Angular in the 2010's.
-
-# Socials
-
-I retweet a lot of football related things [here](https://twitter.com/Tunji_D).
 
 # People I really cannot thank enough:
 
@@ -88,9 +97,23 @@ const About = () => {
         <div className={classes.root}>
             <Helmet>
                 <title>About | Adetunji Dahunsi</title>
-                <meta name="description" content="About Tunji" />
+                <meta name="description" content="About Tunji"/>
             </Helmet>
-            <Avatar className={classes.avatar} src={'https://pbs.twimg.com/profile_images/1368773620386922502/XN6-njLn_400x400.jpg'}/>
+            <Avatar
+                className={classes.avatar}
+                src={'https://pbs.twimg.com/profile_images/1368773620386922502/XN6-njLn_400x400.jpg'}
+            />
+            <div className={classes.socials}>
+                <a className={classes.socialIcons} href='mailto:tjdah100@gmail.cm'>
+                    <EmailIcon/>
+                </a>
+                <a className={classes.socialIcons} href='https://twitter.com/Tunji_D'>
+                    <TwitterIcon/>
+                </a>
+                <a className={classes.socialIcons} href='https://github.com/tunjid'>
+                    <GitHubIcon/>
+                </a>
+            </div>
             <ReactMarkdown
                 className={classes.body}
                 remarkPlugins={[gfm]}
