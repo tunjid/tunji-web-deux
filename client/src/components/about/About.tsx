@@ -13,6 +13,7 @@ import { Helmet } from "react-helmet";
 import EmailIcon from '@material-ui/icons/Email';
 import TwitterIcon from '@material-ui/icons/Twitter';
 import GitHubIcon from '@material-ui/icons/GitHub';
+import { MarkdownComponents } from "../../common/Markdown";
 
 const useStyles = makeStyles((theme) => createStyles({
         root: {
@@ -104,13 +105,25 @@ const About = () => {
                 src={'https://pbs.twimg.com/profile_images/1368773620386922502/XN6-njLn_400x400.jpg'}
             />
             <div className={classes.socials}>
-                <a className={classes.socialIcons} href='mailto:tjdah100@gmail.cm'>
+                <a className={classes.socialIcons}
+                   href='mailto:tjdah100@gmail.com'
+                   target="_blank"
+                   rel="noreferrer"
+                >
                     <EmailIcon/>
                 </a>
-                <a className={classes.socialIcons} href='https://twitter.com/Tunji_D'>
+                <a className={classes.socialIcons}
+                   href='https://twitter.com/Tunji_D'
+                   target="_blank"
+                   rel="noreferrer"
+                >
                     <TwitterIcon/>
                 </a>
-                <a className={classes.socialIcons} href='https://github.com/tunjid'>
+                <a className={classes.socialIcons}
+                   href='https://github.com/tunjid'
+                   target="_blank"
+                   rel="noreferrer"
+                >
                     <GitHubIcon/>
                 </a>
             </div>
@@ -118,17 +131,7 @@ const About = () => {
                 className={classes.body}
                 remarkPlugins={[gfm]}
                 children={body}
-                components={{
-                    img: ({node, ...props}) => (<img{...props} style={{maxWidth: '10vw'}}/>),
-                    p: ({node, ...props}) => (<p{...props} style={{fontSize: '150%'}}/>),
-                    li: ({node, ...props}) => (<p{...props} style={{fontSize: '150%'}}/>),
-                    h1: ({node, ...props}) => (<h1{...props} style={{fontSize: '150%'}}/>),
-                    h2: ({node, ...props}) => (<h2{...props} style={{fontSize: '150%'}}/>),
-                    h3: ({node, ...props}) => (<h3{...props} style={{fontSize: '150%'}}/>),
-                    h4: ({node, ...props}) => (<h4{...props} style={{fontSize: '150%'}}/>),
-                    h5: ({node, ...props}) => (<h5{...props} style={{fontSize: '150%'}}/>),
-                    h6: ({node, ...props}) => (<h6{...props} style={{fontSize: '150%'}}/>),
-                }}
+                components={MarkdownComponents}
             />
         </div>
     );
