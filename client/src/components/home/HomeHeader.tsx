@@ -97,9 +97,7 @@ const HomeHeader = () => {
             <Tabs
                 className={classes.tabs}
                 value={tabs.indexOf(selectedTab)}
-                onChange={(_: any, index: number) => {
-                    dispatch(HomeActions.selectTab(tabs[index]))
-                }}
+                onChange={(_: any, index: number) => dispatch(HomeActions.selectTab(tabs[index]))}
                 indicatorColor="secondary"
                 textColor="secondary"
                 centered

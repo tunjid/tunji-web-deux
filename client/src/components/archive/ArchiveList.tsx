@@ -17,7 +17,6 @@ import _ from 'lodash';
 import { StylelessAnchor, verticalMargin } from "../../styles/Common";
 import { capitalizeFirst, normalizeArchiveKind, ShortMonthNames } from "./Common";
 import { Helmet } from "react-helmet";
-import { HomeActions } from "../../actions/Home";
 import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => createStyles({
@@ -87,14 +86,13 @@ const ArchiveList = () => {
     }, [kind, dispatch]);
 
     useEffect(() => {
-        dispatch(HomeActions.selectTab(kind));
         dispatch(ArchiveActions.archiveSummaries(kind));
     }, [kind, dispatch]);
 
     const categoryNodes = categories.map(category =>
         <Link className={classes.gutterLink}
-           key={category}
-           to={`/${kind}/?category=${category}`}
+              key={category}
+              to={`/${kind}/?category=${category}`}
         >
             {category}
         </Link>
@@ -102,8 +100,8 @@ const ArchiveList = () => {
 
     const summaryNodes = summaries.map(({dateInfo, titles}) =>
         <Link className={classes.gutterLink}
-           key={JSON.stringify(dateInfo)}
-           to={`/${kind}/?dateInfo=${dateInfo.year}-${dateInfo.month}`}
+              key={JSON.stringify(dateInfo)}
+              to={`/${kind}/?dateInfo=${dateInfo.year}-${dateInfo.month}`}
         >
             {`${ShortMonthNames[dateInfo.month]} ${dateInfo.year} (${titles.length})`}
         </Link>

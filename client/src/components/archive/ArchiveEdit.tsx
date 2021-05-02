@@ -15,7 +15,6 @@ import CardMedia from "@material-ui/core/CardMedia";
 import ChipInput, { ChipType } from "./ChipInput";
 import SaveIcon from '@material-ui/icons/Save';
 import DeleteIcon from '@material-ui/icons/Delete';
-import { HomeActions } from "../../actions/Home";
 
 const useStyles = makeStyles((theme) => createStyles({
         root: {
@@ -126,7 +125,6 @@ const ArchiveCreateOrEdit = ({isCreating}: Props) => {
     }, [archiveId, dispatch, isCreating, kind]);
 
     useEffect(() => {
-        dispatch(HomeActions.selectTab(kind));
         const menuItems = [];
         if (!isCreating) menuItems.push({
             id: 'delete',
