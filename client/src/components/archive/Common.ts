@@ -27,7 +27,7 @@ export const archiveSelector = (archiveViewType: ArchiveView) => createSelector<
         const pathSegments = pathname.split('/').filter(segment => segment !== 'edit');
         const lastSegment = pathSegments[pathSegments.length - 1];
         const linkSplit = lastSegment.split('-');
-        const kind = pathSegments[1] as ArchiveKind;
+        const kind = normalizeArchiveKind(pathSegments[1]);
         const archiveId = linkSplit[linkSplit.length - 1];
 
         return {
