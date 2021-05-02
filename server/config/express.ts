@@ -59,7 +59,8 @@ const App: () => Express = () => {
         contentSecurityPolicy: {
             directives: {
                 ...helmet.contentSecurityPolicy.getDefaultDirectives(),
-                'img-src': ['\'self\'', 'https:']
+                'img-src': ['\'self\'', 'https:'],
+                'connect-src': ['\'self\'', ...config.corsAllowedOrigins],
             },
         }
     }));
