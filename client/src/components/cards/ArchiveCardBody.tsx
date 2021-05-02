@@ -5,6 +5,7 @@ import { ArchiveCardInfo } from "./ArchiveCardInfo";
 import ChipInput, { ChipType } from "../archive/ChipInput";
 import * as React from "react";
 import { horizontalMargin, StylelessAnchor, verticalMargin } from "../../styles/Common";
+import { Link } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => createStyles({
     root: {
@@ -77,14 +78,14 @@ const ArchiveCardBody = ({cardInfo}: State) => {
                     </Typography>
                 </div>
             </div>
-            <a className={classes.titleColumn} href={`/${cardInfo.kind}/${cardInfo.link}`}>
+            <Link className={classes.titleColumn} to={`/${cardInfo.kind}/${cardInfo.link}`}>
                 <Typography gutterBottom variant="h5">
                     {cardInfo.title}
                 </Typography>
                 <Typography variant="body1" color="textPrimary">
                     {cardInfo.description}
                 </Typography>
-            </a>
+            </Link>
             <div className={classes.authorRow}>
                 <div className={classes.avatarRow}>
                     <Avatar className={classes.avatar} src={cardInfo.author.imageUrl}/>

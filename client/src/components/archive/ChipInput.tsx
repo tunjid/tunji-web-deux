@@ -5,6 +5,7 @@ import { Chip } from "@material-ui/core";
 import { theme } from "../../styles/PersistentUi";
 import { ArchiveKind } from "../../common/Models";
 import { StylelessAnchor } from "../../styles/Common";
+import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -84,9 +85,9 @@ export default function ChipInput({name, chips, type, kind, editor}: Props) {
         <div className={classes.root}>
             {name}
             {(chips || []).map((text) =>
-                <a
+                <Link
                     className={classes.chipAnchor}
-                    href={`/${kind}/?category=${text}`}
+                    to={`/${kind}/?category=${text}`}
                     key={text}
                 >
                     <Chip
@@ -95,7 +96,7 @@ export default function ChipInput({name, chips, type, kind, editor}: Props) {
                         onDelete={deleteChip?.(text)}
                         style={{backgroundColor: chipColor}}
                         size="small"/>
-                </a>
+                </Link>
             )}
 
             {editField}

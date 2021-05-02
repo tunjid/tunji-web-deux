@@ -5,6 +5,7 @@ import React from "react";
 import Card from "@material-ui/core/Card";
 import CardMedia from "@material-ui/core/CardMedia";
 import ArchiveCardBody from "./ArchiveCardBody";
+import { Link } from "react-router-dom";
 
 const useStyles = makeStyles(() => createStyles({
         root: {
@@ -56,14 +57,14 @@ export default function ArchiveCard({kind, cardInfo}: State) {
     return (
         <div className={classes.root}>
             <Card className={isHorizontal ? classes.horizontalRoot : classes.verticalRoot}>
-                <a className={isHorizontal ? classes.horizontalMedia : classes.verticalMedia}
-                   href={`/${kind}/${cardInfo.link}`}>
+                <Link className={isHorizontal ? classes.horizontalMedia : classes.verticalMedia}
+                   to={`/${kind}/${cardInfo.link}`}>
                     <CardMedia
                         className={isHorizontal ? classes.horizontalImage : classes.verticalImage}
                         image={cardInfo.thumbnail}
                         title={cardInfo.title}
                     />
-                </a>
+                </Link>
                 <div className={classes.body}>
                     <ArchiveCardBody cardInfo={cardInfo}/>
                 </div>

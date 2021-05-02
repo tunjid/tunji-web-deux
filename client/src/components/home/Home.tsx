@@ -16,6 +16,7 @@ import Fab from "@material-ui/core/Fab";
 import { RouterActions } from "../../actions/Router";
 import {Helmet} from "react-helmet";
 import { ArchiveKind } from "../../common/Models";
+import {Link} from 'react-router-dom'
 
 const useStyles = makeStyles((theme) => createStyles({
         root: {
@@ -113,7 +114,7 @@ const Home = () => {
                 size="small"
                 aria-label="add"
             >
-                <a className={classes.topFabHyperlink} href={`/${selectedTab}`}>{`All ${selectedTab}`}</a>
+                <Link className={classes.topFabHyperlink} to={`/${selectedTab}`}>{`All ${selectedTab}`}</Link>
             </Fab>
             <div className={classes.cards}>
                 <ArchiveCards kind={selectedTab}/>
@@ -125,7 +126,7 @@ const Home = () => {
                 size="small"
                 aria-label="add"
             >
-                <a className={classes.bottomFabHyperlink} href={`/${selectedTab}`}>{`All ${selectedTab}`}</a>
+                <Link className={classes.bottomFabHyperlink} to={`/${selectedTab}`}>{`All ${selectedTab}`}</Link>
             </Fab>
         </div>
     );

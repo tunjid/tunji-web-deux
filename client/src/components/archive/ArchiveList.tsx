@@ -15,9 +15,10 @@ import Typography from "@material-ui/core/Typography";
 import { Divider } from "@material-ui/core";
 import _ from 'lodash';
 import { StylelessAnchor, verticalMargin } from "../../styles/Common";
-import { capitalizeFirst, ShortMonthNames } from "./Common";
+import { capitalizeFirst, normalizeArchiveKind, ShortMonthNames } from "./Common";
 import { Helmet } from "react-helmet";
 import { HomeActions } from "../../actions/Home";
+import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => createStyles({
         root: {
@@ -56,11 +57,11 @@ const selector = createSelector<StoreState, RouterState, ArchiveState, State>(
     state => state.router,
     state => state.archives,
     (routerState, archiveState) => {
-        const kind = routerState.location.pathname.split('/')[1] as ArchiveKind;
+        const kind = normalizeArchiveKind(routerState.location.pathname.split('/')[1]);
         return {
             kind,
             summaries: archiveState.summariesMap[kind],
-            archives: archiveState.kindToArchivesMap[kind],
+            archives: archiveState.kindToArchivesMap[kind] || [],
             queryParams: routerState.location.query,
         }
     }
@@ -91,21 +92,21 @@ const ArchiveList = () => {
     }, [kind, dispatch]);
 
     const categoryNodes = categories.map(category =>
-        <a className={classes.gutterLink}
+        <Link className={classes.gutterLink}
            key={category}
-           href={`/${kind}/?category=${category}`}
+           to={`/${kind}/?category=${category}`}
         >
             {category}
-        </a>
+        </Link>
     );
 
     const summaryNodes = summaries.map(({dateInfo, titles}) =>
-        <a className={classes.gutterLink}
+        <Link className={classes.gutterLink}
            key={JSON.stringify(dateInfo)}
-           href={`/${kind}/?dateInfo=${dateInfo.year}-${dateInfo.month}`}
+           to={`/${kind}/?dateInfo=${dateInfo.year}-${dateInfo.month}`}
         >
             {`${ShortMonthNames[dateInfo.month]} ${dateInfo.year} (${titles.length})`}
-        </a>
+        </Link>
     );
 
     return (

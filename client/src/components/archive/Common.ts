@@ -39,6 +39,8 @@ export const archiveSelector = (archiveViewType: ArchiveView) => createSelector<
     }
 );
 
+export const normalizeArchiveKind = (text: String) => Object.values(ArchiveKind).find(item => item === text) || ArchiveKind.Articles
+
 export const readTime = (text: String) => `${Math.ceil(text.trim().split(/\s+/).length / 250)} min read`
 
 export const archiveDate = (date: Date) => date.toDateString().split(' ').splice(1).join(' ');
