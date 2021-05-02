@@ -1,8 +1,8 @@
 import { UserLike } from "../common/Models";
 import ApiService from "../rest/ApiService";
 import { AppThunk } from "./index";
-import { onHttpResponse, onSuccessOrSnackbar } from "./Common";
 import { RouterActions } from "./Router";
+import { onHttpResponse, onSuccessOrSnackbar } from "./Common";
 
 export const SET_USER = 'SET_USER';
 

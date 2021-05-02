@@ -12,7 +12,7 @@ import { HomeActions } from "../../actions/Home";
 import useEventListener from "../../hooks/UseEventListener";
 import { AuthState } from "../../reducers/Auth";
 import { ArchiveKind } from "../../common/Models";
-import { capitalizeFirst } from "../archive/Common";
+import { capitalizeFirst } from "../common/Common";
 
 const throttle = require('lodash/throttle');
 
