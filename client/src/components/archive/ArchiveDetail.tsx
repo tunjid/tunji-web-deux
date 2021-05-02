@@ -16,6 +16,7 @@ import EditIcon from '@material-ui/icons/Edit';
 import ChipInput, { ChipType } from "./ChipInput";
 import { horizontalMargin, verticalMargin } from "../../styles/Common";
 import { Helmet } from "react-helmet";
+import { HomeActions } from "../../actions/Home";
 
 const useStyles = makeStyles((theme) => createStyles({
         root: {
@@ -77,6 +78,7 @@ const ArchiveDetail = () => {
     }, [archiveId, dispatch, kind]);
 
     useEffect(() => {
+        dispatch(HomeActions.selectTab(kind));
         dispatch(PersistentUiActions.modifyAppBar({
             appBarTitle: `${capitalizeFirst(kind).slice(0, -1)} Detail`,
             hasAppBarShadow: true,

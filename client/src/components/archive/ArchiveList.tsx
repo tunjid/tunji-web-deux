@@ -17,6 +17,7 @@ import _ from 'lodash';
 import { StylelessAnchor, verticalMargin } from "../../styles/Common";
 import { capitalizeFirst, ShortMonthNames } from "./Common";
 import { Helmet } from "react-helmet";
+import { HomeActions } from "../../actions/Home";
 
 const useStyles = makeStyles((theme) => createStyles({
         root: {
@@ -85,6 +86,7 @@ const ArchiveList = () => {
     }, [kind, dispatch]);
 
     useEffect(() => {
+        dispatch(HomeActions.selectTab(kind));
         dispatch(ArchiveActions.archiveSummaries(kind));
     }, [kind, dispatch]);
 
