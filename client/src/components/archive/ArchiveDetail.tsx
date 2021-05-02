@@ -16,7 +16,7 @@ import EditIcon from '@material-ui/icons/Edit';
 import ChipInput, { ChipType } from "./ChipInput";
 import { horizontalMargin, verticalMargin } from "../../styles/Common";
 import { Helmet } from "react-helmet";
-import { MarkdownComponents } from "../../common/Markdown";
+import { MarkdownComponents } from "../common/Markdown";
 
 const useStyles = makeStyles((theme) => createStyles({
         root: {
