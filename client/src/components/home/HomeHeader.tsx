@@ -12,6 +12,7 @@ import { HomeActions } from "../../actions/Home";
 import useEventListener from "../../hooks/UseEventListener";
 import { AuthState } from "../../reducers/Auth";
 import { ArchiveKind } from "../../common/Models";
+import { capitalizeFirst } from "../archive/Common";
 
 const throttle = require('lodash/throttle');
 
@@ -103,7 +104,7 @@ const HomeHeader = () => {
                 textColor="secondary"
                 centered
             >
-                {tabs.map((item: ArchiveKind) => <Tab className={classes.tab} key={item} label={item}/>)}
+                {tabs.map((item: ArchiveKind) => <Tab className={classes.tab} key={item} label={capitalizeFirst(item)}/>)}
             </Tabs>
         </div>
     );
