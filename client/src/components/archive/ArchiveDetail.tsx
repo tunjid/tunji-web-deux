@@ -24,11 +24,11 @@ const useStyles = makeStyles((theme) => createStyles({
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
+            ...verticalMargin(theme.spacing(2)),
         },
         title: {
             ...responsiveWidth(theme),
-            'margin-top': theme.spacing(3),
-            'margin-bottom': theme.spacing(1),
+            ...verticalMargin(theme.spacing(1)),
         },
         description: {
             ...responsiveWidth(theme),
