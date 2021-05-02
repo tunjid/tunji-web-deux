@@ -49,7 +49,7 @@ const App: () => Express = () => {
 
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({extended: true}));
-
+igig
     app.all('/.well-known/acme-challenge/jHTByRi03P8lmzpHst99bQ7cXTmTyA6Jt4IFayowKUY', (req, res) => {
         res.sendFile(path.join(__dirname, '..', 'cert-renewal'));
     });
@@ -59,7 +59,8 @@ const App: () => Express = () => {
         contentSecurityPolicy: {
             directives: {
                 ...helmet.contentSecurityPolicy.getDefaultDirectives(),
-                'img-src': ['\'self\'', 'https:']
+                'img-src': ['\'self\'', 'https:'],
+                'connect-src': ['\'self\'', ...config.corsAllowedOrigins],
             },
         }
     }));
