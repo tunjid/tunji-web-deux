@@ -1,18 +1,18 @@
-import { HomeTab } from "../reducers/Home";
+import { ArchiveKind } from "../common/Models";
 
 export const SELECT_TAB = 'SELECT_TAB';
 
 export interface SelectTab {
     type: typeof SELECT_TAB;
-    tab: HomeTab;
+    kind: ArchiveKind;
 }
 
 export type HomeAction = SelectTab;
 
 export const HomeActions = {
-    selectTab: (tab: HomeTab) => ({
+    selectTab: (kind: ArchiveKind) => ({
         type: SELECT_TAB,
-        tab
+        kind
     })
 }
 

@@ -43,8 +43,9 @@ Some things I've done:
 3. Haggled with product managers on pushing delivery of a feature in the short term to better scale in the long term.
 4. Worked with low level apis for live video streaming, and made them consumable them in a high level API.
 5. Worked across the full stack from the backend to both web and mobile frontend clients.
-5. Dabbled in home automation.
-6. Tried my hand at a startup.
+6. Performed manufacturing research and a  little embedded programming.
+7. Dabbled in home automation.
+8. Tried my hand at a startup.
 
 This website is my latest attempt at learning the web frontend flavor du jour after the original Angular in the 2010's.
 
@@ -60,7 +61,9 @@ I retweet a lot of football related things [here](https://twitter.com/Tunji_D).
 * Alex Grabski
 * Adam McNeilly
 * Lola Odelola
+* Izzy Oji
 * Ron Fessler
+* Micheal Pardon
 * Matt Chowning
 * Ben Yesley
 `
@@ -72,10 +75,11 @@ const About = () => {
     useEffect(() => {
         dispatch(PersistentUiActions.modifyAppBar({
             appBarTitle: 'About',
+            appBarColor: theme.palette.primary.dark,
             hasHomeIcon: true,
             hasAppBarShadow: true,
             hasAppBarSpacer: true,
-            appBarColor: theme.palette.primary.dark,
+            menuItems: [],
             fab: undefined
         }));
     }, [dispatch]);
