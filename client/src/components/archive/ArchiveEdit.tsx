@@ -8,7 +8,7 @@ import { PersistentUiActions } from "../../actions/PersistentUi";
 import { theme } from "../../styles/PersistentUi";
 import MEDitor from '@uiw/react-md-editor';
 import { ArchiveActions } from "../../actions/Archive";
-import { archiveSelector, responsiveWidth } from "./Common";
+import { archiveSelector, responsiveWidth } from "../common/Common";
 import _ from 'lodash';
 import Card from "@material-ui/core/Card";
 import CardMedia from "@material-ui/core/CardMedia";

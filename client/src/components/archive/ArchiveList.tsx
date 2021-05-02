@@ -15,7 +15,7 @@ import Typography from "@material-ui/core/Typography";
 import { Divider } from "@material-ui/core";
 import _ from 'lodash';
 import { StylelessAnchor, verticalMargin } from "../../styles/Common";
-import { capitalizeFirst, normalizeArchiveKind, ShortMonthNames } from "./Common";
+import { capitalizeFirst, normalizeArchiveKind, ShortMonthNames } from "../common/Common";
 import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
 

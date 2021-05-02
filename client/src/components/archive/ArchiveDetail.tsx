@@ -9,7 +9,7 @@ import { theme } from "../../styles/PersistentUi";
 import CardMedia from "@material-ui/core/CardMedia";
 import Card from "@material-ui/core/Card";
 import ReactMarkdown from 'react-markdown'
-import { archiveDate, archiveSelector, capitalizeFirst, readTime, responsiveWidth } from "./Common";
+import { archiveDate, archiveSelector, capitalizeFirst, readTime, responsiveWidth } from "../common/Common";
 import { ArchiveActions } from "../../actions/Archive";
 import gfm from "remark-gfm";
 import EditIcon from '@material-ui/icons/Edit';

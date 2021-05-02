@@ -5,7 +5,7 @@ import { useDispatch } from "react-redux";
 import { PersistentUiActions } from "../../actions/PersistentUi";
 import { theme } from "../../styles/PersistentUi";
 import ReactMarkdown from 'react-markdown'
-import { responsiveWidth } from "../archive/Common";
+import { responsiveWidth } from "../common/Common";
 import gfm from "remark-gfm";
 import { Avatar } from "@material-ui/core";
 import { horizontalMargin, StylelessAnchor, verticalMargin } from "../../styles/Common";
