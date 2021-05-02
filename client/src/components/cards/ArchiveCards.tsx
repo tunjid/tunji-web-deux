@@ -11,7 +11,7 @@ import { ArchiveCardInfo, CardStyle } from "./ArchiveCardInfo";
 import { ArchiveActions, yearAndMonthParam } from "../../actions/Archive";
 import { PersistentUiActions } from "../../actions/PersistentUi";
 import { useWidth } from "../../hooks/UseWidth";
-import { archiveDate, readTime } from "../archive/Common";
+import { archiveDate, readTime } from "../common/Common";
 import { ArchiveState } from "../../reducers/Archive";
 
 const useStyles = makeStyles(() => createStyles({

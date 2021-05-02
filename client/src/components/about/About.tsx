@@ -5,7 +5,7 @@ import { useDispatch } from "react-redux";
 import { PersistentUiActions } from "../../actions/PersistentUi";
 import { theme } from "../../styles/PersistentUi";
 import ReactMarkdown from 'react-markdown'
-import { responsiveWidth } from "../archive/Common";
+import { responsiveWidth } from "../common/Common";
 import gfm from "remark-gfm";
 import { Avatar } from "@material-ui/core";
 import { horizontalMargin, StylelessAnchor, verticalMargin } from "../../styles/Common";
@@ -13,7 +13,7 @@ import { Helmet } from "react-helmet";
 import EmailIcon from '@material-ui/icons/Email';
 import TwitterIcon from '@material-ui/icons/Twitter';
 import GitHubIcon from '@material-ui/icons/GitHub';
-import { MarkdownComponents } from "../../common/Markdown";
+import { MarkdownComponents } from "../common/Markdown";
 
 const useStyles = makeStyles((theme) => createStyles({
         root: {
