@@ -59,8 +59,10 @@ const App: () => Express = () => {
         contentSecurityPolicy: {
             directives: {
                 ...helmet.contentSecurityPolicy.getDefaultDirectives(),
-                'img-src': ['\'self\'', 'https:'],
-                'connect-src': ['\'self\'', ...config.corsAllowedOrigins],
+                'img-src': config.corsImageSources,
+                'connect-src': config.corsConnectSources,
+                'script-src': config.corsScriptSources,
+                'frame-src': config.corsFrameSources,
             },
         }
     }));
