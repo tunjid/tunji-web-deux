@@ -12,7 +12,7 @@ export const MarkdownComponents: Components = {
     h5: ({node, ...props}) => <h5{...props} style={{fontSize: '150%'}}/>,
     h6: ({node, ...props}) => <h6{...props} style={{fontSize: '150%'}}/>,
     table: ({node, ...props}) => <table{...props} style={{width: '100%'}}/>,
-    img: ({node, ...props}) => <img{...props} style={{maxWidth: '100%'}}/>,
+    img: ({node, ...props}) => <img{...props} style={{maxWidth: '100%', display: 'block', margin: '0 auto'}}/>,
     a: ({node, ...props}) => {
         const href = props['href'];
         const videoUrl = (!!href && typeof href === 'string' &&
