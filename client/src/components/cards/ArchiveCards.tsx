@@ -28,6 +28,7 @@ const useStyles = makeStyles(() => createStyles({
 
 interface Props {
     kind: ArchiveKind,
+    max?: number,
     queryParams?: Record<string, string>,
 }
 
@@ -35,9 +36,10 @@ interface State {
     archives: ArchiveLike[];
 }
 
-const selector = (kind: ArchiveKind, queryParams: Record<string, string> = {}) => createSelector<StoreState, ArchiveState, State>(
+const selector = ({kind, max, queryParams}: Props) => createSelector<StoreState, ArchiveState, State>(
     state => state.archives,
     (archiveState) => {
+        queryParams = queryParams || {};
         const {category} = queryParams;
         const yearAndMonth = yearAndMonthParam(queryParams);
         let archives = archiveState.kindToArchivesMap[kind];
@@ -45,15 +47,17 @@ const selector = (kind: ArchiveKind, queryParams: Record<string, string> = {}) =
         archives = yearAndMonth
             ? archives.filter(archive => archive.created.getFullYear() === yearAndMonth.year && archive.created.getMonth() === yearAndMonth.month)
             : archives;
+        archives = max ? archives.slice(0, max) : archives;
 
         return {archives};
     }
 );
 
-const ArchiveCards = ({kind, queryParams}: Props) => {
+const ArchiveCards = (props: Props) => {
     const classes = useStyles();
     const dispatch = useDispatch();
-    const {archives}: State = useSelector(selector(kind, queryParams), shallowEqual);
+    const {kind, queryParams} = props;
+    const {archives}: State = useSelector(selector(props), shallowEqual);
 
     const width = useWidth();
     const isxSmallScreen = /xs/.test(width);
