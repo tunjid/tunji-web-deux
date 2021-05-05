@@ -1,4 +1,4 @@
-import { ArchiveKind, ArchiveLike, ArchiveSummary } from "../common/Models";
+import { ArchiveKind, ArchiveLike, ArchiveSummary } from "../client-server-common/Models";
 import ApiService from "../rest/ApiService";
 import { AppThunk } from "./index";
 import { onSuccessOrSnackbar } from "./Common";

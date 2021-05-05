@@ -1,6 +1,6 @@
 import { ADD_ARCHIVE, ADD_ARCHIVES, ArchiveAction, EDIT_ARCHIVE, UPDATE_ARCHIVE_SUMMARY } from '../actions/Archive';
 import _ from 'lodash';
-import { ArchiveKind, ArchiveLike, ArchiveSummary, EmptyArchive } from "../common/Models";
+import { ArchiveKind, ArchiveLike, ArchiveSummary, EmptyArchive } from "../client-server-common/Models";
 
 export interface ArchiveState {
     kindToEditMap: Record<ArchiveKind, ArchiveLike>;

@@ -3,7 +3,7 @@ import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import InputBase from '@material-ui/core/InputBase';
 import { Chip } from "@material-ui/core";
 import { theme } from "../../styles/PersistentUi";
-import { ArchiveKind } from "../../common/Models";
+import { ArchiveKind } from "../../client-server-common/Models";
 import { StylelessAnchor } from "../../styles/Common";
 import { Link } from "react-router-dom";
 

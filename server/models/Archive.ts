@@ -1,6 +1,6 @@
 import { Document, model, Model, Schema } from 'mongoose';
 import { UserDocument } from './UserSchema';
-import { ArchiveKind, ArchiveLike } from '../../client/src/common/Models';
+import { ArchiveKind, ArchiveLike } from '../../client/src/client-server-common/Models';
 
 export interface Archive extends ArchiveLike {
     title: string;

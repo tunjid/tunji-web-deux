@@ -11,7 +11,7 @@ import { HomeState } from "../../reducers/Home";
 import { HomeActions } from "../../actions/Home";
 import useEventListener from "../../hooks/UseEventListener";
 import { AuthState } from "../../reducers/Auth";
-import { ArchiveKind } from "../../common/Models";
+import { ArchiveKind } from "../../client-server-common/Models";
 import { capitalizeFirst } from "../common/Common";
 
 const throttle = require('lodash/throttle');

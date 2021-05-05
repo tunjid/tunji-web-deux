@@ -1,4 +1,4 @@
-import { ArchiveKind, ArchiveLike, UserLike } from "../../common/Models";
+import { ArchiveKind, ArchiveLike, UserLike } from "../../client-server-common/Models";
 import { createSelector } from "reselect";
 import { StoreState } from "../../types";
 import { ArchiveState } from "../../reducers/Archive";

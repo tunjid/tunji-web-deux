@@ -2,12 +2,12 @@ import { Express, Request, Response } from 'express';
 import path from 'path';
 import fs from 'fs';
 import util from 'util';
-import { describeRoute, RouteDescription } from '../../client/src/common/RouteUtilities';
+import { describeRoute, RouteDescription } from '../../client/src/client-server-common/RouteUtilities';
 
 import { Article } from '../models/ArticleSchema';
 import { Project } from '../models/ProjectSchema';
 import { Talk } from '../models/TalkSchema';
-import { ArchiveKind } from '../../client/src/common/Models';
+import { ArchiveKind } from '../../client/src/client-server-common/Models';
 
 interface OpenGraphParams {
     title: string

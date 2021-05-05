@@ -15,7 +15,7 @@ import { AuthState } from "../../reducers/Auth";
 import Fab from "@material-ui/core/Fab";
 import { RouterActions } from "../../actions/Router";
 import {Helmet} from "react-helmet";
-import { ArchiveKind } from "../../common/Models";
+import { ArchiveKind } from "../../client-server-common/Models";
 import {Link} from 'react-router-dom'
 
 const useStyles = makeStyles((theme) => createStyles({

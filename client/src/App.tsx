@@ -11,7 +11,7 @@ import Routes from './routes'
 import { theme } from "./styles/PersistentUi";
 import { StoreState } from "./types";
 import { createSelector, OutputSelector } from "reselect";
-import { UserLike } from "./common/Models";
+import { UserLike } from "./client-server-common/Models";
 import { AuthActions } from "./actions/Auth";
 import { ConnectedRouter } from 'connected-react-router'
 import { history } from "./reducers";
