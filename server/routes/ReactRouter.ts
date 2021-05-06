@@ -42,7 +42,7 @@ async function openGraphParams({root, archiveLookup}: RouteDescription): Promise
             return {
                 title: 'About Tunji',
                 description: 'What I\'ve been up to',
-                image: ''
+                image: 'https://pbs.twimg.com/profile_images/1368773620386922502/XN6-njLn_400x400.jpg'
             };
         }
         case ArchiveKind.Articles:
@@ -59,14 +59,14 @@ async function openGraphParams({root, archiveLookup}: RouteDescription): Promise
             return {
                 title: document?.title || `${root} by Tunji`,
                 description: document?.description || `An archive of my ${root}`,
-                image: document?.thumbnail || ''
+                image: document?.thumbnail || 'https://storage.cloud.google.com/tunji-web/assets/tunji-web-deux.png'
             };
         }
         default: {
             return {
                 title: 'Tunji\'s Web Corner',
                 description: 'Adetunji Dahunsi\'s Portfolio',
-                image: ''
+                image: 'https://storage.cloud.google.com/tunji-web/assets/tunji-web-deux.png'
             };
         }
     }
