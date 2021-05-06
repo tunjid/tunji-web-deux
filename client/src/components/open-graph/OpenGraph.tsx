@@ -52,14 +52,18 @@ const useStyles = makeStyles((theme) =>
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-around',
+            width: '100%',
+
             ...horizontalMargin(theme.spacing(2)),
         },
         cover: {
-            width: 151,
-            height: 151,
+            minWidth: 151,
+            minHeight: 151,
         },
     }),
 );
+
+const truncate = (input: string) => input.length > 80 ? `${input.substring(0, 80)}...` : input;
 
 interface Props {
     url: string
@@ -86,13 +90,13 @@ const OpenGraphCard = ({url}: Props) => {
         ? <Paper className={classes.root} variant="outlined">
             <div className={classes.details}>
                 <Typography component="h5" variant="h5">
-                    {openGraphData?.ogTitle}
+                    {openGraphData?.ogTitle ? truncate(openGraphData?.ogTitle) : ''}
                 </Typography>
-                <Typography variant="subtitle1" color="textSecondary" noWrap={true}>
-                    {openGraphData?.ogDescription}
+                <Typography variant="subtitle1" color="textSecondary">
+                    {openGraphData?.ogDescription ? truncate(openGraphData?.ogDescription) : ''}
                 </Typography>
                 <Typography variant="caption" color="textSecondary">
-                    {openGraphData?.ogSiteName}
+                    {openGraphData?.ogSiteName ? truncate(openGraphData?.ogSiteName) : ''}
                 </Typography>
             </div>
             <CardMedia

@@ -23,13 +23,19 @@ export const MarkdownComponents: Components = {
     }/>,
     a: ({node, ...props}) => {
         const href = props['href'];
-        const openGraphUrl = (!!href && typeof href === 'string' &&
-            (href.indexOf(OpenGraphScrapeEndpoint) >= 0))
-            ? href as string
+        if (!href && typeof href !== 'string') return <a{...props}/>;
+
+        const url = href as string;
+
+        const openGraphIndex = url.indexOf(OpenGraphScrapeEndpoint);
+        const openGraphUrl = openGraphIndex >= 0
+            ? new URLSearchParams(
+                url.slice(openGraphIndex + OpenGraphScrapeEndpoint.length)
+            ).get('url')
             : undefined
-        const videoUrl = (!!href && typeof href === 'string' &&
-            (href.indexOf('youtube') >= 0 || href.indexOf('vimeo') >= 0 || href.indexOf('wistia') >= 0))
-            ? href as string
+
+        const videoUrl = url.indexOf('youtube') >= 0 || url.indexOf('vimeo') >= 0 || url.indexOf('wistia') >= 0
+            ? url
             : undefined
 
         return openGraphUrl
