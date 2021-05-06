@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import ApiService from "../../rest/ApiService";
 import { Link } from "react-router-dom";
 import { Paper } from "@material-ui/core";
-import { horizontalMargin } from "../../styles/Common";
+import { horizontalMargin, StylelessAnchor } from "../../styles/Common";
 
 export interface OpenGraphData {
     ogTitle: string;
@@ -41,6 +41,13 @@ export interface TwitterImage {
 
 const useStyles = makeStyles((theme) =>
     createStyles({
+        anchor: {
+            ...StylelessAnchor,
+            '& > *': {
+                ...horizontalMargin(theme.spacing(1)),
+            },
+            display: 'flex'
+        },
         root: {
             display: 'flex',
             margin: '0 auto',
@@ -87,24 +94,30 @@ const OpenGraphCard = ({url}: Props) => {
 
 
     const node = openGraphData
-        ? <Paper className={classes.root} variant="outlined">
-            <div className={classes.details}>
-                <Typography component="h5" variant="h5">
-                    {openGraphData?.ogTitle ? truncate(openGraphData?.ogTitle) : ''}
-                </Typography>
-                <Typography variant="subtitle1" color="textSecondary">
-                    {openGraphData?.ogDescription ? truncate(openGraphData?.ogDescription) : ''}
-                </Typography>
-                <Typography variant="caption" color="textSecondary">
-                    {openGraphData?.ogSiteName ? truncate(openGraphData?.ogSiteName) : ''}
-                </Typography>
-            </div>
-            <CardMedia
-                className={classes.cover}
-                image={openGraphData?.ogImage?.url}
-                title="Live from space album cover"
-            />
-        </Paper>
+        ? <a className={classes.anchor}
+             href={url}
+             target="_blank"
+             rel="noreferrer"
+        >
+            <Paper className={classes.root} variant="outlined">
+                <div className={classes.details}>
+                    <Typography component="h5" variant="h5">
+                        {openGraphData?.ogTitle ? truncate(openGraphData?.ogTitle) : ''}
+                    </Typography>
+                    <Typography variant="subtitle1" color="textSecondary">
+                        {openGraphData?.ogDescription ? truncate(openGraphData?.ogDescription) : ''}
+                    </Typography>
+                    <Typography variant="caption" color="textSecondary">
+                        {openGraphData?.ogSiteName ? truncate(openGraphData?.ogSiteName) : ''}
+                    </Typography>
+                </div>
+                <CardMedia
+                    className={classes.cover}
+                    image={openGraphData?.ogImage?.url}
+                    title="Live from space album cover"
+                />
+            </Paper>
+        </a>
         : <Link to={url}/>
 
     return node;
