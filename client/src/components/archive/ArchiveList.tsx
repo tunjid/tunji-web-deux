@@ -2,7 +2,7 @@ import { createStyles, makeStyles } from '@material-ui/core/styles';
 import * as React from 'react';
 import { useEffect } from 'react';
 import ArchiveCards from "../cards/ArchiveCards";
-import { shallowEqual, useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { PersistentUiActions } from "../../actions/PersistentUi";
 import { createSelector } from "reselect";
 import { StoreState } from "../../types";
@@ -19,6 +19,7 @@ import { archivesSelector, capitalizeFirst, ShortMonthNames } from "../common/Co
 import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
 import { describeRoute } from "../../client-server-common/RouteUtilities";
+import { useDeepEqualSelector } from "../../hooks/UseDeepEqualSelector";
 
 const useStyles = makeStyles((theme) => createStyles({
         root: {
@@ -91,9 +92,9 @@ const querySelector = createSelector<StoreState, RouterState, ArchivesQuery>(
 const ArchiveList = () => {
     const classes = useStyles();
     const dispatch = useDispatch();
-    const {kind, summaries} = useSelector(selector, shallowEqual);
-    const query = useSelector(querySelector, shallowEqual);
-    const archives = useSelector(archivesSelector(querySelector), shallowEqual);
+    const {kind, summaries} = useDeepEqualSelector(selector);
+    const query = useDeepEqualSelector(querySelector);
+    const archives = useDeepEqualSelector(archivesSelector(querySelector));
 
     const title = `Tunji's ${capitalizeFirst(kind)}`;
     const categories = _.uniq(_.flatten(archives.map(archive => archive.categories)));

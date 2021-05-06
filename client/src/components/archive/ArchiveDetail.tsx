@@ -3,7 +3,7 @@ import * as React from 'react';
 import { useEffect } from 'react';
 import { Avatar } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
-import { shallowEqual, useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { PersistentUiActions } from "../../actions/PersistentUi";
 import { theme } from "../../styles/PersistentUi";
 import CardMedia from "@material-ui/core/CardMedia";
@@ -17,6 +17,7 @@ import ChipInput, { ChipType } from "./ChipInput";
 import { horizontalMargin, verticalMargin } from "../../styles/Common";
 import { Helmet } from "react-helmet";
 import { MarkdownComponents } from "../common/Markdown";
+import { useDeepEqualSelector } from "../../hooks/UseDeepEqualSelector";
 
 const useStyles = makeStyles((theme) => createStyles({
         root: {
@@ -71,7 +72,7 @@ const useStyles = makeStyles((theme) => createStyles({
 const ArchiveDetail = () => {
     const classes = useStyles();
     const dispatch = useDispatch();
-    const {isSignedIn, kind, archiveId, archive} = useSelector(archiveSelector('detail'), shallowEqual);
+    const {isSignedIn, kind, archiveId, archive} = useDeepEqualSelector(archiveSelector('detail'));
 
     useEffect(() => {
         if (archiveId) dispatch(ArchiveActions.readArchive({kind, view: "detail", id: archiveId}));

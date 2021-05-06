@@ -6,7 +6,6 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import classNames from "classnames";
 import * as React from "react";
-import { shallowEqual, useSelector } from "react-redux";
 import AppBarIcons from "../../components/appBar/AppBarIcons";
 import { StoreState } from "../../types";
 import { PersistentUiState } from "../../reducers/PersistentUi";
@@ -15,6 +14,7 @@ import { UserLike } from "../../client-server-common/Models";
 import HomeIcon from "@material-ui/icons/Home";
 import { horizontalMargin, StylelessAnchor } from "../../styles/Common";
 import { Link } from "react-router-dom";
+import { useDeepEqualSelector } from "../../hooks/UseDeepEqualSelector";
 
 const drawerWidth = 240;
 
@@ -89,7 +89,7 @@ const MainAppBar = () => {
         appBarColor,
         hasHomeIcon,
         hasAppBarShadow,
-    }: State = useSelector(selector, shallowEqual);
+    }: State = useDeepEqualSelector(selector);
 
     const appBarStyle = {backgroundColor: appBarColor, boxShadow: hasAppBarShadow ? undefined : 'none'};
     const backToHome = hasHomeIcon ? <Link className={classes.homeIcon} to={'/'}><HomeIcon/></Link> : undefined;
