@@ -2,6 +2,8 @@ import * as React from "react";
 import { Components } from "react-markdown/src/ast-to-react";
 import ReactPlayer from "react-player";
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
+import { OpenGraphScrapeEndpoint } from "../../client-server-common/RouteUtilities";
+import OpenGraphCard from "../open-graph/OpenGraph";
 
 export const MarkdownComponents: Components = {
     p: ({node, ...props}) => <p{...props} style={{fontSize: '150%'}}/>,
@@ -12,17 +14,29 @@ export const MarkdownComponents: Components = {
     h5: ({node, ...props}) => <h5{...props} style={{fontSize: '150%'}}/>,
     h6: ({node, ...props}) => <h6{...props} style={{fontSize: '150%'}}/>,
     table: ({node, ...props}) => <table{...props} style={{width: '100%'}}/>,
-    img: ({node, ...props}) => <img{...props} style={{maxWidth: '100%', display: 'block', margin: '0 auto'}}/>,
+    img: ({node, ...props}) => <img{...props} style={
+        {
+            maxWidth: '100%',
+            display: 'block',
+            margin: '0 auto'
+        }
+    }/>,
     a: ({node, ...props}) => {
         const href = props['href'];
+        const openGraphUrl = (!!href && typeof href === 'string' &&
+            (href.indexOf(OpenGraphScrapeEndpoint) >= 0))
+            ? href as string
+            : undefined
         const videoUrl = (!!href && typeof href === 'string' &&
             (href.indexOf('youtube') >= 0 || href.indexOf('vimeo') >= 0 || href.indexOf('wistia') >= 0))
             ? href as string
             : undefined
 
-        return videoUrl
-            ? <ReactPlayer url={videoUrl}/>
-            : <a{...props}/>;
+        return openGraphUrl
+            ? <OpenGraphCard url={openGraphUrl}/>
+            : videoUrl
+                ? <ReactPlayer url={videoUrl}/>
+                : <a{...props}/>;
     },
     code({node, inline, className, children, ...props}) {
         const c = className as string;

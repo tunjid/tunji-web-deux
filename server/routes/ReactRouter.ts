@@ -4,7 +4,11 @@ import fs from 'fs';
 import util from 'util';
 import scraper from 'open-graph-scraper';
 
-import { describeRoute, RouteDescription } from '../../client/src/client-server-common/RouteUtilities';
+import {
+    describeRoute,
+    OpenGraphScrapeEndpoint,
+    RouteDescription
+} from '../../client/src/client-server-common/RouteUtilities';
 
 import { Article } from '../models/ArticleSchema';
 import { Project } from '../models/ProjectSchema';
@@ -26,7 +30,7 @@ const readFilePromise = util.promisify<string, string>((argument, callback) => f
 
 export default function (app: Express): void {
     const indexPath = path.join(__dirname, '../../../', 'build', 'client', 'index.html');
-    app.route('/open-graph-scrape')
+    app.route(`/${OpenGraphScrapeEndpoint}`)
         .get(async (req: Request, res: Response) => {
             const url = req.query.url as unknown as string | undefined;
             if (!url) return res.status(400).send({

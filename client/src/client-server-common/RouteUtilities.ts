@@ -12,6 +12,8 @@ export interface ArchiveLookup {
 
 const isObjectIdLike = (plausibleId: string) => !!plausibleId.match(/^[0-9a-fA-F]{24}$/)
 
+export const OpenGraphScrapeEndpoint = 'open-graph-scrape';
+
 export const normalizeArchiveKind = (text: String) => Object.values(ArchiveKind).find(item => item === text) || ArchiveKind.Articles
 
 export const describeRoute = (path: string): RouteDescription => {
