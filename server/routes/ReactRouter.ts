@@ -19,9 +19,11 @@ import config from '../config/config';
 import { getErrorMessage } from '../controllers/Common';
 
 interface OpenGraphParams {
-    title: string
-    description: string
-    image: string
+    title: string;
+    description: string;
+    image: string;
+    url: string;
+    siteName: string;
 }
 
 const archiveModels = [Article, Project, Talk];
@@ -53,6 +55,8 @@ export default function (app: Express): void {
             webPage = webPage.replace(/\$OG_TITLE/g, params.title);
             webPage = webPage.replace(/\$OG_DESCRIPTION/g, params.description);
             webPage = webPage.replace(/\$OG_IMAGE/g, params.image);
+            webPage = webPage.replace(/\$OG_URL/g, params.url);
+            webPage = webPage.replace(/\$OG_SITE_NAME/g, params.siteName);
             res.send(webPage);
         }
     );
@@ -64,7 +68,9 @@ async function openGraphParams({root, archiveLookup}: RouteDescription): Promise
             return {
                 title: 'About Tunji',
                 description: 'What I\'ve been up to',
-                image: config.rootIndexImage
+                image: config.rootIndexImage,
+                url: 'https://tunjd.com/about',
+                siteName: 'tunjid.com',
             };
         }
         case ArchiveKind.Articles:
@@ -81,14 +87,18 @@ async function openGraphParams({root, archiveLookup}: RouteDescription): Promise
             return {
                 title: document?.title || `${root} by Tunji`,
                 description: document?.description || `An archive of my ${root}`,
-                image: document?.thumbnail || config.archiveListDefaultImage
+                image: document?.thumbnail || config.archiveListDefaultImage,
+                url: document?.link || `https://tunjid.com/${root.toLowerCase()}`,
+                siteName: 'tunjid.com',
             };
         }
         default: {
             return {
                 title: 'Tunji\'s Web Corner',
                 description: 'Adetunji Dahunsi\'s Portfolio',
-                image: config.rootIndexImage
+                image: config.rootIndexImage,
+                url: 'https://tunjd.com',
+                siteName: 'tunjid.com',
             };
         }
     }
