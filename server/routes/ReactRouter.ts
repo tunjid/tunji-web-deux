@@ -2,6 +2,8 @@ import { Express, Request, Response } from 'express';
 import path from 'path';
 import fs from 'fs';
 import util from 'util';
+import scraper from 'open-graph-scraper';
+
 import { describeRoute, RouteDescription } from '../../client/src/client-server-common/RouteUtilities';
 
 import { Article } from '../models/ArticleSchema';
@@ -10,6 +12,7 @@ import { Talk } from '../models/TalkSchema';
 import { ArchiveKind } from '../../client/src/client-server-common/Models';
 
 import config from '../config/config';
+import { getErrorMessage } from '../controllers/Common';
 
 interface OpenGraphParams {
     title: string
@@ -23,6 +26,19 @@ const readFilePromise = util.promisify<string, string>((argument, callback) => f
 
 export default function (app: Express): void {
     const indexPath = path.join(__dirname, '../../../', 'build', 'client', 'index.html');
+    app.route('/open-graph-scrape')
+        .get(async (req: Request, res: Response) => {
+            const url = req.query.url as unknown as string | undefined;
+            if (!url) return res.status(400).send({
+                message: getErrorMessage('There is no url to scrape')
+            });
+            const {error, result} = await scraper({url});
+
+            return error ? res.status(400).send({
+                message: getErrorMessage(`Error scraping for open graph results: ${JSON.stringify(error)}`)
+            }) : res.json(result);
+        });
+
     app.all(
         '/*',
         async (req: Request, res: Response) => {
