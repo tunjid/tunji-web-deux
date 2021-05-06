@@ -1,5 +1,5 @@
 import { HomeAction, SELECT_TAB } from "../actions/Home";
-import { ArchiveKind } from "../common/Models";
+import { ArchiveKind } from "../client-server-common/Models";
 
 export interface HomeState {
     tabs: ArchiveKind[];

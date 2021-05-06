@@ -2,9 +2,9 @@ import { Express } from 'express';
 import archiveController from '../controllers/ArchiveController';
 import users from '../controllers/UserController';
 
-import { ArchiveModel } from '../models/Archive';
+import { ArchiveDocument, ArchiveModel } from '../models/Archive';
 
-export default function (app: Express, model: ArchiveModel): void {
+export default function <T extends ArchiveDocument>(app: Express, model: ArchiveModel<T>): void {
     const archives = archiveController(model);
     const modelPath = model.modelName.toLowerCase();
     const routeName = `${modelPath}s`;

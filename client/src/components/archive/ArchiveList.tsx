@@ -6,7 +6,7 @@ import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { PersistentUiActions } from "../../actions/PersistentUi";
 import { createSelector } from "reselect";
 import { StoreState } from "../../types";
-import { ArchiveKind, ArchiveLike, ArchiveSummary } from "../../common/Models";
+import { ArchiveKind, ArchiveLike, ArchiveSummary } from "../../client-server-common/Models";
 import { ArchiveState } from "../../reducers/Archive";
 import { RouterState } from "connected-react-router";
 import { theme } from "../../styles/PersistentUi";
@@ -15,9 +15,10 @@ import Typography from "@material-ui/core/Typography";
 import { Divider } from "@material-ui/core";
 import _ from 'lodash';
 import { StylelessAnchor, verticalMargin } from "../../styles/Common";
-import { capitalizeFirst, normalizeArchiveKind, ShortMonthNames } from "../common/Common";
+import { capitalizeFirst, ShortMonthNames } from "../common/Common";
 import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
+import { describeRoute } from "../../client-server-common/RouteUtilities";
 
 const useStyles = makeStyles((theme) => createStyles({
         root: {
@@ -56,7 +57,9 @@ const selector = createSelector<StoreState, RouterState, ArchiveState, State>(
     state => state.router,
     state => state.archives,
     (routerState, archiveState) => {
-        const kind = normalizeArchiveKind(routerState.location.pathname.split('/')[1]);
+        const lookup = describeRoute(routerState.location.pathname).archiveLookup;
+        const kind = lookup?.kind || ArchiveKind.Articles;
+
         return {
             kind,
             summaries: archiveState.summariesMap[kind],

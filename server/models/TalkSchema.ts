@@ -4,10 +4,8 @@ import archiveModel, { Archive, ArchiveSchema } from './Archive';
 export interface TalkDocument extends Document, Archive {
 }
 
-type TalkModel = Model<TalkDocument>
-
-const TalkSchema = new Schema<TalkDocument, TalkModel>({
+const TalkSchema = new Schema<TalkDocument, Model<TalkDocument>>({
     ...ArchiveSchema,
 });
 
-export const Talk = archiveModel<TalkDocument, TalkModel>('Talk', TalkSchema);
+export const Talk = archiveModel<TalkDocument>('Talk', TalkSchema);

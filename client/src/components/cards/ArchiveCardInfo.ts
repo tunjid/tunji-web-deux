@@ -1,4 +1,4 @@
-import { ArchiveKind, UserLike } from "../../common/Models";
+import { ArchiveKind, UserLike } from "../../client-server-common/Models";
 
 export enum CardStyle {
     horizontal = "horizontal",

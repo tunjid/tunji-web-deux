@@ -1,4 +1,4 @@
-import { ArchiveKind } from "../common/Models";
+import { ArchiveKind } from "../client-server-common/Models";
 
 export const SELECT_TAB = 'SELECT_TAB';
 

@@ -1,9 +1,10 @@
-import { ArchiveKind, ArchiveLike, UserLike } from "../../common/Models";
+import { ArchiveKind, ArchiveLike, UserLike } from "../../client-server-common/Models";
 import { createSelector } from "reselect";
 import { StoreState } from "../../types";
 import { ArchiveState } from "../../reducers/Archive";
 import { ArchiveView } from "../../actions/Archive";
 import { Theme } from "@material-ui/core";
+import { describeRoute } from "../../client-server-common/RouteUtilities";
 
 export const responsiveWidth = (theme: Theme) => ({
     [theme.breakpoints.up('md')]: {
@@ -24,11 +25,9 @@ export const archiveSelector = (archiveViewType: ArchiveView) => createSelector<
     state => state.router.location.pathname,
     state => state.archives,
     (signedInUser, pathname, archiveState) => {
-        const pathSegments = pathname.split('/').filter(segment => segment !== 'edit');
-        const lastSegment = pathSegments[pathSegments.length - 1];
-        const linkSplit = lastSegment.split('-');
-        const kind = normalizeArchiveKind(pathSegments[1]);
-        const archiveId = linkSplit[linkSplit.length - 1];
+        const lookup = describeRoute(pathname).archiveLookup;
+        const kind = lookup?.kind || ArchiveKind.Articles;
+        const archiveId = lookup?.archiveId;
 
         return {
             isSignedIn: signedInUser !== undefined,
@@ -38,8 +37,6 @@ export const archiveSelector = (archiveViewType: ArchiveView) => createSelector<
         };
     }
 );
-
-export const normalizeArchiveKind = (text: String) => Object.values(ArchiveKind).find(item => item === text) || ArchiveKind.Articles
 
 export const readTime = (text: String) => `${Math.ceil(text.trim().split(/\s+/).length / 250)} min read`
 

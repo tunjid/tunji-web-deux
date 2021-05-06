@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
-import { ArchiveModel } from '../models/Archive';
+import { ArchiveDocument, ArchiveModel } from '../models/Archive';
 import { errorMessage, getErrorMessage } from './Common';
-import { ArchiveSummary } from '../../client/src/common/Models';
+import { ArchiveSummary } from '../../client/src/client-server-common/Models';
 
 interface ArchiveController {
     create: (res: Request, req: Response, next: NextFunction) => void;
@@ -15,7 +15,7 @@ interface ArchiveController {
     hasAuthorization: (res: Request, req: Response, next: NextFunction) => void;
 }
 
-const archiveController = (Model: ArchiveModel): ArchiveController => ({
+const archiveController = <T extends ArchiveDocument>(Model: ArchiveModel<T>): ArchiveController => ({
     create: (req, res) => {
         const archive = new Model(req.body);
         archive.author = req.user?.id;

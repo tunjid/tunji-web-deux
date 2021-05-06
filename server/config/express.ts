@@ -14,6 +14,7 @@ import config from './config';
 import session from './session';
 import userRouter from '../routes/UserRouter';
 import archiveRouter from '../routes/ArchiveRouter';
+import reactRouter from '../routes/ReactRouter';
 import errorMiddleware from '../middleware/ErrorMiddleware';
 import HttpException from '../utilities/HttpException';
 
@@ -82,14 +83,7 @@ const App: () => Express = () => {
     archiveRouter(app, Article);
     archiveRouter(app, Project);
     archiveRouter(app, Talk);
-
-    app.all(
-        '/*',
-        (req: Request, res: Response) => {
-            const indexPath = path.join(__dirname, '../../../', 'build', 'client', 'index.html');
-            res.sendFile(indexPath);
-        }
-    );
+    reactRouter(app);
 
 // catch 404 and forward to error handler
     app.use((req: Request, res: Response, next: NextFunction) => {

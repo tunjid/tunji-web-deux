@@ -1,6 +1,6 @@
 import { Document, model, Model, Schema } from 'mongoose';
 import { UserDocument } from './UserSchema';
-import { ArchiveLike } from '../../client/src/common/Models';
+import { ArchiveKind, ArchiveLike } from '../../client/src/client-server-common/Models';
 
 export interface Archive extends ArchiveLike {
     title: string;
@@ -16,7 +16,9 @@ export interface Archive extends ArchiveLike {
 
 export type ArchiveDocument = Document & Archive
 
-export type ArchiveModel = Model<ArchiveDocument>
+export interface ArchiveModel<T extends ArchiveDocument = ArchiveDocument> extends Model<T> {
+    getKind: () => ArchiveKind
+}
 
 export const ArchiveSchema = {
     title: {type: String, required: true},
@@ -29,7 +31,13 @@ export const ArchiveSchema = {
     created: {type: Date, default: Date.now}
 };
 
-export default function archiveModel<D extends ArchiveDocument, M extends Model<D>>(name: string, schema: Schema<D, M>): M {
+export default function archiveModel<D extends ArchiveDocument>(name: string, schema: Schema<D, ArchiveModel<D>>): ArchiveModel<D> {
+    const kind = `${name.toLowerCase()}s` as ArchiveKind;
+
+    schema.statics.getKind = function () {
+        return kind;
+    };
+
     schema.virtual('key')
         .get(function (this: D) {
             return this._id;
@@ -37,7 +45,7 @@ export default function archiveModel<D extends ArchiveDocument, M extends Model<
 
     schema.virtual('kind')
         .get(function (this: D) {
-            return `${name.toLowerCase()}s`;
+            return kind;
         });
 
     schema.virtual('link')
@@ -48,10 +56,10 @@ export default function archiveModel<D extends ArchiveDocument, M extends Model<
     schema.set('toJSON', {
         virtuals: true,
         transform: (doc: ArchiveDocument, ret: Partial<ArchiveDocument>) => {
-            if(!ret.thumbnail) ret.thumbnail = 'https://miro.medium.com/max/4800/1*F7eVQ1Fe7-O6vZWvEt7kHg.png';
+            if (!ret.thumbnail) ret.thumbnail = 'https://miro.medium.com/max/4800/1*F7eVQ1Fe7-O6vZWvEt7kHg.png';
             return ret;
         }
     });
 
-    return model<D, M>(name, schema);
+    return model<D, ArchiveModel<D>>(name, schema);
 }

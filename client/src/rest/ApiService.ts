@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { ArchiveKind, ArchiveLike, ArchiveSummary, UserLike } from "../common/Models";
+import { ArchiveKind, ArchiveLike, ArchiveSummary, UserLike } from "../client-server-common/Models";
 import { SignInArgs } from "../actions/Auth";
 import { ArchivePayload, ArchivesQuery, yearAndMonthParam } from "../actions/Archive";
 

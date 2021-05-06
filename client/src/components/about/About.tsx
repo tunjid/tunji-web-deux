@@ -75,7 +75,7 @@ This website is my latest attempt at learning the web frontend flavor du jour af
 * Ron Fessler
 * Micheal Pardon
 * Matt Chowning
-* Ben Yesley
+* Ben Yelsey
 `
 
 const About = () => {

@@ -4,10 +4,8 @@ import archiveModel, { Archive, ArchiveSchema } from './Archive';
 export interface ArticleDocument extends Document, Archive {
 }
 
-type ArticleModel = Model<ArticleDocument>
-
-const ArticleSchema = new Schema<ArticleDocument, ArticleModel>({
+const ArticleSchema = new Schema<ArticleDocument, Model<ArticleDocument>>({
     ...ArchiveSchema,
 });
 
-export const Article = archiveModel<ArticleDocument, ArticleModel>('Article', ArticleSchema);
+export const Article = archiveModel<ArticleDocument>('Article', ArticleSchema);
