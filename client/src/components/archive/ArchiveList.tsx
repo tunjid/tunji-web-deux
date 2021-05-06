@@ -12,7 +12,7 @@ import { RouterState } from "connected-react-router";
 import { theme } from "../../styles/PersistentUi";
 import { ArchiveActions, ArchivesQuery } from "../../actions/Archive";
 import Typography from "@material-ui/core/Typography";
-import { Divider } from "@material-ui/core";
+import { CircularProgress, Divider } from "@material-ui/core";
 import _ from 'lodash';
 import { StylelessAnchor, verticalMargin } from "../../styles/Common";
 import { archivesSelector, capitalizeFirst, ShortMonthNames } from "../common/Common";
@@ -23,12 +23,21 @@ import { describeRoute } from "../../client-server-common/RouteUtilities";
 const useStyles = makeStyles((theme) => createStyles({
         root: {
             display: 'flex',
-            'flex-direction': 'row',
-            'justify-content': 'center'
+            flexDirection: 'row',
+            justifyContent: 'center'
         },
-        cards: {
+        contentColumn: {
             width: 'auto',
             position: 'relative',
+            display: 'flex',
+            flexDirection: 'column'
+        },
+        progressBar: {
+            width: 'auto',
+            position: 'relative',
+            marginLeft: 'auto',
+            marginRight: 'auto',
+            ...verticalMargin(theme.spacing(8)),
         },
         gutter: {
             display: 'flex',
@@ -132,8 +141,9 @@ const ArchiveList = () => {
                 <title>{title}</title>
                 <meta name="description" content={title}/>
             </Helmet>
-            <div className={classes.cards}>
+            <div className={classes.contentColumn}>
                 <ArchiveCards kind={kind} archives={archives}/>
+                <CircularProgress className={classes.progressBar}/>
             </div>
             <div className={classes.gutter}>
                 <Typography gutterBottom variant="h5">
