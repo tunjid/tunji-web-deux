@@ -1,18 +1,11 @@
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import * as React from 'react';
-import { useEffect } from 'react';
-import { createSelector } from "reselect";
-import { StoreState } from "../../types";
-import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import ArchiveCard from "../cards/ArchiveCard";
 import { GridList, GridListTile } from "@material-ui/core";
 import { ArchiveKind, ArchiveLike } from "../../client-server-common/Models";
 import { ArchiveCardInfo, CardStyle } from "./ArchiveCardInfo";
-import { ArchiveActions, yearAndMonthParam } from "../../actions/Archive";
-import { PersistentUiActions } from "../../actions/PersistentUi";
 import { useWidth } from "../../hooks/UseWidth";
 import { archiveDate, readTime } from "../common/Common";
-import { ArchiveState } from "../../reducers/Archive";
 
 const useStyles = makeStyles(() => createStyles({
         root: {
@@ -28,36 +21,11 @@ const useStyles = makeStyles(() => createStyles({
 
 interface Props {
     kind: ArchiveKind,
-    max?: number,
-    queryParams?: Record<string, string>,
-}
-
-interface State {
     archives: ArchiveLike[];
 }
 
-const selector = ({kind, max, queryParams}: Props) => createSelector<StoreState, ArchiveState, State>(
-    state => state.archives,
-    (archiveState) => {
-        queryParams = queryParams || {};
-        const {category} = queryParams;
-        const yearAndMonth = yearAndMonthParam(queryParams);
-        let archives = archiveState.kindToArchivesMap[kind];
-        archives = category ? archives.filter(archive => archive.categories.indexOf(category) > -1) : archives
-        archives = yearAndMonth
-            ? archives.filter(archive => archive.created.getFullYear() === yearAndMonth.year && archive.created.getMonth() === yearAndMonth.month)
-            : archives;
-        archives = max ? archives.slice(0, max) : archives;
-
-        return {archives};
-    }
-);
-
-const ArchiveCards = (props: Props) => {
+const ArchiveCards = ({kind, archives}: Props) => {
     const classes = useStyles();
-    const dispatch = useDispatch();
-    const {kind, queryParams} = props;
-    const {archives}: State = useSelector(selector(props), shallowEqual);
 
     const width = useWidth();
     const isxSmallScreen = /xs/.test(width);
@@ -91,14 +59,6 @@ const ArchiveCards = (props: Props) => {
     })
 
     const cards = archives.map(cardFromArchive);
-
-    useEffect(() => {
-        dispatch(PersistentUiActions.modifyAppBar({menuItems: []}));
-    }, [kind, dispatch]);
-
-    useEffect(() => {
-        dispatch(ArchiveActions.fetchArchives({kind, item: queryParams || {}}));
-    }, [kind, queryParams, dispatch]);
 
     return (
         <div className={classes.root}>

@@ -7,9 +7,10 @@ import { SnackbarActions, SnackbarKind } from "./Snackbar";
 
 export const ADD_ARCHIVE = 'ADD_ARCHIVE';
 export const EDIT_ARCHIVE = 'EDIT_ARCHIVE';
-export const ADD_ARCHIVES = 'ADD_ARCHIVES';
+export const UPDATE_ARCHIVES = 'UPDATE_ARCHIVES';
 export const SAVE_ARCHIVE = 'SAVE_ARCHIVE';
 export const UPDATE_ARCHIVE_SUMMARY = 'UPDATE_ARCHIVE_SUMMARY';
+export const UPDATE_FETCH_STATUS = 'UPDATE_FETCH_STATUS';
 
 export type ArchiveView = 'detail' | 'edit';
 
@@ -39,9 +40,19 @@ export interface EditArchive {
     edits: Partial<ArchiveLike>;
 }
 
-export interface AddArchives {
-    type: typeof ADD_ARCHIVES;
+export interface UpdateArchives {
+    type: typeof UPDATE_ARCHIVES;
     payload: ArchivePayload<ArchiveLike[]>;
+}
+
+interface UpdateFetchStatusPayload {
+    queryKey: string,
+    isLoading: boolean
+}
+
+export interface UpdateFetchStatus {
+    type: typeof UPDATE_FETCH_STATUS;
+    payload: UpdateFetchStatusPayload;
 }
 
 export interface SaveArchive {
@@ -54,12 +65,16 @@ export interface UpdateArchiveSummary {
     payload: ArchivePayload<ArchiveSummary[]>;
 }
 
-export type ArchiveAction = AddArchive | EditArchive | AddArchives | SaveArchive | UpdateArchiveSummary;
+export type ArchiveAction = AddArchive | EditArchive | UpdateArchives | SaveArchive | UpdateArchiveSummary | UpdateFetchStatus;
 
-export type ArchivesQuery = Record<string, string>;
+export interface ArchivesQuery {
+    key: string;
+    kind: ArchiveKind;
+    params: Record<string, string>
+}
 
-export const yearAndMonthParam = (queryParams: ArchivesQuery) => {
-    const {dateInfo} = queryParams;
+export const yearAndMonthParam = ({params}: ArchivesQuery) => {
+    const {dateInfo} = params;
     const splitDate = dateInfo ? dateInfo.split('-') : [];
     const {year, month} = {year: parseInt(splitDate[0]), month: parseInt(splitDate[1])}
 
@@ -67,10 +82,11 @@ export const yearAndMonthParam = (queryParams: ArchivesQuery) => {
 }
 
 interface IArchiveActions {
-    fetchArchives: (payload: ArchivePayload<ArchivesQuery>) => AppThunk
+    fetchArchives: (query: ArchivesQuery) => AppThunk
     editArchive: (edits: Partial<ArchiveLike>) => EditArchive
     addArchive: (response: FetchArchiveResponse) => AddArchive
-    addArchives: (payload: ArchivePayload<ArchiveLike[]>) => AddArchives
+    addArchives: (payload: ArchivePayload<ArchiveLike[]>) => UpdateArchives
+    updateArchiveFetchStatus: (payload: UpdateFetchStatusPayload) => UpdateFetchStatus
     updateArchiveSummaries: (payload: ArchivePayload<ArchiveSummary[]>) => UpdateArchiveSummary
     createArchive: (kind: ArchiveKind) => AppThunk
     readArchive: (request: FetchArchiveRequest) => AppThunk
@@ -124,24 +140,29 @@ export const ArchiveActions: IArchiveActions = {
             () => dispatch(RouterActions.pop())
         );
     },
-    fetchArchives: (payload: ArchivePayload<ArchivesQuery>) => async (dispatch) => {
+    fetchArchives: (query: ArchivesQuery) => async (dispatch) => {
+        // dispatch(ArchiveActions.updateArchiveFetchStatus({queryKey: query.key, isLoading: true}));
+
         await onSuccessOrSnackbar(
-            ApiService.fetchArchives(payload),
+            ApiService.fetchArchives(query),
             dispatch,
             (fetched) => {
                 const archives = fetched.map((raw) => ({...raw, created: new Date(raw.created)}));
-                dispatch(ArchiveActions.addArchives({kind: payload.kind, item: archives}));
-            }
+                dispatch(ArchiveActions.addArchives({kind: query.kind, item: archives}));
+            },
+            // () => dispatch(ArchiveActions.updateArchiveFetchStatus({queryKey: query.key, isLoading: false}))
         );
     },
     archiveSummaries: (kind: ArchiveKind) => async (dispatch) => {
         await onSuccessOrSnackbar(
             ApiService.archiveSummaries(kind),
             dispatch,
-            (fetched) => dispatch(ArchiveActions.updateArchiveSummaries({kind, item: fetched.map(item => {
+            (fetched) => dispatch(ArchiveActions.updateArchiveSummaries({
+                kind, item: fetched.map(item => {
                     // Mongo aggregation pipeline does not 0 index months.
                     return {...item, dateInfo: {...item.dateInfo, month: item.dateInfo.month - 1}};
-                })}))
+                })
+            }))
         );
     },
     addArchive: (response: FetchArchiveResponse) => ({
@@ -153,11 +174,15 @@ export const ArchiveActions: IArchiveActions = {
         edits
     }),
     addArchives: (payload: ArchivePayload<ArchiveLike[]>) => ({
-        type: ADD_ARCHIVES,
+        type: UPDATE_ARCHIVES,
         payload
     }),
     updateArchiveSummaries: (payload: ArchivePayload<ArchiveSummary[]>) => ({
         type: UPDATE_ARCHIVE_SUMMARY,
+        payload
+    }),
+    updateArchiveFetchStatus: (payload: UpdateFetchStatusPayload) => ({
+        type: UPDATE_FETCH_STATUS,
         payload
     }),
 }

@@ -6,16 +6,16 @@ import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { PersistentUiActions } from "../../actions/PersistentUi";
 import { createSelector } from "reselect";
 import { StoreState } from "../../types";
-import { ArchiveKind, ArchiveLike, ArchiveSummary } from "../../client-server-common/Models";
+import { ArchiveKind, ArchiveSummary } from "../../client-server-common/Models";
 import { ArchiveState } from "../../reducers/Archive";
 import { RouterState } from "connected-react-router";
 import { theme } from "../../styles/PersistentUi";
-import { ArchiveActions } from "../../actions/Archive";
+import { ArchiveActions, ArchivesQuery } from "../../actions/Archive";
 import Typography from "@material-ui/core/Typography";
 import { Divider } from "@material-ui/core";
 import _ from 'lodash';
 import { StylelessAnchor, verticalMargin } from "../../styles/Common";
-import { capitalizeFirst, ShortMonthNames } from "../common/Common";
+import { archivesSelector, capitalizeFirst, ShortMonthNames } from "../common/Common";
 import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
 import { describeRoute } from "../../client-server-common/RouteUtilities";
@@ -48,9 +48,7 @@ const useStyles = makeStyles((theme) => createStyles({
 
 interface State {
     kind: ArchiveKind,
-    archives: ArchiveLike[];
     summaries: ArchiveSummary[];
-    queryParams: Record<string, string>;
 }
 
 const selector = createSelector<StoreState, RouterState, ArchiveState, State>(
@@ -63,8 +61,20 @@ const selector = createSelector<StoreState, RouterState, ArchiveState, State>(
         return {
             kind,
             summaries: archiveState.summariesMap[kind],
-            archives: archiveState.kindToArchivesMap[kind] || [],
-            queryParams: routerState.location.query,
+        }
+    }
+);
+
+const querySelector = createSelector<StoreState, RouterState, ArchivesQuery>(
+    state => state.router,
+    (routerState) => {
+        const lookup = describeRoute(routerState.location.pathname).archiveLookup;
+        const kind = lookup?.kind || ArchiveKind.Articles;
+
+        return {
+            kind,
+            key: `ArchiveList-${kind}`,
+            params: routerState.location.query,
         }
     }
 );
@@ -72,7 +82,9 @@ const selector = createSelector<StoreState, RouterState, ArchiveState, State>(
 const ArchiveList = () => {
     const classes = useStyles();
     const dispatch = useDispatch();
-    const {kind, summaries, archives, queryParams}: State = useSelector(selector, shallowEqual);
+    const {kind, summaries} = useSelector(selector, shallowEqual);
+    const query = useSelector(querySelector, shallowEqual);
+    const archives = useSelector(archivesSelector(querySelector), shallowEqual);
 
     const title = `Tunji's ${capitalizeFirst(kind)}`;
     const categories = _.uniq(_.flatten(archives.map(archive => archive.categories)));
@@ -87,6 +99,10 @@ const ArchiveList = () => {
             }
         ));
     }, [kind, dispatch]);
+
+    useEffect(() => {
+        dispatch(ArchiveActions.fetchArchives(query));
+    }, [query, dispatch]);
 
     useEffect(() => {
         dispatch(ArchiveActions.archiveSummaries(kind));
@@ -117,7 +133,7 @@ const ArchiveList = () => {
                 <meta name="description" content={title}/>
             </Helmet>
             <div className={classes.cards}>
-                <ArchiveCards kind={kind} queryParams={queryParams}/>
+                <ArchiveCards kind={kind} archives={archives}/>
             </div>
             <div className={classes.gutter}>
                 <Typography gutterBottom variant="h5">

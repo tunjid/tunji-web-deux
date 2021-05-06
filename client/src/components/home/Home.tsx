@@ -14,9 +14,11 @@ import { PersistentUiState } from "../../reducers/PersistentUi";
 import { AuthState } from "../../reducers/Auth";
 import Fab from "@material-ui/core/Fab";
 import { RouterActions } from "../../actions/Router";
-import {Helmet} from "react-helmet";
+import { Helmet } from "react-helmet";
 import { ArchiveKind } from "../../client-server-common/Models";
-import {Link} from 'react-router-dom'
+import { Link } from 'react-router-dom'
+import { ArchiveActions, ArchivesQuery } from "../../actions/Archive";
+import { archivesSelector } from "../common/Common";
 
 const useStyles = makeStyles((theme) => createStyles({
         root: {
@@ -69,6 +71,15 @@ const selector = createSelector<StoreState, PersistentUiState, HomeState, AuthSt
     })
 );
 
+const querySelector = createSelector<StoreState, HomeState, ArchivesQuery>(
+    state => state.home,
+    (home) => ({
+        params: {},
+        key: `Home-${home.selectedTab}`,
+        kind: home.selectedTab,
+    })
+);
+
 const Home = () => {
     const classes = useStyles();
     const dispatch = useDispatch();
@@ -77,8 +88,9 @@ const Home = () => {
         appBarTitle,
         selectedTab,
         isSignedIn,
-    }: State = useSelector(selector, shallowEqual);
-
+    } = useSelector(selector, shallowEqual);
+    const query = useSelector(querySelector, shallowEqual);
+    const archives = useSelector(archivesSelector(querySelector, 13), shallowEqual);
 
     useEffect(() => {
         dispatch(PersistentUiActions.modifyAppBar({
@@ -100,11 +112,15 @@ const Home = () => {
         }));
     }, [appBarTitle, isSignedIn, selectedTab, dispatch])
 
+    useEffect(() => {
+        dispatch(ArchiveActions.fetchArchives(query));
+    }, [query, dispatch]);
+
     return (
         <div className={classes.root}>
             <Helmet>
                 <title>Adetunji Dahunsi</title>
-                <meta name="description" content="Tunji's web corner" />
+                <meta name="description" content="Tunji's web corner"/>
             </Helmet>
             <HomeHeader/>
             <Fab
@@ -117,7 +133,7 @@ const Home = () => {
                 <Link className={classes.topFabHyperlink} to={`/${selectedTab}`}>{`All ${selectedTab}`}</Link>
             </Fab>
             <div className={classes.cards}>
-                <ArchiveCards kind={selectedTab} max={13}/>
+                <ArchiveCards kind={selectedTab} archives={archives}/>
             </div>
             <Fab
                 className={classes.bottomFab}
