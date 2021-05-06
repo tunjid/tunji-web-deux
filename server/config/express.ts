@@ -37,7 +37,10 @@ const App: () => Express = () => {
     });
 
     // Set the static files location
-    app.use('/', ExpressApp.static(path.join(__dirname, '../../client')));
+    app.use('/', ExpressApp.static(
+        path.join(__dirname, '../../client'),
+        {index: false}
+    ));
 
     app.use(cors({
         credentials: true,

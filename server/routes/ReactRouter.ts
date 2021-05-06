@@ -9,6 +9,8 @@ import { Project } from '../models/ProjectSchema';
 import { Talk } from '../models/TalkSchema';
 import { ArchiveKind } from '../../client/src/client-server-common/Models';
 
+import config from '../config/config';
+
 interface OpenGraphParams {
     title: string
     description: string
@@ -42,7 +44,7 @@ async function openGraphParams({root, archiveLookup}: RouteDescription): Promise
             return {
                 title: 'About Tunji',
                 description: 'What I\'ve been up to',
-                image: 'https://pbs.twimg.com/profile_images/1368773620386922502/XN6-njLn_400x400.jpg'
+                image: config.rootIndexImage
             };
         }
         case ArchiveKind.Articles:
@@ -59,14 +61,14 @@ async function openGraphParams({root, archiveLookup}: RouteDescription): Promise
             return {
                 title: document?.title || `${root} by Tunji`,
                 description: document?.description || `An archive of my ${root}`,
-                image: document?.thumbnail || 'https://storage.cloud.google.com/tunji-web/assets/tunji-web-deux.png'
+                image: document?.thumbnail || config.archiveListDefaultImage
             };
         }
         default: {
             return {
                 title: 'Tunji\'s Web Corner',
                 description: 'Adetunji Dahunsi\'s Portfolio',
-                image: 'https://storage.cloud.google.com/tunji-web/assets/tunji-web-deux.png'
+                image: config.rootIndexImage
             };
         }
     }

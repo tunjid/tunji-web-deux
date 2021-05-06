@@ -102,7 +102,7 @@ const About = () => {
             </Helmet>
             <Avatar
                 className={classes.avatar}
-                src={'https://pbs.twimg.com/profile_images/1368773620386922502/XN6-njLn_400x400.jpg'}
+                src={process.env.REACT_APP_ABOUT_PROFILE_PICTURE}
             />
             <div className={classes.socials}>
                 <a className={classes.socialIcons}
