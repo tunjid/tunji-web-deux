@@ -6,7 +6,7 @@ import { ArchiveKind, ArchiveLike } from "../../client-server-common/Models";
 import { ArchiveCardInfo, CardStyle } from "./ArchiveCardInfo";
 import { useWidth } from "../../hooks/UseWidth";
 import { archiveDate, readTime } from "../common/Common";
-ø
+
 const useStyles = makeStyles(() => createStyles({
         root: {
             display: 'flex',
