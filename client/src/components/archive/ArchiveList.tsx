@@ -1,12 +1,12 @@
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import * as React from 'react';
-import { useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import ArchiveCards from "../cards/ArchiveCards";
 import { useDispatch } from "react-redux";
 import { PersistentUiActions } from "../../actions/PersistentUi";
 import { createSelector } from "reselect";
 import { StoreState } from "../../types";
-import { ArchiveKind, ArchiveSummary } from "../../client-server-common/Models";
+import { ArchiveKind, ArchiveLike, ArchiveSummary } from "../../client-server-common/Models";
 import { ArchiveState } from "../../reducers/Archive";
 import { RouterState } from "connected-react-router";
 import { theme } from "../../styles/PersistentUi";
@@ -84,7 +84,7 @@ const querySelector = createSelector<StoreState, RouterState, ArchivesQuery>(
         return {
             kind,
             key: `ArchiveList-${kind}`,
-            params: routerState.location.query,
+            params: {...routerState.location.query, limit: '13'},
         }
     }
 );
@@ -95,6 +95,28 @@ const ArchiveList = () => {
     const {kind, summaries} = useDeepEqualSelector(selector);
     const query = useDeepEqualSelector(querySelector);
     const archives = useDeepEqualSelector(archivesSelector(querySelector));
+    const offset = useDeepEqualSelector(createSelector<StoreState, ArchiveLike[], number>(
+        archivesSelector(querySelector),
+        (archives) => archives.length
+    ));
+    const isLoading = useDeepEqualSelector(createSelector<StoreState, ArchivesQuery, ArchiveState, boolean>(
+        querySelector,
+        state => state.archives,
+        (query, archiveState) => archiveState.archivesFetchStatus[query.key]
+    ));
+
+    const [loader, setLoader] = useState<HTMLDivElement | undefined>(undefined);
+    const loaderRef = useCallback(node => {
+        if (node !== null) setLoader(node);
+    }, []);
+
+    const loadMore = useCallback((entries) => {
+        const target = entries[0];
+        if (!target.isIntersecting || isLoading) return;
+
+        const params = {...query.params, offset: `${offset}`}
+        dispatch(ArchiveActions.fetchArchives({...query, params}));
+    }, [isLoading, query, offset, dispatch]);
 
     const title = `Tunji's ${capitalizeFirst(kind)}`;
     const categories = _.uniq(_.flatten(archives.map(archive => archive.categories)));
@@ -117,6 +139,24 @@ const ArchiveList = () => {
     useEffect(() => {
         dispatch(ArchiveActions.archiveSummaries(kind));
     }, [kind, dispatch]);
+
+    useEffect(() => {
+        const options = {
+            root: null, // window by default
+            rootMargin: '0px',
+            threshold: 0.25
+        };
+
+        const observer = new IntersectionObserver(loadMore, options);
+        if (loader) observer.observe(loader);
+
+        // clean up on willUnMount
+        return () => {
+            if (loader) observer.unobserve(loader);
+        };
+    }, [loader, loadMore]);
+
+    const progressNode = isLoading ? <CircularProgress/> : <div/>;
 
     const categoryNodes = categories.map(category =>
         <Link className={classes.gutterLink}
@@ -144,7 +184,9 @@ const ArchiveList = () => {
             </Helmet>
             <div className={classes.contentColumn}>
                 <ArchiveCards kind={kind} archives={archives}/>
-                <CircularProgress className={classes.progressBar}/>
+                <div ref={loaderRef} className={classes.progressBar}>
+                    {progressNode}
+                </div>
             </div>
             <div className={classes.gutter}>
                 <Typography gutterBottom variant="h5">
