@@ -12,7 +12,8 @@ interface ApiError {
 export const onHttpResponse = async <T>(
     request: Promise<AxiosResponse<T>>,
     onSuccess: (item: T) => void,
-    onError: (response: AxiosError<ApiError>) => void = emptyCallback) => {
+    onError: (response: AxiosError<ApiError>) => void = emptyCallback
+) => {
     try {
         const response = await request;
         onSuccess(response.data)
@@ -25,11 +26,14 @@ export const onHttpResponse = async <T>(
 export const onSuccessOrSnackbar = async <T>(
     request: Promise<AxiosResponse<T>>,
     dispatch: AppDispatch,
-    onSuccess: (item: T) => void) => {
+    onSuccess: (item: T) => void,
+    onError: (response: AxiosError<ApiError>) => void = emptyCallback
+) => {
     await onHttpResponse(request, onSuccess, (error) => {
         const response = error.response;
         const status = `status: ${response?.status}`;
         const message = `${response?.data?.message || 'Unknown error'} ${status}`
+        onError(error);
         dispatch(SnackbarActions.enqueueSnackbar({
             title: message,
             kind: SnackbarKind.Error,

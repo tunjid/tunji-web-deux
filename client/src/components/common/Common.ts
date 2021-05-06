@@ -2,7 +2,7 @@ import { ArchiveKind, ArchiveLike, UserLike } from "../../client-server-common/M
 import { createSelector } from "reselect";
 import { StoreState } from "../../types";
 import { ArchiveState } from "../../reducers/Archive";
-import { ArchiveView } from "../../actions/Archive";
+import { ArchivesQuery, ArchiveView, yearAndMonthParam } from "../../actions/Archive";
 import { Theme } from "@material-ui/core";
 import { describeRoute } from "../../client-server-common/RouteUtilities";
 
@@ -35,6 +35,25 @@ export const archiveSelector = (archiveViewType: ArchiveView) => createSelector<
             archiveId,
             archive: archiveViewType === 'detail' ? archiveState.kindToDetailMap[kind] : archiveState.kindToEditMap[kind]
         };
+    }
+);
+
+export const archivesSelector = (querySelector: (StoreState: StoreState) => ArchivesQuery, max: number | undefined = undefined) => createSelector<StoreState,ArchivesQuery, ArchiveState, ArchiveLike[]>(
+    querySelector,
+    state => state.archives,
+    (query, archiveState) => {
+        const { kind, params} = query;
+        const {category} = params;
+        const yearAndMonth = yearAndMonthParam(query);
+
+        let archives = archiveState.kindToArchivesMap[kind];
+        archives = category ? archives.filter(archive => archive.categories.indexOf(category) > -1) : archives
+        archives = yearAndMonth
+            ? archives.filter(archive => archive.created.getFullYear() === yearAndMonth.year && archive.created.getMonth() === yearAndMonth.month)
+            : archives;
+        archives = max ? archives.slice(0, max) : archives;
+
+        return archives;
     }
 );
 
