@@ -4,7 +4,7 @@ import { theme } from "../../styles/PersistentUi";
 import { createSelector } from "reselect";
 import { StoreState } from "../../types";
 import { PersistentUiState } from "../../reducers/PersistentUi";
-import { shallowEqual, useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { PersistentUiActions } from "../../actions/PersistentUi";
 import { Tab, Tabs } from "@material-ui/core";
 import { HomeState } from "../../reducers/Home";
@@ -13,6 +13,7 @@ import useEventListener from "../../hooks/UseEventListener";
 import { AuthState } from "../../reducers/Auth";
 import { ArchiveKind } from "../../client-server-common/Models";
 import { capitalizeFirst } from "../common/Common";
+import { useDeepEqualSelector } from "../../hooks/UseDeepEqualSelector";
 
 const throttle = require('lodash/throttle');
 
@@ -67,7 +68,7 @@ const HomeHeader = () => {
         selectedTab,
         onHomePage,
         tabs,
-    }: State = useSelector(selector, shallowEqual);
+    } = useDeepEqualSelector(selector);
 
     const onScroll = () => {
         const transparent = '#00000000'
@@ -102,7 +103,8 @@ const HomeHeader = () => {
                 textColor="secondary"
                 centered
             >
-                {tabs.map((item: ArchiveKind) => <Tab className={classes.tab} key={item} label={capitalizeFirst(item)}/>)}
+                {tabs.map((item: ArchiveKind) => <Tab className={classes.tab} key={item}
+                                                      label={capitalizeFirst(item)}/>)}
             </Tabs>
         </div>
     );

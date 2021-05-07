@@ -1,10 +1,11 @@
 import { useEffect } from 'react';
-import { shallowEqual, useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useSnackbar } from 'notistack';
 import { createSelector } from "reselect";
 import { StoreState } from "../types";
 import { SnackbarActions, SnackbarNotification } from "../actions/Snackbar";
 import { SnackbarState } from "../reducers/Snackbar";
+import { useDeepEqualSelector } from "../hooks/UseDeepEqualSelector";
 
 const selector = createSelector<StoreState, SnackbarState, SnackbarNotification[]>(
     state => state.snackbars,
@@ -15,7 +16,7 @@ let displayed = [] as string[];
 
 const SnackbarManager = () => {
     const dispatch = useDispatch();
-    const notifications = useSelector(selector, shallowEqual);
+    const notifications = useDeepEqualSelector(selector);
     const {enqueueSnackbar, closeSnackbar} = useSnackbar();
 
     const storeDisplayed = (id: string) => {

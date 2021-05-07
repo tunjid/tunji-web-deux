@@ -8,10 +8,11 @@ import { MenuRes } from "../../types/MenuRes";
 import { createSelector } from "reselect";
 import { StoreState } from "../../types";
 import { PersistentUiState } from "../../reducers/PersistentUi";
-import { shallowEqual, useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { MENU_ROUTE, PersistentUiActions } from "../../actions/PersistentUi";
 import { RouterActions } from "../../actions/Router";
 import { useWidth } from "../../hooks/UseWidth";
+import { useDeepEqualSelector } from "../../hooks/UseDeepEqualSelector";
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
     root: {
@@ -56,7 +57,7 @@ const AppBarIcons = () => {
     const {
         items,
         hasOverflow,
-    }: State = useSelector(selector, shallowEqual);
+    }: State = useDeepEqualSelector(selector);
 
     const width = useWidth();
     const isSmallScreen = /xs|sm/.test(width);

@@ -5,6 +5,7 @@ import { ArchiveState } from "../../reducers/Archive";
 import { ArchivesQuery, ArchiveView, yearAndMonthParam } from "../../actions/Archive";
 import { Theme } from "@material-ui/core";
 import { describeRoute } from "../../client-server-common/RouteUtilities";
+import { MenuRes } from "../../types/MenuRes";
 
 export const responsiveWidth = (theme: Theme) => ({
     [theme.breakpoints.up('md')]: {
@@ -38,11 +39,11 @@ export const archiveSelector = (archiveViewType: ArchiveView) => createSelector<
     }
 );
 
-export const archivesSelector = (querySelector: (StoreState: StoreState) => ArchivesQuery, max: number | undefined = undefined) => createSelector<StoreState,ArchivesQuery, ArchiveState, ArchiveLike[]>(
+export const archivesSelector = (querySelector: (StoreState: StoreState) => ArchivesQuery, max: number | undefined = undefined) => createSelector<StoreState, ArchivesQuery, ArchiveState, ArchiveLike[]>(
     querySelector,
     state => state.archives,
     (query, archiveState) => {
-        const { kind, params} = query;
+        const {kind, params} = query;
         const {category} = params;
         const yearAndMonth = yearAndMonthParam(query);
 
@@ -56,6 +57,8 @@ export const archivesSelector = (querySelector: (StoreState: StoreState) => Arch
         return archives;
     }
 );
+
+export const MenuResEquality = (left: MenuRes | undefined, right: MenuRes | undefined) => left?.id === right?.id || false
 
 export const readTime = (text: String) => `${Math.ceil(text.trim().split(/\s+/).length / 250)} min read`
 

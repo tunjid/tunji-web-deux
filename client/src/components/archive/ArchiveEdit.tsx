@@ -3,7 +3,7 @@ import * as React from 'react';
 import { useEffect } from 'react';
 import { TextField } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
-import { shallowEqual, useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { PersistentUiActions } from "../../actions/PersistentUi";
 import { theme } from "../../styles/PersistentUi";
 import MEDitor from '@uiw/react-md-editor';
@@ -15,6 +15,7 @@ import CardMedia from "@material-ui/core/CardMedia";
 import ChipInput, { ChipType } from "./ChipInput";
 import SaveIcon from '@material-ui/icons/Save';
 import DeleteIcon from '@material-ui/icons/Delete';
+import { useDeepEqualSelector } from "../../hooks/UseDeepEqualSelector";
 
 const useStyles = makeStyles((theme) => createStyles({
         root: {
@@ -75,7 +76,7 @@ export interface Props {
 const ArchiveCreateOrEdit = ({isCreating}: Props) => {
     const classes = useStyles();
     const dispatch = useDispatch();
-    const {isSignedIn, kind, archiveId, archive} = useSelector(archiveSelector('edit'), shallowEqual);
+    const {isSignedIn, kind, archiveId, archive} = useDeepEqualSelector(archiveSelector('edit'));
 
     const onChipChanged = ({text, added, isTag}: ChipChange) => {
         const existing = isTag ? archive?.tags : archive?.categories;

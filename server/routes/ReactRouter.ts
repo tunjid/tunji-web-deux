@@ -2,7 +2,13 @@ import { Express, Request, Response } from 'express';
 import path from 'path';
 import fs from 'fs';
 import util from 'util';
-import { describeRoute, RouteDescription } from '../../client/src/client-server-common/RouteUtilities';
+import scraper from 'open-graph-scraper';
+
+import {
+    describeRoute,
+    OpenGraphScrapeEndpoint,
+    RouteDescription
+} from '../../client/src/client-server-common/RouteUtilities';
 
 import { Article } from '../models/ArticleSchema';
 import { Project } from '../models/ProjectSchema';
@@ -10,11 +16,14 @@ import { Talk } from '../models/TalkSchema';
 import { ArchiveKind } from '../../client/src/client-server-common/Models';
 
 import config from '../config/config';
+import { getErrorMessage } from '../controllers/Common';
 
 interface OpenGraphParams {
-    title: string
-    description: string
-    image: string
+    title: string;
+    description: string;
+    image: string;
+    url: string;
+    siteName: string;
 }
 
 const archiveModels = [Article, Project, Talk];
@@ -23,6 +32,19 @@ const readFilePromise = util.promisify<string, string>((argument, callback) => f
 
 export default function (app: Express): void {
     const indexPath = path.join(__dirname, '../../../', 'build', 'client', 'index.html');
+    app.route(`/${OpenGraphScrapeEndpoint}`)
+        .get(async (req: Request, res: Response) => {
+            const url = req.query.url as unknown as string | undefined;
+            if (!url) return res.status(400).send({
+                message: getErrorMessage('There is no url to scrape')
+            });
+            const {error, result} = await scraper({url});
+
+            return error ? res.status(400).send({
+                message: getErrorMessage(`Error scraping for open graph results: ${JSON.stringify(error)}`)
+            }) : res.json(result);
+        });
+
     app.all(
         '/*',
         async (req: Request, res: Response) => {
@@ -33,6 +55,8 @@ export default function (app: Express): void {
             webPage = webPage.replace(/\$OG_TITLE/g, params.title);
             webPage = webPage.replace(/\$OG_DESCRIPTION/g, params.description);
             webPage = webPage.replace(/\$OG_IMAGE/g, params.image);
+            webPage = webPage.replace(/\$OG_URL/g, params.url);
+            webPage = webPage.replace(/\$OG_SITE_NAME/g, params.siteName);
             res.send(webPage);
         }
     );
@@ -44,7 +68,9 @@ async function openGraphParams({root, archiveLookup}: RouteDescription): Promise
             return {
                 title: 'About Tunji',
                 description: 'What I\'ve been up to',
-                image: config.rootIndexImage
+                image: config.rootIndexImage,
+                url: 'https://tunjd.com/about',
+                siteName: 'tunjid.com',
             };
         }
         case ArchiveKind.Articles:
@@ -61,14 +87,18 @@ async function openGraphParams({root, archiveLookup}: RouteDescription): Promise
             return {
                 title: document?.title || `${root} by Tunji`,
                 description: document?.description || `An archive of my ${root}`,
-                image: document?.thumbnail || config.archiveListDefaultImage
+                image: document?.thumbnail || config.archiveListDefaultImage,
+                url: document?.link || `https://tunjid.com/${root.toLowerCase()}`,
+                siteName: 'tunjid.com',
             };
         }
         default: {
             return {
                 title: 'Tunji\'s Web Corner',
                 description: 'Adetunji Dahunsi\'s Portfolio',
-                image: config.rootIndexImage
+                image: config.rootIndexImage,
+                url: 'https://tunjd.com',
+                siteName: 'tunjid.com',
             };
         }
     }

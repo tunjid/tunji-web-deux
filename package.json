@@ -1,6 +1,6 @@
 {
   "name": "tunji-web-deux-server",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "private": true,
   "scripts": {
     "build-client": "cd client; yarn install; npm run build; cd ..;",
@@ -28,6 +28,7 @@
     "@types/helmet": "^4.0.0",
     "@types/mongoose": "^5.10.5",
     "@types/morgan": "^1.9.2",
+    "@types/open-graph-scraper": "^4.7.0",
     "@types/passport": "^1.0.6",
     "@types/passport-local": "^1.0.33",
     "@types/serve-favicon": "^2.5.2",
@@ -45,6 +46,7 @@
     "mongoose": "^5.4.20",
     "morgan": "^1.9.1",
     "nodemailer": "6.5.0",
+    "open-graph-scraper": "^4.8.2",
     "passport": "^0.4.1",
     "passport-local": "^1.0.0",
     "pm2": "^4.5.6",

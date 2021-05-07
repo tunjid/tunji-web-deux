@@ -6,7 +6,7 @@ import ArchiveCards from "../cards/ArchiveCards";
 import { PersistentUiActions } from "../../actions/PersistentUi";
 import AddIcon from "@material-ui/icons/Add";
 import PhoneIcon from "@material-ui/icons/Phone";
-import { shallowEqual, useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { HomeState } from "../../reducers/Home";
 import { createSelector } from "reselect";
 import { StoreState } from "../../types";
@@ -19,6 +19,7 @@ import { ArchiveKind } from "../../client-server-common/Models";
 import { Link } from 'react-router-dom'
 import { ArchiveActions, ArchivesQuery } from "../../actions/Archive";
 import { archivesSelector } from "../common/Common";
+import { useDeepEqualSelector } from "../../hooks/UseDeepEqualSelector";
 
 const useStyles = makeStyles((theme) => createStyles({
         root: {
@@ -88,9 +89,9 @@ const Home = () => {
         appBarTitle,
         selectedTab,
         isSignedIn,
-    } = useSelector(selector, shallowEqual);
-    const query = useSelector(querySelector, shallowEqual);
-    const archives = useSelector(archivesSelector(querySelector, 13), shallowEqual);
+    } = useDeepEqualSelector(selector);
+    const query = useDeepEqualSelector(querySelector);
+    const archives = useDeepEqualSelector(archivesSelector(querySelector, 13));
 
     useEffect(() => {
         dispatch(PersistentUiActions.modifyAppBar({

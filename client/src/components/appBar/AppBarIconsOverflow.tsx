@@ -5,9 +5,10 @@ import { MenuRes } from "../../types/MenuRes";
 import { createSelector, OutputSelector } from "reselect";
 import { StoreState } from "../../types";
 import { PersistentUiState } from "../../reducers/PersistentUi";
-import { shallowEqual, useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { MENU_ROUTE, PersistentUiActions } from "../../actions/PersistentUi";
 import { RouterActions } from "../../actions/Router";
+import _ from 'lodash';
 
 interface State {
     items: MenuRes[];
@@ -27,7 +28,11 @@ const AppBarIconsOverflow = () => {
     const {
         items,
         anchorEl,
-    }: State = useSelector(selector, shallowEqual);
+    }: State = useSelector(selector, (left, right) => {
+        const itemsEqual = _.isEqual(left.items.map(item => item.id), right.items.map(item => item.id));
+        const anchorsEqual = left.anchorEl === right.anchorEl;
+        return itemsEqual && anchorsEqual;
+    });
 
     const onMenuItemClicked = (item: MenuRes) => {
         if (item.action.type === MENU_ROUTE) dispatch(RouterActions.push(item.action.route));

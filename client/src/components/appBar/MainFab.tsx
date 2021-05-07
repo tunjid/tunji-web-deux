@@ -5,9 +5,10 @@ import { createSelector } from "reselect";
 import { StoreState } from "../../types";
 import { PersistentUiState } from "../../reducers/PersistentUi";
 import { MenuRes } from "../../types/MenuRes";
-import { shallowEqual, useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { MENU_ROUTE } from "../../actions/PersistentUi";
 import { RouterActions } from "../../actions/Router";
+import { MenuResEquality } from "../common/Common";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -29,21 +30,15 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 
-interface State {
-    menu?: MenuRes
-}
-
-const selector = createSelector<StoreState, PersistentUiState, State>(
+const selector = createSelector<StoreState, PersistentUiState, MenuRes | undefined>(
     state => state.persistentUI,
-    persistentUI => ({
-        menu: persistentUI.fab
-    })
+    persistentUI => persistentUI.fab
 );
 
 export default function MainFab() {
     const classes = useStyles();
     const dispatch = useDispatch();
-    const {menu} = useSelector(selector, shallowEqual);
+    const menu = useSelector(selector, MenuResEquality);
 
     const onMenuClicked = (clicked?: MenuRes) => {
         if (!clicked) return;
