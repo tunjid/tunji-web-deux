@@ -65,8 +65,7 @@ const selector = createSelector<StoreState, RouterState, ArchiveState, State>(
     state => state.router,
     state => state.archives,
     (routerState, archiveState) => {
-        const lookup = describeRoute(routerState.location.pathname).archiveLookup;
-        const kind = lookup?.kind || ArchiveKind.Articles;
+        const kind = describeRoute(routerState.location.pathname).kind || ArchiveKind.Articles;
 
         return {
             kind,
@@ -78,8 +77,7 @@ const selector = createSelector<StoreState, RouterState, ArchiveState, State>(
 const querySelector = createSelector<StoreState, RouterState, ArchivesQuery>(
     state => state.router,
     (routerState) => {
-        const lookup = describeRoute(routerState.location.pathname).archiveLookup;
-        const kind = lookup?.kind || ArchiveKind.Articles;
+        const kind = describeRoute(routerState.location.pathname).kind || ArchiveKind.Articles;
 
         return {
             kind,

@@ -62,7 +62,7 @@ export default function (app: Express): void {
     );
 }
 
-async function openGraphParams({root, archiveLookup}: RouteDescription): Promise<OpenGraphParams> {
+async function openGraphParams({root, archiveId}: RouteDescription): Promise<OpenGraphParams> {
     switch (root.toLowerCase()) {
         case 'about': {
             return {
@@ -76,10 +76,10 @@ async function openGraphParams({root, archiveLookup}: RouteDescription): Promise
         case ArchiveKind.Articles:
         case ArchiveKind.Projects:
         case ArchiveKind.Talks: {
-            const modelAndId = archiveLookup
+            const modelAndId = archiveId
                 ? archiveModels
-                    .map(model => ({model, id: archiveLookup.archiveId}))
-                    .find(modelAndId => modelAndId.model.getKind() === archiveLookup.kind)
+                    .map(model => ({model, id: archiveId}))
+                    .find(modelAndId => modelAndId.model.getKind() === root)
                 : undefined;
 
             const document = modelAndId ? await modelAndId.model.findById(modelAndId.id).exec() : undefined;
