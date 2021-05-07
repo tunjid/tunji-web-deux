@@ -16,7 +16,7 @@ import EditIcon from '@material-ui/icons/Edit';
 import ChipInput, { ChipType } from "./ChipInput";
 import { horizontalMargin, verticalMargin } from "../../styles/Common";
 import { Helmet } from "react-helmet";
-import { MarkdownComponents } from "../common/Markdown";
+import { MarkdownBody, MarkdownComponents } from "../common/Markdown";
 import { useDeepEqualSelector } from "../../hooks/UseDeepEqualSelector";
 
 const useStyles = makeStyles((theme) => createStyles({
@@ -65,6 +65,7 @@ const useStyles = makeStyles((theme) => createStyles({
         },
         archiveBody: {
             ...responsiveWidth(theme),
+            ...MarkdownBody,
         },
     }
 ));

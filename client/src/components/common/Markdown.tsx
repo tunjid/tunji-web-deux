@@ -5,14 +5,13 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { OpenGraphScrapeEndpoint } from "../../client-server-common/RouteUtilities";
 import OpenGraphCard from "../open-graph/OpenGraph";
 
+export const MarkdownBody = {
+    '& > *': {
+        fontSize: '150%'
+    }
+}
+
 export const MarkdownComponents: Components = {
-    p: ({node, ...props}) => <p{...props} style={{fontSize: '150%'}}/>,
-    h1: ({node, ...props}) => <h1{...props} style={{fontSize: '150%'}}/>,
-    h2: ({node, ...props}) => <h2{...props} style={{fontSize: '150%'}}/>,
-    h3: ({node, ...props}) => <h3{...props} style={{fontSize: '150%'}}/>,
-    h4: ({node, ...props}) => <h4{...props} style={{fontSize: '150%'}}/>,
-    h5: ({node, ...props}) => <h5{...props} style={{fontSize: '150%'}}/>,
-    h6: ({node, ...props}) => <h6{...props} style={{fontSize: '150%'}}/>,
     table: ({node, ...props}) => <table{...props} style={{width: '100%'}}/>,
     img: ({node, ...props}) => <img{...props} style={
         {
@@ -45,13 +44,25 @@ export const MarkdownComponents: Components = {
                 : <a{...props}/>;
     },
     code({node, inline, className, children, ...props}) {
-        const c = className as string;
-        const match = /language-(\w+)/.exec(c || '')
+        const classname = className as string;
+        const match = /language-(\w+)/.exec(classname || '')
         return !inline && match
             ? <SyntaxHighlighter
+                showLineNumbers={true}
                 language={match[1]}
                 PreTag="div"
+                customStyle={{
+                    fontSize: "66%"
+                }}
+                codeTagProps={
+                    {
+                        style: {
+                            lineHeight: "inherit",
+                            fontSize: "inherit"
+                        }
+                    }
+                }
                 children={String(children).replace(/\n$/, '')} {...props} />
-            : <code className={c} {...props} />
+            : <code className={classname} children={children} {...props} />
     }
 }

@@ -13,7 +13,7 @@ import { Helmet } from "react-helmet";
 import EmailIcon from '@material-ui/icons/Email';
 import TwitterIcon from '@material-ui/icons/Twitter';
 import GitHubIcon from '@material-ui/icons/GitHub';
-import { MarkdownComponents } from "../common/Markdown";
+import { MarkdownBody, MarkdownComponents } from "../common/Markdown";
 
 const useStyles = makeStyles((theme) => createStyles({
         root: {
@@ -23,6 +23,7 @@ const useStyles = makeStyles((theme) => createStyles({
         },
         body: {
             ...responsiveWidth(theme),
+            ...MarkdownBody,
         },
         avatar: {
             ...verticalMargin(theme.spacing(8)),
