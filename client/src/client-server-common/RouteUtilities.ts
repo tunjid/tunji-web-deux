@@ -2,12 +2,8 @@ import { ArchiveKind } from "./Models";
 
 export interface RouteDescription {
     root: string
-    archiveLookup?: ArchiveLookup
-}
-
-export interface ArchiveLookup {
-    kind: ArchiveKind
-    archiveId: string
+    kind?: ArchiveKind
+    archiveId?: string
 }
 
 const isObjectIdLike = (plausibleId: string) => !!plausibleId.match(/^[0-9a-fA-F]{24}$/)
@@ -23,10 +19,12 @@ export const describeRoute = (path: string): RouteDescription => {
     const kind = normalizeArchiveKind(pathSegments[1]);
     const archiveId = linkSplit[linkSplit.length - 1];
 
+    const root = pathSegments[1];
     const isArchivePath = isObjectIdLike(archiveId);
 
     return {
-        root: pathSegments[1],
-        archiveLookup: isArchivePath ? {kind, archiveId} : undefined
+        root,
+        kind,
+        archiveId: isArchivePath ? archiveId : undefined
     };
 };

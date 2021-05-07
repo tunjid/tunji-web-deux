@@ -26,7 +26,7 @@ export const archiveSelector = (archiveViewType: ArchiveView) => createSelector<
     state => state.router.location.pathname,
     state => state.archives,
     (signedInUser, pathname, archiveState) => {
-        const lookup = describeRoute(pathname).archiveLookup;
+        const lookup = describeRoute(pathname);
         const kind = lookup?.kind || ArchiveKind.Articles;
         const archiveId = lookup?.archiveId;
 
