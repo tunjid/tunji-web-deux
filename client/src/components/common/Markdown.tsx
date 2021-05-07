@@ -63,6 +63,11 @@ export const MarkdownComponents: Components = {
                     }
                 }
                 children={String(children).replace(/\n$/, '')} {...props} />
-            : <code className={classname} children={children} {...props} />
+            : <code
+                className={classname}
+                children={children}
+                style={{backgroundColor: '#F2F2F2'}}
+                {...props}
+            />
     }
 }
