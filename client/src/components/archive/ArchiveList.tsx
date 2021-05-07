@@ -24,8 +24,11 @@ import { useDeepEqualSelector } from "../../hooks/UseDeepEqualSelector";
 const useStyles = makeStyles((theme) => createStyles({
         root: {
             display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'center'
+            flexDirection: 'column',
+            justifyContent: 'center',
+            [theme.breakpoints.up('md')]: {
+                flexDirection: 'row',
+            },
         },
         contentColumn: {
             width: 'auto',
@@ -44,6 +47,10 @@ const useStyles = makeStyles((theme) => createStyles({
             display: 'flex',
             flexDirection: 'column',
             ...verticalMargin(theme.spacing(4)),
+            [theme.breakpoints.down('md')]: {
+                marginLeft: 'auto',
+                marginRight: 'auto',
+            },
         },
         gutterLink: {
             ...StylelessAnchor,
