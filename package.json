@@ -1,6 +1,6 @@
 {
   "name": "tunji-web-deux-server",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "private": true,
   "scripts": {
     "build-client": "cd client; yarn install; npm run build; cd ..;",
