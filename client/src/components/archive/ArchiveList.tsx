@@ -14,7 +14,7 @@ import { ArchiveActions, ArchivesQuery } from "../../actions/Archive";
 import Typography from "@material-ui/core/Typography";
 import { CircularProgress, Divider } from "@material-ui/core";
 import _ from 'lodash';
-import { StylelessAnchor, verticalMargin } from "../../styles/Common";
+import { horizontalMargin, StylelessAnchor, verticalMargin } from "../../styles/Common";
 import { archivesSelector, capitalizeFirst, ShortMonthNames } from "../common/Common";
 import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
@@ -48,6 +48,7 @@ const useStyles = makeStyles((theme) => createStyles({
             flexDirection: 'column',
             ...verticalMargin(theme.spacing(4)),
             [theme.breakpoints.down('md')]: {
+                width: `80%`,
                 marginLeft: 'auto',
                 marginRight: 'auto',
             },
