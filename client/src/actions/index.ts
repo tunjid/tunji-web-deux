@@ -7,17 +7,17 @@ import { StoreState } from "../types";
 import { RouterAction } from "./Router";
 import { SnackbarAction } from "./Snackbar";
 
-type SynchronousAppActions =
+export type SynchronousAppAction =
     ArchiveAction | HomeAction | AuthAction |
     PersistentUiAction | RouterAction | SnackbarAction;
 
 const APP_THUNK = 'APP_THUNK';
-export interface AppThunk extends ThunkAction<void, StoreState, unknown, SynchronousAppActions> {
+export interface AppThunk extends ThunkAction<void, StoreState, unknown, SynchronousAppAction> {
     type?: typeof APP_THUNK
 }
 
-export interface AppDispatch extends ThunkDispatch<StoreState, unknown, SynchronousAppActions> {
+export interface AppDispatch extends ThunkDispatch<StoreState, unknown, SynchronousAppAction> {
 
 }
 
-export type AppAction = SynchronousAppActions | AppThunk;
+export type AppAction = SynchronousAppAction | AppThunk;

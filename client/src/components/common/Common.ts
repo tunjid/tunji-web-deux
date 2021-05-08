@@ -58,7 +58,8 @@ export const archivesSelector = (querySelector: (StoreState: StoreState) => Arch
     }
 );
 
-export const MenuResEquality = (left: MenuRes | undefined, right: MenuRes | undefined) => left?.id === right?.id || false
+export const MenuResEquality = (left: MenuRes | undefined, right: MenuRes | undefined) =>
+    (left?.id === right?.id && left?.text === right?.text && left?.action === right?.action) || false
 
 export const readTime = (text: String) => `${Math.ceil(text.trim().split(/\s+/).length / 250)} min read`
 
