@@ -2,6 +2,7 @@ import { User, UserDocument } from '../models/UserSchema';
 import passport from 'passport';
 import { NextFunction, Request, Response } from 'express';
 import { basicMessage, errorMessage, getErrorMessage } from './Common';
+import { RateLimiter } from '../middleware/RateLimiter';
 
 interface UserController {
     create: (res: Request, req: Response, next: NextFunction) => void;
@@ -17,7 +18,7 @@ interface UserController {
     requiresLogin: (res: Request, req: Response, next: NextFunction) => void;
 }
 
-const UserController: UserController = {
+const UserController: (limiter: RateLimiter) => UserController = (limiter) => ({
     create: (req, res, next) => {
         const user = new User(req.body);
         user.save(error => {
@@ -88,17 +89,40 @@ const UserController: UserController = {
             });
         } else return errorMessage(res, 'You are already signed in', 400);
     },
-    signIn: (req, res, next) => {
-        passport.authenticate('local', function (err, user, status) {
+    signIn: async (req, res, next) => {
+        const username = req.body.username;
+        const rlResUsername = await limiter.signInLimiterStore.get(username);
+
+        if (rlResUsername !== null && rlResUsername.consumedPoints > limiter.maxConsecutiveFailsByUsername) {
+            const retrySecs = Math.round(rlResUsername.msBeforeNext / 1000) || 1;
+            res.set('Retry-After', String(retrySecs));
+            return errorMessage(res, 'Too Many Requests', 429);
+        }
+
+        passport.authenticate('local', async function (err, user, status) {
             if (err) {
                 return next(err);
             }
-            if (!user) return status
-                ? errorMessage(res, status.message, 400)
-                : errorMessage(res, 'User does not exist', 404);
+            if (!user) {
+                try {
+                    await limiter.signInLimiterStore.consume(username);
+                    return status
+                        ? errorMessage(res, status.message, 400)
+                        : errorMessage(res, 'User does not exist', 404);
+                } catch (rlRejected) {
+                    if (rlRejected instanceof Error) throw rlRejected;
 
-            req.logIn(user, function (err) {
-                return err ? res.json(err) : res.json(user);
+                    res.set('Retry-After', String(Math.round(rlRejected.msBeforeNext / 1000)) || '1');
+                    return errorMessage(res, 'Too Many Requests', 429);
+                }
+            }
+
+            req.logIn(user, async function (err) {
+                if (err) return res.json(err);
+                if (rlResUsername !== null && rlResUsername.consumedPoints > 0)
+                    await limiter.signInLimiterStore.delete(username);
+
+                return res.json(user);
             });
         })(req, res, next);
     },
@@ -111,7 +135,7 @@ const UserController: UserController = {
         if (req.user) return res.json(req.user);
         return errorMessage(res, 'Not signed in', 400);
     },
-};
+});
 
 
 // contact: function (req, res) {
