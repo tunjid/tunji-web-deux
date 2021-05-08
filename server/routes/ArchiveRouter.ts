@@ -1,10 +1,10 @@
 import { Express } from 'express';
 import archiveController from '../controllers/ArchiveController';
-import users from '../controllers/UserController';
+import { UserController } from '../controllers/UserController';
 
 import { ArchiveDocument, ArchiveModel } from '../models/Archive';
 
-export default function <T extends ArchiveDocument>(app: Express, model: ArchiveModel<T>): void {
+export default function <T extends ArchiveDocument>(app: Express, model: ArchiveModel<T>, userController: UserController): void {
     const archives = archiveController(model);
     const modelPath = model.modelName.toLowerCase();
     const routeName = `${modelPath}s`;
@@ -17,13 +17,13 @@ export default function <T extends ArchiveDocument>(app: Express, model: Archive
         .get(archives.tagsOrCategories);
 
     app.route(`/api/${routeName}`)
-        .post(users.requiresLogin, archives.create)
+        .post(userController.requiresLogin, archives.create)
         .get(archives.find);
 
     app.route(`/api/${routeName}/:${paramName}`)
         .get(archives.get)
-        .put(users.requiresLogin, archives.put)
-        .delete(users.requiresLogin, archives.hasAuthorization, archives.remove);
+        .put(userController.requiresLogin, archives.put)
+        .delete(userController.requiresLogin, archives.hasAuthorization, archives.remove);
 
     app.param(paramName, archives.byId);
 }
