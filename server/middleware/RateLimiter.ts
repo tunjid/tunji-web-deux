@@ -10,7 +10,7 @@ export interface RateLimiter {
     maxConsecutiveFailsByUsername: number;
 }
 
-const rateLimiter: (connection: Connection) => RateLimiter = (connection) => {
+const createRateLimiter: (connection: Connection) => RateLimiter = (connection) => {
     const defaultLimiter = new RateLimiterMongo({
         storeClient: connection,
         keyPrefix: 'default-rate-limiter',
@@ -36,4 +36,4 @@ const rateLimiter: (connection: Connection) => RateLimiter = (connection) => {
     });
 };
 
-export default rateLimiter;
+export default createRateLimiter;

@@ -4,7 +4,7 @@ import { NextFunction, Request, Response } from 'express';
 import { basicMessage, errorMessage, getErrorMessage } from './Common';
 import { RateLimiter } from '../middleware/RateLimiter';
 
-interface UserController {
+export interface UserController {
     create: (res: Request, req: Response, next: NextFunction) => void;
     get: (res: Request, req: Response, next: NextFunction) => void;
     put: (res: Request, req: Response, next: NextFunction) => void;
@@ -18,7 +18,7 @@ interface UserController {
     requiresLogin: (res: Request, req: Response, next: NextFunction) => void;
 }
 
-const UserController: (limiter: RateLimiter) => UserController = (limiter) => ({
+const createUserController: (limiter: RateLimiter) => UserController = (limiter) => ({
     create: (req, res, next) => {
         const user = new User(req.body);
         user.save(error => {
@@ -188,4 +188,4 @@ const UserController: (limiter: RateLimiter) => UserController = (limiter) => ({
 //     });
 // };
 
-export default UserController;
+export default createUserController;
