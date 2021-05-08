@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { SynchronousAppAction } from "../actions";
+import { AppAction } from '../actions';
 
 export interface MenuRes {
     id: string;
     text: string;
     icon?: React.ReactNode;
-    action: SynchronousAppAction;
+    action: AppAction;
 }
