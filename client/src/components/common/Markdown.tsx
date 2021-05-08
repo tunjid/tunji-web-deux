@@ -40,7 +40,11 @@ export const MarkdownComponents: Components = {
         return openGraphUrl
             ? <OpenGraphCard url={openGraphUrl}/>
             : videoUrl
-                ? <ReactPlayer url={videoUrl}/>
+                ? <ReactPlayer
+                    url={videoUrl}
+                    width={'100%'}
+                    controls={true}
+                />
                 : <a{...props}/>;
     },
     code({node, inline, className, children, ...props}) {

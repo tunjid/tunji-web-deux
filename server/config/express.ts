@@ -16,7 +16,9 @@ import userRouter from '../routes/UserRouter';
 import archiveRouter from '../routes/ArchiveRouter';
 import reactRouter from '../routes/ReactRouter';
 import errorMiddleware from '../middleware/ErrorMiddleware';
+import createRateLimiter from '../middleware/RateLimiter';
 import HttpException from '../utilities/HttpException';
+import createUserController from '../controllers/UserController';
 
 import { Article } from '../models/ArticleSchema';
 import { Project } from '../models/ProjectSchema';
@@ -36,6 +38,9 @@ const App: () => Express = () => {
         // process.exit();
     });
 
+    const rateLimiter = createRateLimiter(mongoose.connection);
+    const userController = createUserController(rateLimiter);
+    
     // Set the static files location
     app.use('/', ExpressApp.static(
         path.join(__dirname, '../../../', 'build', 'client'),
@@ -89,10 +94,10 @@ const App: () => Express = () => {
     app.use(cookieParser());
 
 // Route mapping
-    userRouter(app);
-    archiveRouter(app, Article);
-    archiveRouter(app, Project);
-    archiveRouter(app, Talk);
+    userRouter(app, userController);
+    archiveRouter(app, Article, userController);
+    archiveRouter(app, Project, userController);
+    archiveRouter(app, Talk, userController);
     reactRouter(app);
 
 // catch 404 and forward to error handler

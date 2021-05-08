@@ -1,30 +1,30 @@
 import { Express } from 'express';
-import users from '../controllers/UserController';
+import { UserController } from '../controllers/UserController';
 
-export default function (app: Express): void {
+export default function (app: Express, userController: UserController): void {
     app.route('/api/users');
      //   .post(users.create);
     //.get(users.find);
 
     app.route('/api/users/:userId')
-        .get(users.requiresLogin, users.get)
-        .put(users.requiresLogin, users.put);
+        .get(userController.requiresLogin, userController.get)
+        .put(userController.requiresLogin, userController.put);
         // .delete(users.requiresLogin, users.delete);
 
     app.route('/api/session')
-        .get(users.session);
+        .get(userController.session);
 
     /*app.route('/signup')
         .post(users.signup);*/
 
     app.route('/api/sign-in')
-        .post(users.signIn);
+        .post(userController.signIn);
 
     app.route('/api/sign-out')
-        .post(users.signOut);
+        .post(userController.signOut);
 
     // app.route('/contact')
     //     .post(users.contact);
 
-    app.param('userId', users.byId);
+    app.param('userId', userController.byId);
 }
