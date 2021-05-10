@@ -1,5 +1,4 @@
 import { Theme } from "@material-ui/core";
-import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { MoreVert } from "@material-ui/icons";
@@ -13,6 +12,8 @@ import { MENU_ROUTE, PersistentUiActions } from "../../actions/PersistentUi";
 import { RouterActions } from "../../actions/Router";
 import { useWidth } from "../../hooks/UseWidth";
 import { useDeepEqualSelector } from "../../hooks/UseDeepEqualSelector";
+import { Link } from "react-router-dom";
+import { StylelessAnchor } from "../../styles/Common";
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
     root: {
@@ -24,9 +25,10 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     grow: {
         flexGrow: 1,
     },
-    icon: {
+    iconContainer: {
         paddingLeft: '6px',
-        paddingRight: '6px'
+        paddingRight: '6px',
+        ...StylelessAnchor,
     },
     icons: {
         display: 'flex',
@@ -75,9 +77,18 @@ const AppBarIcons = () => {
         ? <IconButton aria-haspopup="true" onClick={handleMenuOpen} color="inherit"><MoreVert/></IconButton>
         : null;
 
-    const renderIcon = (item: MenuRes) => isSmallScreen && item.icon
-        ? <div key={item.text} className={classes.icon} onClick={() => clickMenuItem(item)}>{item.icon}</div>
-        : <Button key={item.text} color="inherit" onClick={() => clickMenuItem(item)}>{item.text}</Button>;
+    const renderIcon = (item: MenuRes) =>
+        item.action.type === MENU_ROUTE
+            ? <Link key={item.text}
+                    className={classes.iconContainer}
+                    to={item.action.route}>
+                {isSmallScreen && item.icon ? item.icon : item.text}
+            </Link>
+            : <div key={item.text}
+                   className={classes.iconContainer}
+                   onClick={() => clickMenuItem(item)}>
+                {isSmallScreen && item.icon ? item.icon : item.text}
+            </div>;
 
     const menuItems = items.map(renderIcon);
 
