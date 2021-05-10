@@ -40,7 +40,7 @@ const App: () => Express = () => {
 
     const rateLimiter = createRateLimiter(mongoose.connection);
     const userController = createUserController(rateLimiter);
-    
+
     // Set the static files location
     app.use('/', ExpressApp.static(
         path.join(__dirname, '../../../', 'build', 'client'),
@@ -67,7 +67,7 @@ const App: () => Express = () => {
     app.use(bodyParser.urlencoded({extended: true}));
 
     app.all('/.well-known/acme-challenge/jHTByRi03P8lmzpHst99bQ7cXTmTyA6Jt4IFayowKUY', (req, res) => {
-        res.sendFile(path.join(__dirname, '..', 'cert-renewal'));
+        res.sendFile(path.join(__dirname, '../../../', 'cert-renewal'));
     });
 
     // Session and passport initialization

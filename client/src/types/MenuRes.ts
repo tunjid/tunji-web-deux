@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { AppAction } from "../actions";
+import { AppAction } from '../actions';
 
 export interface MenuRes {
     id: string;
