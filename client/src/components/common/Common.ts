@@ -45,8 +45,8 @@ export const archivesSelector = (querySelector: (StoreState: StoreState) => Arch
     state => state.archives,
     (query, archiveState) => {
         const {kind, params} = query;
-        const tags = params.getAll('tag');
-        const categories = params.getAll('category');
+        const tags = params.getAll('tag').map((item => item.toLowerCase()));
+        const categories = params.getAll('category').map((item => item.toLowerCase()));
         const yearAndMonth = yearAndMonthParam(query);
 
         let archives = archiveState.kindToArchivesMap[kind];
