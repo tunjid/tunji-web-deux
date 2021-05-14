@@ -76,7 +76,7 @@ export default function ChipInput({name, chips, type, kind, editor}: Props) {
     const editField = editor
         ? <InputBase
             className={classes.input}
-            placeholder="Add item"
+            placeholder={`Add ${type}`}
             value={textValue}
             onChange={(e) => setText(e.target.value)}
             onKeyDown={addChip}
