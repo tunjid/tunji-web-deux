@@ -76,8 +76,9 @@ const useStyles = makeStyles((theme) => createStyles({
 
 interface State {
     kind: ArchiveKind,
-    tags: string[];
-    categories: string[];
+    queryTags: string[];
+    queryCategories: string[];
+    availableCategories: string[];
     summaries: ArchiveSummary[];
 }
 
@@ -87,14 +88,15 @@ const selector = createSelector<StoreState, Search, RouterState, ArchiveState, S
     state => state.archives,
     (search, routerState, archiveState) => {
         const params = new URLSearchParams(search);
-        const tags = params.getAll('tag');
-        const categories = params.getAll('category');
+        const queryTags = params.getAll(ChipType.Tag);
+        const queryCategories = params.getAll(ChipType.Category);
         const kind = describeRoute(routerState.location.pathname).kind || ArchiveKind.Articles;
 
         return {
             kind,
-            tags,
-            categories,
+            queryTags,
+            queryCategories,
+            availableCategories: _.uniq(_.flatten(archiveState.kindToArchivesMap[kind].map(archive => archive.categories))),
             summaries: archiveState.summariesMap[kind],
         }
     }
@@ -120,7 +122,7 @@ const querySelector = createSelector<StoreState, Search, RouterState, ArchivesQu
 const ArchiveList = () => {
     const classes = useStyles();
     const dispatch = useDispatch();
-    const {kind, tags, categories, summaries} = useDeepEqualSelector(selector);
+    const {kind, queryTags, queryCategories, availableCategories, summaries} = useDeepEqualSelector(selector);
     const query = useDeepEqualSelector(querySelector);
     const archives = useDeepEqualSelector(archivesSelector(querySelector));
     const offset = useDeepEqualSelector(createSelector<StoreState, ArchiveLike[], number>(
@@ -149,7 +151,6 @@ const ArchiveList = () => {
     }, [isLoading, query, offset, dispatch]);
 
     const title = `Tunji's ${capitalizeFirst(kind)}`;
-    const gutterCategories = _.uniq(_.flatten(archives.map(archive => archive.categories)));
 
     useEffect(() => {
         dispatch(PersistentUiActions.modifyAppBar({
@@ -188,7 +189,7 @@ const ArchiveList = () => {
 
     const progressNode = isLoading ? <CircularProgress/> : <div/>;
 
-    const categoryNodes = gutterCategories.map(category =>
+    const categoryNodes = availableCategories.map(category =>
         <Link className={classes.gutterLink}
               key={category}
               to={`/${kind}/?category=${category}`}
@@ -230,17 +231,18 @@ const ArchiveList = () => {
                         name='Categories: '
                         type={ChipType.Category}
                         kind={kind}
-                        chips={categories}
+                        chips={queryCategories}
                         editor={{
                             onChipAdded: chipEditor(ChipType.Category, true),
                             onChipDeleted: chipEditor(ChipType.Category, false)
                         }}
                     />
+                    <p>&</p>
                     <ChipInput
                         name='Tags: '
                         type={ChipType.Tag}
                         kind={kind}
-                        chips={tags}
+                        chips={queryTags}
                         editor={{
                             onChipAdded: chipEditor(ChipType.Tag, true),
                             onChipDeleted: chipEditor(ChipType.Tag, false)
