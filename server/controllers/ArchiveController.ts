@@ -33,11 +33,12 @@ const archiveController = <T extends ArchiveDocument>(Model: ArchiveModel<T>): A
         const limit = Number(req.query.limit) || 0;
         const offset = Number(req.query.offset) || 0;
 
+        const {tag, category} = req.query;
         const query = {} as any;
 
-        if (req.query.tag) query.tags = req.query.tag;
+        if (tag) query.tags = Array.isArray(tag) ? {$in: tag} : tag;
 
-        if (req.query.category) query.categories = req.query.category;
+        if (category) query.categories = Array.isArray(category) ? {$in: category} : category;
 
         if (req.query.freeForm) {
             const searchString = req.query.freeForm;

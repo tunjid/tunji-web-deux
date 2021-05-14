@@ -3,12 +3,13 @@ import * as React from 'react';
 import { useCallback, useEffect, useState } from 'react';
 import ArchiveCards from "../cards/ArchiveCards";
 import { useDispatch } from "react-redux";
+import { getSearch, RouterState } from 'connected-react-router'
+import { Search } from 'history'
 import { PersistentUiActions } from "../../actions/PersistentUi";
 import { createSelector } from "reselect";
 import { StoreState } from "../../types";
 import { ArchiveKind, ArchiveLike, ArchiveSummary } from "../../client-server-common/Models";
 import { ArchiveState } from "../../reducers/Archive";
-import { RouterState } from "connected-react-router";
 import { theme } from "../../styles/PersistentUi";
 import { ArchiveActions, ArchivesQuery } from "../../actions/Archive";
 import Typography from "@material-ui/core/Typography";
@@ -20,6 +21,8 @@ import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
 import { describeRoute } from "../../client-server-common/RouteUtilities";
 import { useDeepEqualSelector } from "../../hooks/UseDeepEqualSelector";
+import ChipInput, { ChipType } from "./ChipInput";
+import { RouterActions } from "../../actions/Router";
 
 const useStyles = makeStyles((theme) => createStyles({
         root: {
@@ -31,8 +34,15 @@ const useStyles = makeStyles((theme) => createStyles({
             },
         },
         contentColumn: {
-            width: 'auto',
-            position: 'relative',
+            ...horizontalMargin(theme.spacing(4)),
+            display: 'flex',
+            flexDirection: 'column',
+            maxWidth: '1200px',
+            [theme.breakpoints.up('md')]: {
+                ...horizontalMargin(theme.spacing(12)),
+            },
+        },
+        chips: {
             display: 'flex',
             flexDirection: 'column'
         },
@@ -43,7 +53,7 @@ const useStyles = makeStyles((theme) => createStyles({
             marginRight: 'auto',
             ...verticalMargin(theme.spacing(8)),
         },
-        gutter: {
+        gutterColumn: {
             display: 'flex',
             flexDirection: 'column',
             ...verticalMargin(theme.spacing(4)),
@@ -66,31 +76,43 @@ const useStyles = makeStyles((theme) => createStyles({
 
 interface State {
     kind: ArchiveKind,
+    tags: string[];
+    categories: string[];
     summaries: ArchiveSummary[];
 }
 
-const selector = createSelector<StoreState, RouterState, ArchiveState, State>(
+const selector = createSelector<StoreState, Search, RouterState, ArchiveState, State>(
+    getSearch,
     state => state.router,
     state => state.archives,
-    (routerState, archiveState) => {
+    (search, routerState, archiveState) => {
+        const params = new URLSearchParams(search);
+        const tags = params.getAll('tag');
+        const categories = params.getAll('category');
         const kind = describeRoute(routerState.location.pathname).kind || ArchiveKind.Articles;
 
         return {
             kind,
+            tags,
+            categories,
             summaries: archiveState.summariesMap[kind],
         }
     }
 );
 
-const querySelector = createSelector<StoreState, RouterState, ArchivesQuery>(
+const querySelector = createSelector<StoreState, Search, RouterState, ArchivesQuery>(
+    getSearch,
     state => state.router,
-    (routerState) => {
+    (search, routerState) => {
         const kind = describeRoute(routerState.location.pathname).kind || ArchiveKind.Articles;
+        const params = new URLSearchParams(search);
+        params.delete('limit');
+        params.append('limit', '13');
 
         return {
             kind,
+            params,
             key: `ArchiveList-${kind}`,
-            params: {...routerState.location.query, limit: '13'},
         }
     }
 );
@@ -98,7 +120,7 @@ const querySelector = createSelector<StoreState, RouterState, ArchivesQuery>(
 const ArchiveList = () => {
     const classes = useStyles();
     const dispatch = useDispatch();
-    const {kind, summaries} = useDeepEqualSelector(selector);
+    const {kind, tags, categories, summaries} = useDeepEqualSelector(selector);
     const query = useDeepEqualSelector(querySelector);
     const archives = useDeepEqualSelector(archivesSelector(querySelector));
     const offset = useDeepEqualSelector(createSelector<StoreState, ArchiveLike[], number>(
@@ -120,12 +142,14 @@ const ArchiveList = () => {
         const target = entries[0];
         if (!target.isIntersecting || isLoading) return;
 
-        const params = {...query.params, offset: `${offset}`}
+        const params = query.params;
+        params.delete('offset');
+        params.append('offset', `${offset}`);
         dispatch(ArchiveActions.fetchArchives({...query, params}));
     }, [isLoading, query, offset, dispatch]);
 
     const title = `Tunji's ${capitalizeFirst(kind)}`;
-    const categories = _.uniq(_.flatten(archives.map(archive => archive.categories)));
+    const gutterCategories = _.uniq(_.flatten(archives.map(archive => archive.categories)));
 
     useEffect(() => {
         dispatch(PersistentUiActions.modifyAppBar({
@@ -164,7 +188,7 @@ const ArchiveList = () => {
 
     const progressNode = isLoading ? <CircularProgress/> : <div/>;
 
-    const categoryNodes = categories.map(category =>
+    const categoryNodes = gutterCategories.map(category =>
         <Link className={classes.gutterLink}
               key={category}
               to={`/${kind}/?category=${category}`}
@@ -182,6 +206,18 @@ const ArchiveList = () => {
         </Link>
     );
 
+    const chipEditor = (type: ChipType, isAdd: boolean) => (chip: string) => {
+        const params = new URLSearchParams(query.params.toString())
+        if (isAdd) params.append(type, chip)
+        else {
+            const filtered = params.getAll(type).filter(item => item !== chip)
+            params.delete(type)
+            filtered.forEach(item => params.append(type, item))
+        }
+
+        dispatch(RouterActions.push(`/${kind}?${params.toString()}`))
+    }
+
     return (
         <div className={classes.root}>
             <Helmet>
@@ -189,12 +225,34 @@ const ArchiveList = () => {
                 <meta name="description" content={title}/>
             </Helmet>
             <div className={classes.contentColumn}>
+                <div className={classes.chips}>
+                    <ChipInput
+                        name='Categories: '
+                        type={ChipType.Category}
+                        kind={kind}
+                        chips={categories}
+                        editor={{
+                            onChipAdded: chipEditor(ChipType.Category, true),
+                            onChipDeleted: chipEditor(ChipType.Category, false)
+                        }}
+                    />
+                    <ChipInput
+                        name='Tags: '
+                        type={ChipType.Tag}
+                        kind={kind}
+                        chips={tags}
+                        editor={{
+                            onChipAdded: chipEditor(ChipType.Tag, true),
+                            onChipDeleted: chipEditor(ChipType.Tag, false)
+                        }}
+                    />
+                </div>
                 <ArchiveCards kind={kind} archives={archives}/>
                 <div ref={loaderRef} className={classes.progressBar}>
                     {progressNode}
                 </div>
             </div>
-            <div className={classes.gutter}>
+            <div className={classes.gutterColumn}>
                 <Typography gutterBottom variant="h5">
                     Categories
                 </Typography>
