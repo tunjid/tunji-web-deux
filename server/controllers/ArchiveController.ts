@@ -36,9 +36,13 @@ const archiveController = <T extends ArchiveDocument>(Model: ArchiveModel<T>): A
         const {tag, category} = req.query;
         const query = {} as any;
 
-        if (tag) query.tags = Array.isArray(tag) ? {$in: tag} : tag;
+        if (tag) query.tags = Array.isArray(tag)
+            ? {$in: tag.map((item: any) => item.toString().toLowerCase())}
+            : tag.toString().toLowerCase();
 
-        if (category) query.categories = Array.isArray(category) ? {$in: category} : category;
+        if (category) query.categories = Array.isArray(category)
+            ? {$in: category.map((item: any) => item.toString().toLowerCase())}
+            : category.toString().toLowerCase();
 
         if (req.query.freeForm) {
             const searchString = req.query.freeForm;

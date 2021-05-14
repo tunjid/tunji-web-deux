@@ -20,14 +20,20 @@ export interface ArchiveModel<T extends ArchiveDocument = ArchiveDocument> exten
     getKind: () => ArchiveKind
 }
 
+const TagOrCategory = {
+    type: [String],
+    index: true,
+    set: (items: string[]) => items.map(item => item.toLowerCase().trim()),
+};
+
 export const ArchiveSchema = {
     title: {type: String, required: true},
     body: {type: String, required: true},
     description: {type: String, required: true},
     thumbnail: {type: String},
     author: {type: Schema.Types.ObjectId, ref: 'User', required: 'Author is required',},
-    tags: {type: [String], index: true, default: ['untagged']},
-    categories: {type: [String], index: true, default: ['uncategorized']},
+    tags: {...TagOrCategory, default: ['untagged']},
+    categories: {...TagOrCategory, default: ['uncategorized']},
     created: {type: Date, default: Date.now}
 };
 
