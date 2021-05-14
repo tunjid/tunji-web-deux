@@ -1,5 +1,6 @@
 import { ArchiveKind, ArchiveLike, UserLike } from "../../client-server-common/Models";
 import { createSelector } from "reselect";
+import _ from "lodash";
 import { StoreState } from "../../types";
 import { ArchiveState } from "../../reducers/Archive";
 import { ArchivesQuery, ArchiveView, yearAndMonthParam } from "../../actions/Archive";
@@ -44,11 +45,13 @@ export const archivesSelector = (querySelector: (StoreState: StoreState) => Arch
     state => state.archives,
     (query, archiveState) => {
         const {kind, params} = query;
-        const {category} = params;
+        const tags = params.getAll('tag');
+        const categories = params.getAll('category');
         const yearAndMonth = yearAndMonthParam(query);
 
         let archives = archiveState.kindToArchivesMap[kind];
-        archives = category ? archives.filter(archive => archive.categories.indexOf(category) > -1) : archives
+        archives = tags.length > 0 ? archives.filter(archive => _.intersection(tags, archive.tags).length > 0) : archives
+        archives = categories.length > 0 ? archives.filter(archive => _.intersection(categories, archive.categories).length > 0) : archives
         archives = yearAndMonth
             ? archives.filter(archive => archive.created.getFullYear() === yearAndMonth.year && archive.created.getMonth() === yearAndMonth.month)
             : archives;

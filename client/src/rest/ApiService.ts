@@ -11,22 +11,16 @@ const transport = axios.create({
     withCredentials: true
 })
 
-const createQueryString = (params: Record<string, string>) => Object.entries(params)
-    .map(([key, value], index) => index === 0 ? `?${key}=${value}` : `&${key}=${value}`)
-    .join('');
-
 const session = () => transport.get<UserLike>(`${API_ENDPOINT}/api/session`);
 const signIn = (args: SignInArgs) => transport.post<UserLike>(`${API_ENDPOINT}/api/sign-in`, args);
 const fetchArchives = (query: ArchivesQuery) => {
     const yearAndMonth = yearAndMonthParam(query);
-    const {dateInfo, ...sanitizedQuery} = query.params;
-    const finalQuery = yearAndMonth
-        ? {...sanitizedQuery, month: yearAndMonth.month.toString(), year: yearAndMonth.year.toString()}
-        : sanitizedQuery;
+    if(yearAndMonth) {
+        query.params.append('month', yearAndMonth.month.toString());
+        query.params.append('year', yearAndMonth.year.toString());
+    }
 
-    const queryString = createQueryString(finalQuery);
-
-    return transport.get<ArchiveLike[]>(`${API_ENDPOINT}/api/${query.kind}${queryString}`);
+    return transport.get<ArchiveLike[]>(`${API_ENDPOINT}/api/${query.kind}?${query.params.toString()}`);
 };
 const createArchive = (archive: ArchiveLike) => transport.post<ArchiveLike>(`${API_ENDPOINT}/api/${archive.kind}/${archive.key}`, archive);
 const readArchive = (kind: ArchiveKind, id: string) => transport.get<ArchiveLike>(`${API_ENDPOINT}/api/${kind}/${id}`);

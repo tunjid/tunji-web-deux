@@ -70,11 +70,11 @@ export type ArchiveAction = AddArchive | EditArchive | UpdateArchives | SaveArch
 export interface ArchivesQuery {
     key: string;
     kind: ArchiveKind;
-    params: Record<string, string>
+    params: URLSearchParams
 }
 
 export const yearAndMonthParam = ({params}: ArchivesQuery) => {
-    const {dateInfo} = params;
+    const dateInfo = params.get('dateInfo');
     const splitDate = dateInfo ? dateInfo.split('-') : [];
     const {year, month} = {year: parseInt(splitDate[0]), month: parseInt(splitDate[1])}
 

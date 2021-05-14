@@ -32,7 +32,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export enum ChipType {
     Category = 'category',
-    Tag = 'Tag'
+    Tag = 'tag'
 }
 
 interface ChipEditor {
@@ -57,7 +57,10 @@ export default function ChipInput({name, chips, type, kind, editor}: Props) {
     const {onChipDeleted, onChipAdded} = editor || {}
 
     const deleteChip = onChipDeleted
-        ? (text: string) => () => onChipDeleted(text)
+        ? (text: string) => (event: Event) => {
+            event.preventDefault()
+            onChipDeleted(text);
+        }
         : undefined;
 
     const addChip: React.KeyboardEventHandler<HTMLInputElement | HTMLTextAreaElement> | undefined = onChipAdded
@@ -73,7 +76,7 @@ export default function ChipInput({name, chips, type, kind, editor}: Props) {
     const editField = editor
         ? <InputBase
             className={classes.input}
-            placeholder="Add item"
+            placeholder={`Add ${type}`}
             value={textValue}
             onChange={(e) => setText(e.target.value)}
             onKeyDown={addChip}
@@ -87,7 +90,7 @@ export default function ChipInput({name, chips, type, kind, editor}: Props) {
             {(chips || []).map((text) =>
                 <Link
                     className={classes.chipAnchor}
-                    to={`/${kind}/?category=${text}`}
+                    to={`/${kind}/?${type}=${text}`}
                     key={text}
                 >
                     <Chip

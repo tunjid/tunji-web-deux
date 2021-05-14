@@ -12,10 +12,6 @@ const useStyles = makeStyles(() => createStyles({
             display: 'flex',
             justifyContent: 'space-around',
         },
-        gridList: {
-            width: `80%`,
-            maxWidth: '1200px'
-        },
     }
 ));
 
@@ -63,7 +59,6 @@ const ArchiveCards = ({kind, archives}: Props) => {
     return (
         <div className={classes.root}>
             <GridList
-                className={classes.gridList}
                 cellHeight={'auto'}
                 spacing={16}
                 cols={6}
