@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme) => createStyles({
         },
         cards: {
             width: `80%`,
-            maxWidth: '1200px',
+            maxWidth: '1080px',
             position: 'relative',
             top: '-10vh',
             'z-index': '1000',

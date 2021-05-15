@@ -37,10 +37,7 @@ const useStyles = makeStyles((theme) => createStyles({
             ...horizontalMargin(theme.spacing(4)),
             display: 'flex',
             flexDirection: 'column',
-            maxWidth: '1200px',
-            [theme.breakpoints.up('md')]: {
-                ...horizontalPadding('5%'),
-            },
+            maxWidth: '1080px',
         },
         chips: {
             display: 'flex',
