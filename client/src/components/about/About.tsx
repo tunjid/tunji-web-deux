@@ -51,16 +51,19 @@ I love to build things, like bad puns, and enjoy football.
 # Career
 Mechanical Engineering undergrad, Manufacturing engineering in grad school, software engineering professionally.
 
-Some things I've done:
+Currently on the Developer Relations Team at Google.
+
+# Some things I've done
 
 1. Led teams and orchestrated large level refactors.
 2. Onboarded, taught and mentored junior engineers.
 3. Haggled with product managers on pushing delivery of a feature in the short term to better scale in the long term.
-4. Worked with low level apis for live video streaming, and made them consumable them in a high level API.
-5. Worked across the full stack from the backend to both web and mobile frontend clients.
-6. Performed manufacturing research and a little embedded programming.
-7. Dabbled in home automation.
-8. Tried my hand at a startup.
+4. Mordernized and rearchitected a top 10 app on the [Google Play Store](https://play.google.com/store/apps/details?id=com.gc.teammanager).
+5. Worked with low level apis for live video streaming, and made them consumable them in a high level API.
+6. Worked across the full stack from the backend to both web and mobile frontend clients.
+7. Performed manufacturing research and a little embedded programming.
+8. Dabbled in home automation.
+9. Tried my hand at a startup.
 
 This website is my latest attempt at learning the web frontend flavor du jour after the original Angular in the 2010's.
 
