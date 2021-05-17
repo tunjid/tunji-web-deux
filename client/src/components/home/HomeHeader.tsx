@@ -6,7 +6,7 @@ import { StoreState } from "../../types";
 import { PersistentUiState } from "../../reducers/PersistentUi";
 import { useDispatch } from "react-redux";
 import { PersistentUiActions } from "../../actions/PersistentUi";
-import { Tab, Tabs } from "@material-ui/core";
+import { Avatar, Tab, Tabs, withStyles } from "@material-ui/core";
 import { HomeState } from "../../reducers/Home";
 import { HomeActions } from "../../actions/Home";
 import useEventListener from "../../hooks/UseEventListener";
@@ -14,6 +14,7 @@ import { AuthState } from "../../reducers/Auth";
 import { ArchiveKind } from "../../client-server-common/Models";
 import { capitalizeFirst } from "../common/Common";
 import { useDeepEqualSelector } from "../../hooks/UseDeepEqualSelector";
+import Typography from "@material-ui/core/Typography";
 
 const throttle = require('lodash/throttle');
 
@@ -21,11 +22,25 @@ const useStyles = makeStyles(() => createStyles({
         root: {
             background: 'linear-gradient(to bottom, #083042, #083042)',
             width: '100vw',
-            minHeight: '50vh',
+            display: 'flex',
+            flexDirection: 'column',
+        },
+        avatar: {
+            marginTop: theme.spacing(10),
+            width: '100px',
+            height: '100px',
+            marginLeft: 'auto',
+            marginRight: 'auto',
+        },
+        blurb: {
+            marginTop: theme.spacing(4),
+            marginLeft: 'auto',
+            marginRight: 'auto',
+            textColorSecondary: '#FFFFFF',
         },
         tabs: {
-            position: 'relative',
-            top: '30vh',
+            marginTop: theme.spacing(4),
+            marginBottom: theme.spacing(12),
             textColorSecondary: '#FFFFFF',
         },
         tab: {
@@ -33,6 +48,12 @@ const useStyles = makeStyles(() => createStyles({
         },
     }
 ));
+
+const WhiteTextTypography = withStyles({
+    root: {
+        color: "#FFFFFF"
+    }
+})(Typography);
 
 interface State {
     appBarColor: string;
@@ -95,6 +116,15 @@ const HomeHeader = () => {
 
     return (
         <div className={classes.root}>
+            <Avatar
+                className={classes.avatar}
+                src={process.env.REACT_APP_ABOUT_PROFILE_PICTURE}
+            />
+            <WhiteTextTypography
+                className={classes.blurb}
+            >
+                These are a few of my favorite things
+            </WhiteTextTypography>
             <Tabs
                 className={classes.tabs}
                 value={tabs.indexOf(selectedTab)}
@@ -103,8 +133,14 @@ const HomeHeader = () => {
                 textColor="secondary"
                 centered
             >
-                {tabs.map((item: ArchiveKind) => <Tab className={classes.tab} key={item}
-                                                      label={capitalizeFirst(item)}/>)}
+                {
+                    tabs.map((item: ArchiveKind) =>
+                        <Tab
+                            className={classes.tab}
+                            key={item}
+                            label={capitalizeFirst(item)}
+                        />)
+                }
             </Tabs>
         </div>
     );
