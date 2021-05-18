@@ -70,7 +70,7 @@ export const MarkdownComponents: Components = {
             : <code
                 className={classname}
                 children={children}
-                style={{backgroundColor: '#F2F2F2'}}
+                style={{backgroundColor: '#F2F2F2', fontSize: '80%'}}
                 {...props}
             />
     }

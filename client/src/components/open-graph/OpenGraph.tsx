@@ -52,7 +52,6 @@ const useStyles = makeStyles((theme) =>
             display: 'flex',
             margin: '0 auto',
             width: '100%',
-            maxWidth: '680px',
             justifyContent: 'space-between'
         },
         details: {
