@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { ArchiveDocument, ArchiveModel } from '../models/Archive';
 import { errorMessage, getErrorMessage } from './Common';
-import { ArchiveSummary } from '../../client/src/client-server-common/Models';
+import { ArchiveSummary } from 'common';
 
 interface ArchiveController {
     create: (res: Request, req: Response, next: NextFunction) => void;

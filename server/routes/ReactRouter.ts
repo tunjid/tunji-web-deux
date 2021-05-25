@@ -7,13 +7,13 @@ import scraper from 'open-graph-scraper';
 import {
     describeRoute,
     OpenGraphScrapeEndpoint,
-    RouteDescription
-} from '../../client/src/client-server-common/RouteUtilities';
+    RouteDescription,
+    ArchiveKind
+} from 'common';
 
 import { Article } from '../models/ArticleSchema';
 import { Project } from '../models/ProjectSchema';
 import { Talk } from '../models/TalkSchema';
-import { ArchiveKind } from '../../client/src/client-server-common/Models';
 
 import config from '../config/config';
 import { getErrorMessage } from '../controllers/Common';

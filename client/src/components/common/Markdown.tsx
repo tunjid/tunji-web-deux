@@ -2,7 +2,7 @@ import * as React from "react";
 import { Components } from "react-markdown/src/ast-to-react";
 import ReactPlayer from "react-player";
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
-import { OpenGraphScrapeEndpoint } from "../../client-server-common/RouteUtilities";
+import { OpenGraphScrapeEndpoint } from "common";
 import OpenGraphCard from "../open-graph/OpenGraph";
 
 export const MarkdownBody = {
