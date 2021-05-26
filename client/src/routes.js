@@ -5,7 +5,7 @@ import Home from "./components/home/Home";
 import SignIn from "./components/auth/SignIn";
 import ArchiveDetail from "./components/archive/ArchiveDetail";
 import {ArchiveCreate, ArchiveEdit} from "./components/archive/ArchiveEdit";
-import {ArchiveKind} from "./client-server-common/Models";
+import {ArchiveKind} from "common";
 import ArchiveList from "./components/archive/ArchiveList";
 import About from "./components/about/About";
 

@@ -1,4 +1,4 @@
-import { UserLike } from "../client-server-common/Models";
+import { UserLike } from 'common';
 import ApiService from "../rest/ApiService";
 import { AppThunk } from "./index";
 import { RouterActions } from "./Router";

@@ -13,7 +13,7 @@ import { PersistentUiState } from "../../reducers/PersistentUi";
 import { AuthState } from "../../reducers/Auth";
 import Fab from "@material-ui/core/Fab";
 import { Helmet } from "react-helmet";
-import { ArchiveKind } from "../../client-server-common/Models";
+import { ArchiveKind } from 'common';
 import { Link } from 'react-router-dom'
 import { ArchiveActions, ArchivesQuery } from "../../actions/Archive";
 import { archivesSelector } from "../common/Common";

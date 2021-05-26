@@ -1,11 +1,11 @@
-import { ArchiveKind, ArchiveLike, UserLike } from "../../client-server-common/Models";
+import { ArchiveKind, ArchiveLike, UserLike } from "common";
 import { createSelector } from "reselect";
 import _ from "lodash";
 import { StoreState } from "../../types";
 import { ArchiveState } from "../../reducers/Archive";
 import { ArchivesQuery, ArchiveView, yearAndMonthParam } from "../../actions/Archive";
 import { Theme } from "@material-ui/core";
-import { describeRoute } from "../../client-server-common/RouteUtilities";
+import { describeRoute } from 'common';
 import { MenuRes } from "../../types/MenuRes";
 
 export const responsiveWidth = (theme: Theme) => ({

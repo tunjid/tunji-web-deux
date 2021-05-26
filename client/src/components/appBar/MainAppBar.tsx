@@ -10,7 +10,7 @@ import AppBarIcons from "../../components/appBar/AppBarIcons";
 import { StoreState } from "../../types";
 import { PersistentUiState } from "../../reducers/PersistentUi";
 import { createSelector } from 'reselect'
-import { UserLike } from "../../client-server-common/Models";
+import { UserLike } from 'common';
 import HomeIcon from "@material-ui/icons/Home";
 import { horizontalMargin, StylelessAnchor } from "../../styles/Common";
 import { Link } from "react-router-dom";

@@ -2,7 +2,7 @@ import { createStyles, makeStyles } from '@material-ui/core/styles';
 import * as React from 'react';
 import ArchiveCard from "../cards/ArchiveCard";
 import { GridList, GridListTile } from "@material-ui/core";
-import { ArchiveKind, ArchiveLike } from "../../client-server-common/Models";
+import { ArchiveKind, ArchiveLike } from 'common';
 import { ArchiveCardInfo, CardStyle } from "./ArchiveCardInfo";
 import { useWidth } from "../../hooks/UseWidth";
 import { archiveDate, readTime } from "../common/Common";

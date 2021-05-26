@@ -1,9 +1,8 @@
 import axios from 'axios';
-import { ArchiveKind, ArchiveLike, ArchiveSummary, UserLike } from "../client-server-common/Models";
+import { ArchiveKind, ArchiveLike, ArchiveSummary, UserLike, OpenGraphScrapeEndpoint } from "common";
 import { SignInArgs } from "../actions/Auth";
 import { ArchivesQuery, yearAndMonthParam } from "../actions/Archive";
 import { OpenGraphData } from "../components/open-graph/OpenGraph";
-import { OpenGraphScrapeEndpoint } from "../client-server-common/RouteUtilities";
 
 const API_ENDPOINT = process.env.REACT_APP_API_ENDPOINT || '';
 

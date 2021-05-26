@@ -7,7 +7,7 @@ import {
     UPDATE_FETCH_STATUS
 } from '../actions/Archive';
 import _ from 'lodash';
-import { ArchiveKind, ArchiveLike, ArchiveSummary, EmptyArchive } from "../client-server-common/Models";
+import { ArchiveKind, ArchiveLike, ArchiveSummary, EmptyArchive } from 'common';
 
 export interface ArchiveState {
     archivesFetchStatus: Record<string, boolean>;

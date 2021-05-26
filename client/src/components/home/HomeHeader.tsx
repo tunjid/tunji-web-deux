@@ -11,7 +11,7 @@ import { HomeState } from "../../reducers/Home";
 import { HomeActions } from "../../actions/Home";
 import useEventListener from "../../hooks/UseEventListener";
 import { AuthState } from "../../reducers/Auth";
-import { ArchiveKind } from "../../client-server-common/Models";
+import { ArchiveKind } from 'common';
 import { capitalizeFirst } from "../common/Common";
 import { useDeepEqualSelector } from "../../hooks/UseDeepEqualSelector";
 import Typography from "@material-ui/core/Typography";

@@ -1,28 +1,27 @@
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import * as React from 'react';
 import { useCallback, useEffect, useState } from 'react';
-import ArchiveCards from "../cards/ArchiveCards";
-import { useDispatch } from "react-redux";
-import { getSearch, RouterState } from 'connected-react-router'
-import { Search } from 'history'
-import { PersistentUiActions } from "../../actions/PersistentUi";
-import { createSelector } from "reselect";
-import { StoreState } from "../../types";
-import { ArchiveKind, ArchiveLike, ArchiveSummary } from "../../client-server-common/Models";
-import { ArchiveState } from "../../reducers/Archive";
-import { theme } from "../../styles/PersistentUi";
-import { ArchiveActions, ArchivesQuery } from "../../actions/Archive";
-import Typography from "@material-ui/core/Typography";
-import { CircularProgress, Divider } from "@material-ui/core";
+import ArchiveCards from '../cards/ArchiveCards';
+import { useDispatch } from 'react-redux';
+import { getSearch, RouterState } from 'connected-react-router';
+import { Search } from 'history';
+import { PersistentUiActions } from '../../actions/PersistentUi';
+import { createSelector } from 'reselect';
+import { StoreState } from '../../types';
+import { ArchiveKind, ArchiveLike, ArchiveSummary, describeRoute } from 'common';
+import { ArchiveState } from '../../reducers/Archive';
+import { theme } from '../../styles/PersistentUi';
+import { ArchiveActions, ArchivesQuery } from '../../actions/Archive';
+import Typography from '@material-ui/core/Typography';
+import { CircularProgress, Divider } from '@material-ui/core';
 import _ from 'lodash';
-import { horizontalMargin, horizontalPadding, StylelessAnchor, verticalMargin } from "../../styles/Common";
-import { archivesSelector, capitalizeFirst, ShortMonthNames } from "../common/Common";
-import { Helmet } from "react-helmet";
-import { Link } from "react-router-dom";
-import { describeRoute } from "../../client-server-common/RouteUtilities";
-import { useDeepEqualSelector } from "../../hooks/UseDeepEqualSelector";
-import ChipInput, { ChipType } from "./ChipInput";
-import { RouterActions } from "../../actions/Router";
+import { horizontalMargin, StylelessAnchor, verticalMargin } from '../../styles/Common';
+import { archivesSelector, capitalizeFirst, ShortMonthNames } from '../common/Common';
+import { Helmet } from 'react-helmet';
+import { Link } from 'react-router-dom';
+import { useDeepEqualSelector } from '../../hooks/UseDeepEqualSelector';
+import ChipInput, { ChipType } from './ChipInput';
+import { RouterActions } from '../../actions/Router';
 
 const useStyles = makeStyles((theme) => createStyles({
         root: {
@@ -95,7 +94,7 @@ const selector = createSelector<StoreState, Search, RouterState, ArchiveState, S
             queryCategories,
             availableCategories: _.uniq(_.flatten(archiveState.kindToArchivesMap[kind].map(archive => archive.categories))),
             summaries: archiveState.summariesMap[kind],
-        }
+        };
     }
 );
 
@@ -112,7 +111,7 @@ const querySelector = createSelector<StoreState, Search, RouterState, ArchivesQu
             kind,
             params,
             key: `ArchiveList-${kind}`,
-        }
+        };
     }
 );
 
@@ -205,16 +204,16 @@ const ArchiveList = () => {
     );
 
     const chipEditor = (type: ChipType, isAdd: boolean) => (chip: string) => {
-        const params = new URLSearchParams(query.params.toString())
-        if (isAdd) params.append(type, chip)
+        const params = new URLSearchParams(query.params.toString());
+        if (isAdd) params.append(type, chip);
         else {
-            const filtered = params.getAll(type).filter(item => item !== chip)
-            params.delete(type)
-            filtered.forEach(item => params.append(type, item))
+            const filtered = params.getAll(type).filter(item => item !== chip);
+            params.delete(type);
+            filtered.forEach(item => params.append(type, item));
         }
 
-        dispatch(RouterActions.push(`/${kind}?${params.toString()}`))
-    }
+        dispatch(RouterActions.push(`/${kind}?${params.toString()}`));
+    };
 
     return (
         <div className={classes.root}>
@@ -267,6 +266,6 @@ const ArchiveList = () => {
             <div/>
         </div>
     );
-}
+};
 
 export default ArchiveList;

@@ -1,6 +1,6 @@
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import { ArchiveCardInfo, CardStyle } from "./ArchiveCardInfo";
-import { ArchiveKind } from "../../client-server-common/Models";
+import { ArchiveKind } from 'common';
 import React from "react";
 import Card from "@material-ui/core/Card";
 import CardMedia from "@material-ui/core/CardMedia";
