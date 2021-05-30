@@ -5,7 +5,7 @@
   "scripts": {
     "build-client": "cd client; yarn install; npm run build; cd ..;",
     "copy-ssl": "cp domain.crt build/domain.crt; cp domain.key build/domain.key",
-    "build-ts": "tsc --noEmit false && npm run copy-ssl",
+    "build-ts": "tsc --noEmit false",
     "build": "npm run build-ts && npm run lint",
     "build-all": "npm run build && npm run build-client",
     "debug": "npm run build && npm run watch-debug",

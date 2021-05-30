@@ -1,5 +1,5 @@
-import { ArchiveDocument } from 'server/models/Archive'
-import { UserDocument } from 'server/models/UserSchema'
+import { ArchiveDocument } from 'server/models/Archive';
+import { UserDocument } from 'server/models/UserSchema';
 import { UserLike } from 'common';
 
 declare global {
