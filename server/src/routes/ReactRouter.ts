@@ -3,6 +3,8 @@ import path from 'path';
 import fs from 'fs';
 import util from 'util';
 import scraper from 'open-graph-scraper';
+import ReactDOMServer from 'react-dom/server';
+import { App, store } from 'client';
 
 import {
     describeRoute,

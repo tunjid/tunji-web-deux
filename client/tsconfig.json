@@ -18,10 +18,11 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "jsx",
+    "jsx": "react",
     "outDir": "../build/client"
   },
   "include": [
     "src",
+    "./index.ts"
   ]
 }
