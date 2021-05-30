@@ -22,6 +22,14 @@
     "baseUrl": ".",
     "outDir": "../build"
   },
+  "references": [
+    {
+      "path": "../client"
+    },
+    {
+      "path": "../common"
+    }
+  ],
   "lib": [
     "es2015"
   ],

@@ -21,6 +21,11 @@
     "jsx": "react",
     "outDir": "../build/client"
   },
+  "references": [
+    {
+      "path": "../common"
+    }
+  ],
   "include": [
     "src",
     "./index.ts"
