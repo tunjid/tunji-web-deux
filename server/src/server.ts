@@ -1,5 +1,5 @@
-import app from './server/app';
-import ssl from './server/config/ssl';
+import app from './app';
+import ssl from './config/ssl';
 import { createServer } from 'https';
 
 const server = createServer(ssl.options, app);
