@@ -1,4 +1,4 @@
-import config from './config/config';
+import config from 'common';
 process.env.NODE_ENV = config.serverEnvironment;
 
 import express from './config/express';

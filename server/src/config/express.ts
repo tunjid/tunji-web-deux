@@ -9,8 +9,8 @@ import path from 'path';
 import helmet from 'helmet';
 import mongoose from 'mongoose';
 import bluebird from 'bluebird';
+import config from 'common';
 
-import config from './config';
 import session from './session';
 import userRouter from '../routes/UserRouter';
 import archiveRouter from '../routes/ArchiveRouter';

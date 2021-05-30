@@ -3,6 +3,8 @@ import path from 'path';
 import fs from 'fs';
 import util from 'util';
 import scraper from 'open-graph-scraper';
+import config from 'common';
+
 import ReactDOMServer from 'react-dom/server';
 import { App, store } from 'client';
 
@@ -17,7 +19,6 @@ import { Article } from '../models/ArticleSchema';
 import { Project } from '../models/ProjectSchema';
 import { Talk } from '../models/TalkSchema';
 
-import config from '../config/config';
 import { getErrorMessage } from '../controllers/Common';
 
 interface OpenGraphParams {

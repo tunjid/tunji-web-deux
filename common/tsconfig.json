@@ -1,8 +1,6 @@
 {
   "compilerOptions": {
     "typeRoots": [
-      "@types",
-      "./node_modules/@types"
     ],
     "allowJs": true,
     "skipLibCheck": true,
@@ -11,7 +9,6 @@
     "noFallthroughCasesInSwitch": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true,
     "module": "commonjs",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
@@ -19,18 +16,9 @@
     "noImplicitAny": true,
     "moduleResolution": "node",
     "sourceMap": true,
-    "baseUrl": ".",
     "composite": true,
-    "outDir": "../build/server"
+    "outDir": "../build/common"
   },
-  "references": [
-    {
-      "path": "../client"
-    },
-    {
-      "path": "../common"
-    }
-  ],
   "lib": [
     "es2015"
   ],
