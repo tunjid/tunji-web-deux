@@ -14,6 +14,7 @@ import EmailIcon from '@material-ui/icons/Email';
 import TwitterIcon from '@material-ui/icons/Twitter';
 import GitHubIcon from '@material-ui/icons/GitHub';
 import { MarkdownBody, MarkdownComponents } from "../common/Markdown";
+import config from 'common'
 
 const useStyles = makeStyles((theme) => createStyles({
         root: {
@@ -106,7 +107,7 @@ const About = () => {
             </Helmet>
             <Avatar
                 className={classes.avatar}
-                src={process.env.REACT_APP_ABOUT_PROFILE_PICTURE}
+                src={config.rootIndexImage}
             />
             <div className={classes.socials}>
                 <a className={classes.socialIcons}

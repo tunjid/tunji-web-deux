@@ -15,6 +15,7 @@ import { ArchiveKind } from 'common';
 import { capitalizeFirst } from "../common/Common";
 import { useDeepEqualSelector } from "../../hooks/UseDeepEqualSelector";
 import Typography from "@material-ui/core/Typography";
+import config from 'common'
 
 const throttle = require('lodash/throttle');
 
@@ -118,7 +119,7 @@ const HomeHeader = () => {
         <div className={classes.root}>
             <Avatar
                 className={classes.avatar}
-                src={process.env.REACT_APP_ABOUT_PROFILE_PICTURE}
+                src={config.rootIndexImage}
             />
             <WhiteTextTypography
                 className={classes.blurb}
