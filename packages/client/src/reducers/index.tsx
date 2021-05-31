@@ -10,6 +10,7 @@ import { connectRouter, routerMiddleware } from 'connected-react-router'
 import { createBrowserHistory, History, LocationState } from 'history'
 import { snackbarReducer } from "./Snackbar";
 import ReactGA from 'react-ga';
+import config from '@tunji-web/common'
 
 const reducers: (history: History) => Reducer<StoreState> = (history) => combineReducers<StoreState>({
     persistentUI: persistentUiReducer,
@@ -20,7 +21,7 @@ const reducers: (history: History) => Reducer<StoreState> = (history) => combine
     router: connectRouter<LocationState>(history),
 });
 
-const analyticsId = process.env.REACT_APP_GA_ID;
+const analyticsId = config.googleAnalyticsId;
 
 if (analyticsId) ReactGA.initialize(analyticsId);
 

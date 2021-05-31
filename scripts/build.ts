@@ -5,7 +5,7 @@ import config from '../config.json';
  * Generic options passed during build.
  */
 interface BuildOptions {
-  env: 'production' | 'development';
+  env: string;
 }
 
 /**
@@ -53,10 +53,10 @@ export async function buildServer(options: BuildOptions) {
 async function buildAll() {
   await Promise.all([
     buildClient({
-      env: 'production',
+      env: config.serverEnvironment,
     }),
     buildServer({
-      env: 'production',
+      env: config.serverEnvironment,
     }),
   ]);
 }
