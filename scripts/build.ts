@@ -1,4 +1,5 @@
 import { build } from 'esbuild';
+import config from '../config.json';
 
 /**
  * Generic options passed during build.
