@@ -1,6 +1,8 @@
 {
   "name": "@tunji-web/common",
   "version": "1.0.0",
+  "private": true,
+  "main": "./src/index.ts",
   "engines": {
     "node": "12.x"
   },

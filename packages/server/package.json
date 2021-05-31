@@ -2,6 +2,7 @@
   "name": "@tunji-web/server",
   "version": "1.0.0",
   "private": true,
+  "main": "./src/index.ts",
   "scripts": {
     "build-client": "cd client; yarn install; npm run build; cd ..;",
     "copy-ssl": "cp domain.crt build/domain.crt; cp domain.key build/domain.key",
