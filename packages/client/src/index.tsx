@@ -3,12 +3,12 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { store } from "./reducers";
+import { clientStore } from './reducers';
 import { Provider } from 'react-redux';
 
-ReactDOM.render(
-    <Provider store={store}>
-        <App/>
+ReactDOM.hydrate(
+    <Provider store={clientStore.store}>
+        <App history={clientStore.history}/>
     </Provider>,
     document.getElementById('root')
 );

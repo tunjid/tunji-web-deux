@@ -7,9 +7,8 @@ import config from '@tunji-web/common';
 
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
-import { createStore } from 'redux';
-
-import { App, store } from '@tunji-web/client';
+import { ServerStyleSheets } from '@material-ui/core/styles';
+import { App, serverStore } from '@tunji-web/client';
 
 import {
     describeRoute,
@@ -56,20 +55,28 @@ export default function (app: Express): void {
         '/*',
         async (req: Request, res: Response) => {
             let webPage = await readFilePromise(indexPath);
+            const sheets = new ServerStyleSheets();
+            const connectedStore = serverStore(req.path);
 
             const app = ReactDOMServer.renderToString(
-                <Provider store={store}>
-                    <App/>
-                </Provider>
+                sheets.collect(
+                    <Provider store={connectedStore.store}>
+                        <App history={connectedStore.history}/>
+                    </Provider>
+                )
             );
 
             const params = await openGraphParams(describeRoute(req.path));
             // replace the special strings with server generated strings
+            webPage = webPage.replace(/\$PUBLIC_URL/g, config.apiEndpoint);
             webPage = webPage.replace(/\$OG_TITLE/g, params.title);
             webPage = webPage.replace(/\$OG_DESCRIPTION/g, params.description);
             webPage = webPage.replace(/\$OG_IMAGE/g, params.image);
             webPage = webPage.replace(/\$OG_URL/g, params.url);
             webPage = webPage.replace(/\$OG_SITE_NAME/g, params.siteName);
+            webPage = webPage.replace(/\$SERVER_CSS/g, `<style id="jss-server-side">${sheets.toString()}</style>`);
+            webPage = webPage.replace('<div id="root"></div>', `<div id="root">${app}</div>`);
+
             res.send(webPage);
         }
     );
