@@ -4,19 +4,10 @@
   "private": true,
   "main": "./src/index.ts",
   "scripts": {
-    "build-client": "cd client; yarn install; npm run build; cd ..;",
-    "copy-ssl": "cp domain.crt build/domain.crt; cp domain.key build/domain.key",
-    "build-ts": "tsc --noEmit false",
-    "build": "npm run build-ts && npm run lint",
-    "build-all": "npm run build && npm run build-client",
-    "debug": "npm run build && npm run watch-debug",
-    "lint": "tsc --noEmit && eslint \"**/*.{js,ts}\" --quiet --fix",
-    "serve-debug": "nodemon --inspect dist/server.js",
-    "serve": "node build/server.js",
-    "start": "npm run serve"
+    "lint": "tsc --noEmit && eslint \"**/*.{js,ts}\" --quiet --fix"
   },
   "engines": {
-    "node": "12.x"
+    "node": "14.x"
   },
   "dependencies": {
     "@types/bluebird": "^3.5.33",
