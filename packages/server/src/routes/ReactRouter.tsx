@@ -5,7 +5,10 @@ import util from 'util';
 import scraper from 'open-graph-scraper';
 import config from '@tunji-web/common';
 
+import React from 'react';
 import ReactDOMServer from 'react-dom/server';
+import { createStore } from 'redux';
+
 import { App, store } from '@tunji-web/client';
 
 import {
@@ -20,6 +23,7 @@ import { Project } from '../models/ProjectSchema';
 import { Talk } from '../models/TalkSchema';
 
 import { getErrorMessage } from '../controllers/Common';
+import { Provider } from 'react-redux';
 
 interface OpenGraphParams {
     title: string;
@@ -52,6 +56,12 @@ export default function (app: Express): void {
         '/*',
         async (req: Request, res: Response) => {
             let webPage = await readFilePromise(indexPath);
+
+            const app = ReactDOMServer.renderToString(
+                <Provider store={store}>
+                    <App/>
+                </Provider>
+            );
 
             const params = await openGraphParams(describeRoute(req.path));
             // replace the special strings with server generated strings

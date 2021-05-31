@@ -3,7 +3,11 @@ import { useEffect, useRef } from "react";
 type Handler = (ev: Event) => void;
 
 // Hook
-export default function useEventListener(eventName: string, handler: Handler, element = window) {
+export default function useEventListener(
+    eventName: string,
+    handler: Handler,
+    element = typeof window !== "undefined" ? window : undefined
+) {
     // Create a ref that stores handler
     const savedHandler = useRef<Handler>();
     // Update ref.current value if handler changes.
@@ -24,10 +28,10 @@ export default function useEventListener(eventName: string, handler: Handler, el
                 savedHandler?.current?.(event);
             }
             // Add event listener
-            element.addEventListener(eventName, eventListener);
+            element?.addEventListener(eventName, eventListener);
             // Remove event listener on cleanup
             return () => {
-                element.removeEventListener(eventName, eventListener);
+                element?.removeEventListener(eventName, eventListener);
             };
         },
         [eventName, element] // Re-run if eventName or element changes

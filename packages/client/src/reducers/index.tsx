@@ -7,7 +7,7 @@ import { composeWithDevTools } from "redux-devtools-extension";
 import { homeReducer } from "./Home";
 import { authReducer } from "./Auth";
 import { connectRouter, routerMiddleware } from 'connected-react-router'
-import { createBrowserHistory, History, LocationState } from 'history'
+import { createBrowserHistory, createMemoryHistory, History, LocationState } from 'history'
 import { snackbarReducer } from "./Snackbar";
 import ReactGA from 'react-ga';
 import config from '@tunji-web/common'
@@ -25,7 +25,7 @@ const analyticsId = config.googleAnalyticsId;
 
 if (analyticsId) ReactGA.initialize(analyticsId);
 
-export const history = createBrowserHistory();
+export const history = typeof window !== "undefined" ? createBrowserHistory() : createMemoryHistory();
 
 if (analyticsId) history.listen(location => {
     ReactGA.set({page: location.pathname});
