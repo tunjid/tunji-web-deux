@@ -5,7 +5,7 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import morgan from 'morgan';
 import passport from 'passport';
-import path from 'path';
+import path, { join } from 'path';
 import helmet from 'helmet';
 import mongoose from 'mongoose';
 import bluebird from 'bluebird';
@@ -42,18 +42,20 @@ const App: () => Express = () => {
     const userController = createUserController(rateLimiter);
 
     // Set the static files location
-    app.use('/', ExpressApp.static(
-        path.join(__dirname, '../../../', 'build', 'client'),
-        {index: false}
-    ));
-    app.use('/', ExpressApp.static(
-        path.join(__dirname, '../../../', 'build', 'client', 'static', 'css'),
-        {index: false}
-    ));
-    app.use('/', ExpressApp.static(
-        path.join(__dirname, '../../../', 'build', 'client', 'static', 'js'),
-        {index: false}
-    ));
+    app.use(ExpressApp.static(join(__dirname, '../../client/public')));
+
+    // app.use('/', ExpressApp.static(
+    //     path.join(__dirname, '../../../', 'build', 'client'),
+    //     {index: false}
+    // ));
+    // app.use('/', ExpressApp.static(
+    //     path.join(__dirname, '../../../', 'build', 'client', 'static', 'css'),
+    //     {index: false}
+    // ));
+    // app.use('/', ExpressApp.static(
+    //     path.join(__dirname, '../../../', 'build', 'client', 'static', 'js'),
+    //     {index: false}
+    // ));
     app.use(cors({
         credentials: true,
         preflightContinue: true,

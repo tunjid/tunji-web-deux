@@ -1,6 +1,3 @@
-import config from '@tunji-web/common';
-process.env.NODE_ENV = config.serverEnvironment;
-
 import express from './config/express';
 import passportConfiguration from './config/passportConfiguraton';
 
