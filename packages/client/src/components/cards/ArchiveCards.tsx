@@ -5,7 +5,7 @@ import { GridList, GridListTile } from "@material-ui/core";
 import { ArchiveKind, ArchiveLike } from '@tunji-web/common';
 import { ArchiveCardInfo, CardStyle } from "./ArchiveCardInfo";
 import { useWidth } from "../../hooks/UseWidth";
-import { archiveDate, readTime } from "../@tunji-web/common/Common";
+import { archiveDate, readTime } from "../common/Common";
 
 const useStyles = makeStyles(() => createStyles({
         root: {

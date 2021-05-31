@@ -9,14 +9,14 @@ import { theme } from "../../styles/PersistentUi";
 import CardMedia from "@material-ui/core/CardMedia";
 import Card from "@material-ui/core/Card";
 import ReactMarkdown from 'react-markdown'
-import { archiveDate, archiveSelector, capitalizeFirst, readTime, responsiveWidth } from "../@tunji-web/common/Common";
+import { archiveDate, archiveSelector, capitalizeFirst, readTime, responsiveWidth } from "../common/Common";
 import { ArchiveActions } from "../../actions/Archive";
 import gfm from "remark-gfm";
 import EditIcon from '@material-ui/icons/Edit';
 import ChipInput, { ChipType } from "./ChipInput";
 import { horizontalMargin, verticalMargin } from "../../styles/Common";
 import { Helmet } from "react-helmet";
-import { MarkdownBody, MarkdownComponents } from "../@tunji-web/common/Markdown";
+import { MarkdownBody, MarkdownComponents } from "../common/Markdown";
 import { useDeepEqualSelector } from "../../hooks/UseDeepEqualSelector";
 
 const useStyles = makeStyles((theme) => createStyles({

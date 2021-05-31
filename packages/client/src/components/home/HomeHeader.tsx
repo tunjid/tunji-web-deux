@@ -12,7 +12,7 @@ import { HomeActions } from "../../actions/Home";
 import useEventListener from "../../hooks/UseEventListener";
 import { AuthState } from "../../reducers/Auth";
 import { ArchiveKind } from '@tunji-web/common';
-import { capitalizeFirst } from "../@tunji-web/common/Common";
+import { capitalizeFirst } from "../common/Common";
 import { useDeepEqualSelector } from "../../hooks/UseDeepEqualSelector";
 import Typography from "@material-ui/core/Typography";
 import config from '@tunji-web/common'

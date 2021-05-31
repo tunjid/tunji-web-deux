@@ -19,7 +19,7 @@
     "isolatedModules": true,
     "jsx": "react",
     "composite": true,
-    "outDir": "../build/client"
+    "outDir": "../build"
   },
   "references": [
     {

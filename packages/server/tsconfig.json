@@ -21,7 +21,7 @@
     "sourceMap": true,
     "baseUrl": ".",
     "composite": true,
-    "outDir": "../build/server"
+    "outDir": "../build"
   },
   "references": [
     {

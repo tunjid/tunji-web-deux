@@ -16,7 +16,7 @@ import { Helmet } from "react-helmet";
 import { ArchiveKind } from '@tunji-web/common';
 import { Link } from 'react-router-dom'
 import { ArchiveActions, ArchivesQuery } from "../../actions/Archive";
-import { archivesSelector } from "../@tunji-web/common/Common";
+import { archivesSelector } from "../common/Common";
 import { useDeepEqualSelector } from "../../hooks/UseDeepEqualSelector";
 import { getSearch } from "connected-react-router";
 import { Search } from "history";

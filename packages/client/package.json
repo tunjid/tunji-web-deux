@@ -47,6 +47,7 @@
     "web-vitals": "^1.0.1"
   },
   "scripts": {
+    "tsc": "tsc --noEmit",
     "start": "react-app-rewired start",
     "build": "react-app-rewired build && cd ../build && mkdir -p client && cd ../client && cp -r build/** ../build/client",
     "test": "react-app-rewired test",

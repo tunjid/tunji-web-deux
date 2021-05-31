@@ -17,7 +17,7 @@
     "moduleResolution": "node",
     "sourceMap": true,
     "composite": true,
-    "outDir": "../build/common"
+    "outDir": "../build"
   },
   "lib": [
     "es2015"

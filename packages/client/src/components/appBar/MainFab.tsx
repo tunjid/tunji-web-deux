@@ -8,7 +8,7 @@ import { MenuRes } from "../../types/MenuRes";
 import { useDispatch, useSelector } from "react-redux";
 import { MENU_ROUTE } from "../../actions/PersistentUi";
 import { RouterActions } from "../../actions/Router";
-import { MenuResEquality } from "../@tunji-web/common/Common";
+import { MenuResEquality } from "../common/Common";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({

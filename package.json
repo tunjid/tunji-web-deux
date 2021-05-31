@@ -3,7 +3,9 @@
   "version": "1.0.13",
   "private": true,
   "workspaces": [
-    "packages/*"
+    "packages/common",
+    "packages/client",
+    "packages/server"
   ],
   "scripts": {
     "build-client": "cd client; yarn install; npm run build; cd ..;",

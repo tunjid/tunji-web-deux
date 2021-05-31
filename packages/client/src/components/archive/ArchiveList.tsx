@@ -16,7 +16,7 @@ import Typography from '@material-ui/core/Typography';
 import { CircularProgress, Divider } from '@material-ui/core';
 import _ from 'lodash';
 import { horizontalMargin, StylelessAnchor, verticalMargin } from '../../styles/Common';
-import { archivesSelector, capitalizeFirst, ShortMonthNames } from '../@tunji-web/common/Common';
+import { archivesSelector, capitalizeFirst, ShortMonthNames } from '../common/Common';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import { useDeepEqualSelector } from '../../hooks/UseDeepEqualSelector';
