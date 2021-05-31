@@ -34,7 +34,7 @@ const archiveModels = [Article, Project, Talk];
 const readFilePromise = util.promisify<string, string>((argument, callback) => fs.readFile(argument, 'utf8', callback));
 
 export default function (app: Express): void {
-    const indexPath = path.join(__dirname, '../../../', 'build', 'client', 'index.html');
+    const indexPath = path.join(__dirname, '../../', 'client', 'public', 'index.html');
     app.route(`/${OpenGraphScrapeEndpoint}`)
         .get(async (req: Request, res: Response) => {
             const url = req.query.url as unknown as string | undefined;
