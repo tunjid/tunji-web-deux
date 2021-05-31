@@ -4,28 +4,37 @@
       "@types",
       "./node_modules/@types"
     ],
+    /* Basic */
+    "target": "es6",
+    "module": "commonjs",
+    "lib": ["es2015", "dom"],
+
+    /* Modules Resolution */
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+
+    /* Paths Resolution */
+    "baseUrl": "./",
     "paths": {
       "@tunji-web/*": ["packages/*"]
     },
+
+    /* Advanced */
+    "jsx": "react",
+    "experimentalDecorators": true,
+    "resolveJsonModule": true,
+
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
-    "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "module": "commonjs",
-    "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "target": "es6",
     "noImplicitAny": true,
-    "moduleResolution": "node",
     "sourceMap": true,
-    "baseUrl": ".",
     "outDir": "build"
   },
-  "lib": [
-    "es2015"
-  ],
+  "exclude": ["node_modules", "**/node_modules/*", "dist"]
 }
