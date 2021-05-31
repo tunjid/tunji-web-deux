@@ -7,16 +7,16 @@
     "packages/client",
     "packages/server"
   ],
+  "devDependencies": {
+    "esbuild": "^0.9.6",
+    "ts-node": "^9.1.1",
+    "typescript": "^4.2.3"
+  },
   "scripts": {
-    "build-client": "cd client; yarn install; npm run build; cd ..;",
-    "copy-ssl": "cp domain.crt build/domain.crt; cp domain.key build/domain.key",
-    "build-ts": "tsc --noEmit false && npm run copy-ssl",
-    "build": "npm run build-ts && npm run lint",
-    "build-all": "npm run build && npm run build-client",
-    "debug": "npm run build && npm run watch-debug",
-    "lint": "tsc --noEmit && eslint \"**/*.{js,ts}\" --quiet --fix",
-    "serve-debug": "nodemon --inspect dist/server.js",
-    "serve": "node build/server.js",
-    "start": "npm run serve"
+    "client": "yarn workspace @tunji-web/client",
+    "common": "yarn workspace @tunji-web/common",
+    "server": "yarn workspace @tunji-web/server",
+    "build": "ts-node ./scripts/build.ts",
+    "serve": "node ./packages/server/dist/index.js"
   }
 }
