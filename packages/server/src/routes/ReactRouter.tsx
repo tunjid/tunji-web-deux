@@ -1,16 +1,9 @@
 import { Express, Request, Response } from 'express';
 import path from 'path';
 import fs from 'fs';
-import util from 'util';
 import promise from 'bluebird';
 import scraper from 'open-graph-scraper';
-import {
-    ArchiveKind,
-    ArchiveLike,
-    describeRoute,
-    OpenGraphScrapeEndpoint,
-    RouteDescription
-} from '@tunji-web/common';
+import { ArchiveKind, ArchiveLike, describeRoute, OpenGraphScrapeEndpoint, RouteDescription } from '@tunji-web/common';
 
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
@@ -38,10 +31,8 @@ interface OpenGraphParams {
 
 const archiveModels = [Article, Project, Talk];
 
-const readFilePromise = util.promisify<string, string>((argument, callback) => fs.readFile(argument, 'utf8', callback));
-
 export default function (app: Express): void {
-    const indexPath = path.join(__dirname, '../../', 'client', 'public', 'index.html');
+    const indexHtml = fs.readFileSync(path.join(__dirname, '../../', 'client', 'public', 'index.html'), 'utf8');
     app.route(`/${OpenGraphScrapeEndpoint}`)
         .get(async (req: Request, res: Response) => {
             const url = req.query.url as unknown as string | undefined;
@@ -58,7 +49,7 @@ export default function (app: Express): void {
     app.all(
         '*',
         async (req: Request, res: Response) => {
-            let webPage = await readFilePromise(indexPath);
+            let webPage = indexHtml;
             const sheets = new ServerStyleSheets();
             const connectedStore = serverStore(req.path);
 
