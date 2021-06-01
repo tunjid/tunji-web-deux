@@ -26,7 +26,6 @@ const reducers: (history: History) => Reducer<StoreState> = (history) => combine
     router: connectRouter<LocationState>(history),
 });
 
-
 export const clientStore: ConnectedStore = (function bar() {
     const hasDom = typeof window !== 'undefined';
     const history = hasDom ? createBrowserHistory() : createMemoryHistory();

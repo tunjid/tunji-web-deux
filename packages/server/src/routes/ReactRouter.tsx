@@ -2,20 +2,20 @@ import { Express, Request, Response } from 'express';
 import path from 'path';
 import fs from 'fs';
 import util from 'util';
+import promise from 'bluebird';
 import scraper from 'open-graph-scraper';
-import config from '@tunji-web/common';
+import config, {
+    ArchiveKind,
+    ArchiveLike,
+    describeRoute,
+    OpenGraphScrapeEndpoint,
+    RouteDescription
+} from '@tunji-web/common';
 
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 import { ServerStyleSheets } from '@material-ui/core/styles';
-import { App, serverStore } from '@tunji-web/client';
-
-import {
-    describeRoute,
-    OpenGraphScrapeEndpoint,
-    RouteDescription,
-    ArchiveKind
-} from '@tunji-web/common';
+import { App, ArchiveActions, serverStore, StoreState } from '@tunji-web/client';
 
 import { Article } from '../models/ArticleSchema';
 import { Project } from '../models/ProjectSchema';
@@ -23,6 +23,8 @@ import { Talk } from '../models/TalkSchema';
 
 import { getErrorMessage } from '../controllers/Common';
 import { Provider } from 'react-redux';
+import { ArchiveDocument } from '@tunji-web/server/src/models/Archive';
+import { Store } from 'redux';
 
 interface OpenGraphParams {
     title: string;
@@ -58,6 +60,8 @@ export default function (app: Express): void {
             const sheets = new ServerStyleSheets();
             const connectedStore = serverStore(req.path);
 
+            const params = await openGraphParams(connectedStore.store, describeRoute(req.path));
+
             const app = ReactDOMServer.renderToString(
                 sheets.collect(
                     <Provider store={connectedStore.store}>
@@ -66,7 +70,6 @@ export default function (app: Express): void {
                 )
             );
 
-            const params = await openGraphParams(describeRoute(req.path));
             // replace the special strings with server generated strings
             webPage = webPage.replace(/\$PUBLIC_URL/g, config.apiEndpoint);
             webPage = webPage.replace(/\$OG_TITLE/g, params.title);
@@ -82,7 +85,10 @@ export default function (app: Express): void {
     );
 }
 
-async function openGraphParams({root, archiveId}: RouteDescription): Promise<OpenGraphParams> {
+async function openGraphParams(
+    store: Store<StoreState>,
+    {root, archiveId}: RouteDescription
+): Promise<OpenGraphParams> {
     switch (root.toLowerCase()) {
         case 'about': {
             return {
@@ -96,13 +102,36 @@ async function openGraphParams({root, archiveId}: RouteDescription): Promise<Ope
         case ArchiveKind.Articles:
         case ArchiveKind.Projects:
         case ArchiveKind.Talks: {
+            const kind: ArchiveKind = root.toLowerCase() as ArchiveKind;
             const modelAndId = archiveId
                 ? archiveModels
                     .map(model => ({model, id: archiveId}))
                     .find(modelAndId => modelAndId.model.getKind() === root)
                 : undefined;
 
-            const document = modelAndId ? await modelAndId.model.findById(modelAndId.id).exec() : undefined;
+            const document: ArchiveDocument | null | undefined = modelAndId
+                ? await modelAndId.model.findById(modelAndId.id)
+                    .populate('author')
+                    .exec()
+                : undefined;
+
+            const documents: ArchiveDocument[] | null | undefined = archiveId
+                ? undefined
+                : await archiveModels.find(model => model.getKind() === kind)
+                    ?.find()
+                    ?.limit(13)
+                    ?.sort({'created': -1})
+                    ?.populate('author', 'firstName lastName fullName imageUrl')
+                    .exec();
+
+            if (document) store.dispatch(ArchiveActions.setArchiveDetail({
+                kind,
+                item: document.toJSON()
+            }));
+            if (documents) store.dispatch(ArchiveActions.addArchives({
+                kind,
+                item: documents.map(it => it.toJSON())
+            }));
 
             return {
                 title: document?.title || `${root} by Tunji`,
@@ -113,6 +142,21 @@ async function openGraphParams({root, archiveId}: RouteDescription): Promise<Ope
             };
         }
         default: {
+            const archives: { item: ArchiveLike[]; kind: ArchiveKind }[] = await promise.all(archiveModels.map(async model => {
+                const archives = await model.find()
+                    .limit(13)
+                    .sort({'created': -1})
+                    .populate('author', 'firstName lastName fullName imageUrl')
+                    .exec();
+                return {
+                    kind: model.getKind(),
+                    item: archives
+                };
+            }));
+
+            archives.map(it => ArchiveActions.addArchives(it))
+                .forEach(action => store.dispatch(action));
+
             return {
                 title: 'Tunji\'s Web Corner',
                 description: 'Adetunji Dahunsi\'s Portfolio',

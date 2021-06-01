@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "typeRoots": [
-      "@types",
+      "./packages/server/@types",
       "./node_modules/@types"
     ],
     /* Basic */

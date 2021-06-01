@@ -2,6 +2,7 @@ import {
     ADD_ARCHIVE,
     ArchiveAction,
     EDIT_ARCHIVE,
+    SET_ARCHIVE_DETAIL,
     UPDATE_ARCHIVE_SUMMARY,
     UPDATE_ARCHIVES,
     UPDATE_FETCH_STATUS
@@ -43,7 +44,7 @@ const archiveReducer = (state = {
                 ...state,
                 kindToEditMap: isDetail ? state.kindToEditMap : editedMap,
                 kindToDetailMap: isDetail ? editedMap : state.kindToDetailMap,
-            }
+            };
         }
         case EDIT_ARCHIVE: {
             const edits = action.edits;
@@ -55,7 +56,7 @@ const archiveReducer = (state = {
             return {
                 ...state,
                 kindToEditMap: editedMap,
-            }
+            };
         }
         case UPDATE_ARCHIVES: {
             const kind = action.payload.kind;
@@ -67,13 +68,22 @@ const archiveReducer = (state = {
                     (archive) => archive.key
                 ),
                 (archive) => -archive.created.getTime()
-            )
+            );
             const updatedArchives = {...state.kindToArchivesMap, [kind]: updatedArray};
 
             return {
                 ...state,
                 kindToArchivesMap: updatedArchives,
-            }
+            };
+        }
+        case SET_ARCHIVE_DETAIL: {
+            return {
+                ...state,
+                kindToDetailMap: {
+                    ...state.kindToDetailMap,
+                    [action.payload.kind]: action.payload.item
+                },
+            };
         }
         case UPDATE_FETCH_STATUS: {
             const {queryKey, isLoading} = action.payload;
@@ -93,13 +103,13 @@ const archiveReducer = (state = {
             return {
                 ...state,
                 summariesMap: updatedSummaries,
-            }
+            };
         }
         default: {
             return state;
         }
     }
-}
+};
 
 
 export default archiveReducer;

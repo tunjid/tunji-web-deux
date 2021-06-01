@@ -1,11 +1,12 @@
 import { ArchiveKind, ArchiveLike, ArchiveSummary } from '@tunji-web/common';
-import ApiService from "../rest/ApiService";
-import { AppThunk } from "./index";
-import { onSuccessOrSnackbar } from "./Common";
-import { RouterActions } from "./Router";
-import { SnackbarActions, SnackbarKind } from "./Snackbar";
+import ApiService from '../rest/ApiService';
+import { AppThunk } from './index';
+import { onSuccessOrSnackbar } from './Common';
+import { RouterActions } from './Router';
+import { SnackbarActions, SnackbarKind } from './Snackbar';
 
 export const ADD_ARCHIVE = 'ADD_ARCHIVE';
+export const SET_ARCHIVE_DETAIL = 'SET_ARCHIVE_DETAIL';
 export const EDIT_ARCHIVE = 'EDIT_ARCHIVE';
 export const UPDATE_ARCHIVES = 'UPDATE_ARCHIVES';
 export const SAVE_ARCHIVE = 'SAVE_ARCHIVE';
@@ -40,6 +41,11 @@ export interface EditArchive {
     edits: Partial<ArchiveLike>;
 }
 
+export interface SetArchiveDetail {
+    type: typeof SET_ARCHIVE_DETAIL;
+    payload: ArchivePayload<ArchiveLike>;
+}
+
 export interface UpdateArchives {
     type: typeof UPDATE_ARCHIVES;
     payload: ArchivePayload<ArchiveLike[]>;
@@ -65,7 +71,14 @@ export interface UpdateArchiveSummary {
     payload: ArchivePayload<ArchiveSummary[]>;
 }
 
-export type ArchiveAction = AddArchive | EditArchive | UpdateArchives | SaveArchive | UpdateArchiveSummary | UpdateFetchStatus;
+export type ArchiveAction =
+    AddArchive
+    | EditArchive
+    | UpdateArchives
+    | SaveArchive
+    | UpdateArchiveSummary
+    | UpdateFetchStatus
+    | SetArchiveDetail;
 
 export interface ArchivesQuery {
     key: string;
@@ -76,10 +89,10 @@ export interface ArchivesQuery {
 export const yearAndMonthParam = ({params}: ArchivesQuery) => {
     const dateInfo = params.get('dateInfo');
     const splitDate = dateInfo ? dateInfo.split('-') : [];
-    const {year, month} = {year: parseInt(splitDate[0]), month: parseInt(splitDate[1])}
+    const {year, month} = {year: parseInt(splitDate[0]), month: parseInt(splitDate[1])};
 
-    return isNaN(year) && isNaN(month) ? undefined : {year, month}
-}
+    return isNaN(year) && isNaN(month) ? undefined : {year, month};
+};
 
 interface IArchiveActions {
     fetchArchives: (query: ArchivesQuery) => AppThunk
@@ -88,6 +101,7 @@ interface IArchiveActions {
     addArchives: (payload: ArchivePayload<ArchiveLike[]>) => UpdateArchives
     updateArchiveFetchStatus: (payload: UpdateFetchStatusPayload) => UpdateFetchStatus
     updateArchiveSummaries: (payload: ArchivePayload<ArchiveSummary[]>) => UpdateArchiveSummary
+    setArchiveDetail: (payload: ArchivePayload<ArchiveLike>) => SetArchiveDetail
     createArchive: (kind: ArchiveKind) => AppThunk
     readArchive: (request: FetchArchiveRequest) => AppThunk
     updateArchive: (kind: ArchiveKind) => AppThunk
@@ -103,7 +117,7 @@ export const ArchiveActions: IArchiveActions = {
             ApiService.createArchive(edited),
             dispatch,
             (created) => {
-                dispatch(RouterActions.replace(`/${created.kind}/${created.key}/edit`))
+                dispatch(RouterActions.replace(`/${created.kind}/${created.key}/edit`));
             }
         );
     },
@@ -185,4 +199,8 @@ export const ArchiveActions: IArchiveActions = {
         type: UPDATE_FETCH_STATUS,
         payload
     }),
-}
+    setArchiveDetail: (payload: ArchivePayload<ArchiveLike>) => ({
+        type: SET_ARCHIVE_DETAIL,
+        payload
+    }),
+};
