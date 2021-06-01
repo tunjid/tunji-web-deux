@@ -1,7 +1,7 @@
-import { applyMiddleware, combineReducers, createStore, Reducer, Store } from 'redux';
+import { applyMiddleware, combineReducers, createStore, PreloadedState, Reducer, Store } from 'redux';
 import { StoreState } from '../types';
 import { persistentUiReducer } from './PersistentUi';
-import archiveReducer from './Archive';
+import archiveReducer, { archiveStateSanitizer } from './Archive';
 import thunkMiddleware from 'redux-thunk';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import { homeReducer } from './Home';
@@ -40,15 +40,17 @@ export const clientStore: ConnectedStore = (function bar() {
     }
 
     // @ts-ignore
-    const preloadedState = hasDom ? window.__PRELOADED_STATE__ : undefined;
+    const rawState: StoreState | undefined = hasDom ? window.__PRELOADED_STATE__ : undefined;
     // @ts-ignore
     if (hasDom) delete window.__PRELOADED_STATE__;
+
+    const preloadedState = rawState ? {...rawState, archives: archiveStateSanitizer(rawState.archives)} : undefined;
 
     return {
         history,
         store: createStore<StoreState, any, any, any>(
             reducers(history),
-            preloadedState,
+            preloadedState as unknown as PreloadedState<StoreState>,
             composeWithDevTools(applyMiddleware(
                 routerMiddleware(history),
                 thunkMiddleware

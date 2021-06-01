@@ -12,6 +12,7 @@ declare global {
         interface Request {
             pathUser: UserDocument
             archive: ArchiveDocument
+            serverReduxStateNonce: string
         }
     }
 }

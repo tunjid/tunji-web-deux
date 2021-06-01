@@ -8,6 +8,7 @@ import passport from 'passport';
 import path, { join } from 'path';
 import helmet from 'helmet';
 import mongoose from 'mongoose';
+import crypto from 'crypto';
 import bluebird from 'bluebird';
 import config from '@tunji-web/common';
 
@@ -60,18 +61,24 @@ const App: () => Express = () => {
         res.sendFile(path.join(__dirname, '../../../', 'cert-renewal'));
     });
 
+    app.use((req, res, next) => {
+        const serverReduxStateNonce = crypto.randomBytes(16).toString('hex');
+        req.serverReduxStateNonce = serverReduxStateNonce;
+
+        const cspMiddleware = helmet({
+            contentSecurityPolicy: {
+                directives: {
+                    ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+                    'img-src': config.corsImageSources,
+                    'connect-src': config.corsConnectSources,
+                    'script-src': [...config.corsScriptSources, `'nonce-${serverReduxStateNonce}'`],
+                    'frame-src': config.corsFrameSources,
+                },
+            }
+        });
+        cspMiddleware(req, res, next);
+    });
     // Session and passport initialization
-    app.use(helmet({
-        contentSecurityPolicy: {
-            directives: {
-                ...helmet.contentSecurityPolicy.getDefaultDirectives(),
-                'img-src': config.corsImageSources,
-                'connect-src': config.corsConnectSources,
-                'script-src': config.corsScriptSources,
-                'frame-src': config.corsFrameSources,
-            },
-        }
-    }));
     app.use(session);
     app.use(passport.initialize());
     app.use(passport.session());

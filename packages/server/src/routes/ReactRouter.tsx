@@ -77,8 +77,21 @@ export default function (app: Express): void {
             webPage = webPage.replace(/\$OG_IMAGE/g, params.image);
             webPage = webPage.replace(/\$OG_URL/g, params.url);
             webPage = webPage.replace(/\$OG_SITE_NAME/g, params.siteName);
-            webPage = webPage.replace(/\$SERVER_CSS/g, `<style id="jss-server-side">${sheets.toString()}</style>`);
-            webPage = webPage.replace('<div id="root"></div>', `<div id="root">${app}</div>`);
+            webPage = webPage.replace(
+                '<style id="jss-server-side"></style>',
+                `<style id="jss-server-side">${sheets.toString()}</style>`
+            );
+            webPage = webPage.replace(
+                '<div id="root"></div>',
+                `<div id="root">${app}</div>`
+            );
+            webPage = webPage.replace(
+                ' <script>window.__PRELOADED_STATE__ = undefined</script>',
+                `<script nonce="${req.serverReduxStateNonce}">window.__PRELOADED_STATE__ = ${JSON.stringify(connectedStore.store.getState()).replace(
+                    /</g,
+                    '\\u003c'
+                )}</script>`
+            );
 
             res.send(webPage);
         }
@@ -144,7 +157,7 @@ async function openGraphParams(
         default: {
             const archives: { item: ArchiveLike[]; kind: ArchiveKind }[] = await promise.all(archiveModels.map(async model => {
                 const archives = await model.find()
-                    .limit(13)
+                    .limit(6)
                     .sort({'created': -1})
                     .populate('author', 'firstName lastName fullName imageUrl')
                     .exec();

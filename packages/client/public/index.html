@@ -11,7 +11,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
 
-    $SERVER_CSS
+    <style id="jss-server-side"></style>
 
     <meta name="title" content="$OG_TITLE"/>
     <meta name="description" content="$OG_DESCRIPTION"/>
@@ -48,6 +48,8 @@
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
+
+    <script>window.__PRELOADED_STATE__ = undefined</script>
     <script src="script.js"></script>
 
     <!--

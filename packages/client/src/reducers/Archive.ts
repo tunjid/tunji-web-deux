@@ -25,6 +25,16 @@ function reduceKind<T>(item: T): Record<ArchiveKind, T> {
         }, {} as Record<ArchiveKind, T>);
 }
 
+function transform<T>(record: Record<ArchiveKind, T>, mapper: (item: T) => T): Record<ArchiveKind, T> {
+    return Object.entries(record)
+        .reduce((reduced, [kind, value]) => {
+            reduced[kind as ArchiveKind] = mapper(value);
+            return reduced;
+        }, {} as Record<ArchiveKind, T>);
+}
+
+const touchUp = (a: ArchiveLike) => ({...a, created: new Date(a.created)});
+
 const archiveReducer = (state = {
     archivesFetchStatus: {},
     kindToEditMap: reduceKind(EmptyArchive),
@@ -111,5 +121,12 @@ const archiveReducer = (state = {
     }
 };
 
+
+export const archiveStateSanitizer = (state: ArchiveState) => ({
+    ...state,
+    kindToEditMap: transform(state.kindToEditMap, touchUp),
+    kindToDetailMap: transform(state.kindToDetailMap, touchUp),
+    kindToArchivesMap: transform(state.kindToArchivesMap, (archives) => archives.map(touchUp)),
+});
 
 export default archiveReducer;
