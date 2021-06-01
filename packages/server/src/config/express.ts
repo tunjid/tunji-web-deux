@@ -5,12 +5,12 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import morgan from 'morgan';
 import passport from 'passport';
-import path, { join } from 'path';
+import path from 'path';
 import helmet from 'helmet';
 import mongoose from 'mongoose';
 import crypto from 'crypto';
 import bluebird from 'bluebird';
-import config from '@tunji-web/common';
+import config from './config';
 
 import session from './session';
 import userRouter from '../routes/UserRouter';
@@ -43,7 +43,7 @@ const App: () => Express = () => {
     const userController = createUserController(rateLimiter);
 
     // Set the static files location
-    app.use(ExpressApp.static(join(__dirname, '../../client/public')));
+    app.use(ExpressApp.static(path.join(__dirname, '../../client/public'), {index: false}));
 
     app.use(cors({
         credentials: true,
@@ -51,7 +51,7 @@ const App: () => Express = () => {
         origin: (origin, callback) => callback(null, config.corsAllowedOrigins),
     }));
 
-    if (config.serverEnvironment === 'production') app.use(compress());
+    if (config.env === 'production') app.use(compress());
     else app.use(morgan('dev'));
 
     app.use(bodyParser.json());

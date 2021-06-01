@@ -14,7 +14,7 @@ import EmailIcon from '@material-ui/icons/Email';
 import TwitterIcon from '@material-ui/icons/Twitter';
 import GitHubIcon from '@material-ui/icons/GitHub';
 import { MarkdownBody, MarkdownComponents } from "../common/Markdown";
-import config from '@tunji-web/common'
+import clientConfig from '../../config'
 
 const useStyles = makeStyles((theme) => createStyles({
         root: {
@@ -107,7 +107,7 @@ const About = () => {
             </Helmet>
             <Avatar
                 className={classes.avatar}
-                src={config.rootIndexImage}
+                src={clientConfig.rootIndexImage}
             />
             <div className={classes.socials}>
                 <a className={classes.socialIcons}

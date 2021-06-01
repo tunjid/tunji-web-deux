@@ -1,11 +1,11 @@
 import axios from 'axios';
-import config from '@tunji-web/common'
+import clientConfig from '../config'
 import { ArchiveKind, ArchiveLike, ArchiveSummary, UserLike, OpenGraphScrapeEndpoint } from "@tunji-web/common";
 import { SignInArgs } from "../actions/Auth";
 import { ArchivesQuery, yearAndMonthParam } from "../actions/Archive";
 import { OpenGraphData } from "../components/open-graph/OpenGraph";
 
-const API_ENDPOINT = config.apiEndpoint || '';
+const API_ENDPOINT = clientConfig.apiEndpoint || '';
 
 const transport = axios.create({
     withCredentials: true

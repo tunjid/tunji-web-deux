@@ -10,7 +10,7 @@ import { connectRouter, routerMiddleware } from 'connected-react-router';
 import { createBrowserHistory, createMemoryHistory, History, LocationState } from 'history';
 import { snackbarReducer } from './Snackbar';
 import ReactGA from 'react-ga';
-import config from '@tunji-web/common';
+import clientConfig from '../config'
 
 interface ConnectedStore {
     history: History
@@ -30,7 +30,7 @@ export const clientStore: ConnectedStore = (function bar() {
     const hasDom = typeof window !== 'undefined';
     const history = hasDom ? createBrowserHistory() : createMemoryHistory();
 
-    const analyticsId = config.googleAnalyticsId;
+    const analyticsId = clientConfig.googleAnalyticsId;
     if (analyticsId && hasDom) {
         ReactGA.initialize(analyticsId);
         history.listen(location => {

@@ -1,6 +1,6 @@
 git pull
 
 yarn install
-yarn build-all
+yarn build
 
-node ./build/server.js
+node ./packages/server/dist/index.js

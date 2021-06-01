@@ -1,5 +1,6 @@
 import { build } from 'esbuild';
-import config from '../config.json';
+import clientConfig from '../clientConfig.json';
+import serverConfig from '../serverConfig.json';
 
 /**
  * Generic options passed during build.
@@ -53,10 +54,10 @@ export async function buildServer(options: BuildOptions) {
 async function buildAll() {
   await Promise.all([
     buildClient({
-      env: config.serverEnvironment,
+      env: clientConfig.env,
     }),
     buildServer({
-      env: config.serverEnvironment,
+      env: serverConfig.env,
     }),
   ]);
 }

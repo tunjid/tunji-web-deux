@@ -15,7 +15,7 @@ import { ArchiveKind } from '@tunji-web/common';
 import { capitalizeFirst } from "../common/Common";
 import { useDeepEqualSelector } from "../../hooks/UseDeepEqualSelector";
 import Typography from "@material-ui/core/Typography";
-import config from '@tunji-web/common'
+import clientConfig from '../../config'
 
 const throttle = require('lodash/throttle');
 
@@ -119,7 +119,7 @@ const HomeHeader = () => {
         <div className={classes.root}>
             <Avatar
                 className={classes.avatar}
-                src={config.rootIndexImage}
+                src={clientConfig.rootIndexImage}
             />
             <WhiteTextTypography
                 className={classes.blurb}

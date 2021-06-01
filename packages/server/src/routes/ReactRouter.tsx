@@ -4,7 +4,7 @@ import fs from 'fs';
 import util from 'util';
 import promise from 'bluebird';
 import scraper from 'open-graph-scraper';
-import config, {
+import {
     ArchiveKind,
     ArchiveLike,
     describeRoute,
@@ -25,6 +25,8 @@ import { getErrorMessage } from '../controllers/Common';
 import { Provider } from 'react-redux';
 import { ArchiveDocument } from '@tunji-web/server/src/models/Archive';
 import { Store } from 'redux';
+
+import config from '../config/config';
 
 interface OpenGraphParams {
     title: string;
@@ -54,7 +56,7 @@ export default function (app: Express): void {
         });
 
     app.all(
-        '/*',
+        '*',
         async (req: Request, res: Response) => {
             let webPage = await readFilePromise(indexPath);
             const sheets = new ServerStyleSheets();

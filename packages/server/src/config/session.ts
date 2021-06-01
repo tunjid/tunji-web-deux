@@ -1,4 +1,4 @@
-import config from '@tunji-web/common';
+import config from './config';
 
 import Session from 'express-session';
 import MongoStore from 'connect-mongo';
