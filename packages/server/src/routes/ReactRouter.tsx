@@ -150,7 +150,7 @@ async function openGraphParams(
         default: {
             const archives: { item: ArchiveLike[]; kind: ArchiveKind }[] = await promise.all(archiveModels.map(async model => {
                 const archives = await model.find()
-                    .limit(6)
+                    .limit(13)
                     .sort({'created': -1})
                     .populate('author', 'firstName lastName fullName imageUrl')
                     .exec();

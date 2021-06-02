@@ -35,12 +35,12 @@ const useStyles = makeStyles((theme) => createStyles({
             width: `80%`,
             maxWidth: '1080px',
             position: 'relative',
-            top: '-10vh',
+            top: -theme.spacing(10),
             'z-index': '1000',
         },
         topFab: {
             position: 'relative',
-            top: '-10vh',
+            top: -theme.spacing(10),
             margin: theme.spacing(1),
         },
         topFabHyperlink: {
