@@ -1,17 +1,20 @@
-import { ArchiveAction } from "./Archive";
-import { PersistentUiAction } from "./PersistentUi";
-import { AuthAction } from "./Auth";
-import { HomeAction } from "./Home";
-import { ThunkAction, ThunkDispatch } from "redux-thunk";
-import { StoreState } from "../types";
-import { RouterAction } from "./Router";
-import { SnackbarAction } from "./Snackbar";
+import { ArchiveAction } from './Archive';
+import { PersistentUiAction } from './PersistentUi';
+import { AuthAction } from './Auth';
+import { HomeAction } from './Home';
+import { ThunkAction, ThunkDispatch } from 'redux-thunk';
+import { StoreState } from '../types';
+import { RouterAction } from './Router';
+import { SnackbarAction } from './Snackbar';
+import { OpenGraphAction } from '@tunji-web/client/src/actions/OpenGraph';
 
 export type SynchronousAppAction =
     ArchiveAction | HomeAction | AuthAction |
-    PersistentUiAction | RouterAction | SnackbarAction;
+    PersistentUiAction | RouterAction | OpenGraphAction |
+    SnackbarAction;
 
 const APP_THUNK = 'APP_THUNK';
+
 export interface AppThunk extends ThunkAction<void, StoreState, unknown, SynchronousAppAction> {
     type?: typeof APP_THUNK
 }

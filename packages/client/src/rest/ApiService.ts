@@ -3,7 +3,7 @@ import clientConfig from '../config'
 import { ArchiveKind, ArchiveLike, ArchiveSummary, UserLike, OpenGraphScrapeEndpoint } from "@tunji-web/common";
 import { SignInArgs } from "../actions/Auth";
 import { ArchivesQuery, yearAndMonthParam } from "../actions/Archive";
-import { OpenGraphData } from "../components/open-graph/OpenGraph";
+import { OpenGraphData } from "../reducers/OpenGraph";
 
 const API_ENDPOINT = clientConfig.apiEndpoint || '';
 

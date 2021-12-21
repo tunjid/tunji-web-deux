@@ -10,7 +10,7 @@ import CardMedia from "@material-ui/core/CardMedia";
 import Card from "@material-ui/core/Card";
 import ReactMarkdown from 'react-markdown'
 import { archiveDate, archiveSelector, capitalizeFirst, readTime, responsiveWidth } from "../common/Common";
-import { ArchiveActions } from "../../actions/Archive";
+import { ArchiveActions } from '@tunji-web/client';
 import gfm from "remark-gfm";
 import EditIcon from '@material-ui/icons/Edit';
 import ChipInput, { ChipType } from "./ChipInput";
