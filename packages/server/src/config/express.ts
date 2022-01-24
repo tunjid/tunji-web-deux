@@ -7,9 +7,8 @@ import morgan from 'morgan';
 import passport from 'passport';
 import path from 'path';
 import helmet from 'helmet';
-import mongoose from 'mongoose';
+import { Connection } from 'mongoose';
 import crypto from 'crypto';
-import bluebird from 'bluebird';
 import config from './config';
 
 import session from './session';
@@ -25,43 +24,33 @@ import { Article } from '../models/ArticleSchema';
 import { Project } from '../models/ProjectSchema';
 import { Talk } from '../models/TalkSchema';
 
-const App: () => Express = () => {
+const app: (connection: Connection) => Express = (connection) => {
     // Initialize Express app
-    const app: Express = ExpressApp();
+    const expressServer: Express = ExpressApp();
 
-    mongoose.Promise = bluebird;
-    mongoose.connect(config.mongoUrl, config.mongooseOptions).then(
-        () => {
-            return;
-        },
-    ).catch(err => {
-        console.log(`MongoDB connection error. Please make sure MongoDB is running. ${err}`);
-        // process.exit();
-    });
-
-    const rateLimiter = createRateLimiter(mongoose.connection);
+    const rateLimiter = createRateLimiter(connection);
     const userController = createUserController(rateLimiter);
 
     // Set the static files location
-    app.use(ExpressApp.static(path.join(__dirname, '../../client/public'), {index: false}));
+    expressServer.use(ExpressApp.static(path.join(__dirname, '../../client/public'), {index: false}));
 
-    app.use(cors({
+    expressServer.use(cors({
         credentials: true,
         preflightContinue: true,
         origin: (origin, callback) => callback(null, config.corsAllowedOrigins),
     }));
 
-    if (config.env === 'production') app.use(compress());
-    else app.use(morgan('dev'));
+    if (config.env === 'production') expressServer.use(compress());
+    else expressServer.use(morgan('dev'));
 
-    app.use(bodyParser.json());
-    app.use(bodyParser.urlencoded({extended: true}));
+    expressServer.use(bodyParser.json());
+    expressServer.use(bodyParser.urlencoded({extended: true}));
 
-    app.all('/.well-known/acme-challenge/jHTByRi03P8lmzpHst99bQ7cXTmTyA6Jt4IFayowKUY', (req, res) => {
+    expressServer.all('/.well-known/acme-challenge/jHTByRi03P8lmzpHst99bQ7cXTmTyA6Jt4IFayowKUY', (req, res) => {
         res.sendFile(path.join(__dirname, '../../../', 'cert-renewal'));
     });
 
-    app.use((req, res, next) => {
+    expressServer.use((req, res, next) => {
         const serverReduxStateNonce = crypto.randomBytes(16).toString('hex');
         req.serverReduxStateNonce = serverReduxStateNonce;
 
@@ -79,26 +68,26 @@ const App: () => Express = () => {
         cspMiddleware(req, res, next);
     });
     // Session and passport initialization
-    app.use(session);
-    app.use(passport.initialize());
-    app.use(passport.session());
-    app.use((req: Request, res: Response, next: NextFunction) => {
+    expressServer.use(session);
+    expressServer.use(passport.initialize());
+    expressServer.use(passport.session());
+    expressServer.use((req: Request, res: Response, next: NextFunction) => {
         const schema = (req.headers['x-forwarded-proto'] || '').toString().toLowerCase();
         if (req.secure || schema === 'https' || req.path.indexOf('.well-known') !== -1) next();
         else res.redirect('https://' + req.headers.host + req.url);
     });
 
-    app.use(cookieParser());
+    expressServer.use(cookieParser());
 
 // Route mapping
-    userRouter(app, userController);
-    archiveRouter(app, Article, userController);
-    archiveRouter(app, Project, userController);
-    archiveRouter(app, Talk, userController);
-    reactRouter(app);
+    userRouter(expressServer, userController);
+    archiveRouter(expressServer, Article, userController);
+    archiveRouter(expressServer, Project, userController);
+    archiveRouter(expressServer, Talk, userController);
+    reactRouter(expressServer);
 
 // catch 404 and forward to error handler
-    app.use((req: Request, res: Response, next: NextFunction) => {
+    expressServer.use((req: Request, res: Response, next: NextFunction) => {
         next(new HttpException(404, 'Not found'));
     });
 
@@ -107,9 +96,9 @@ const App: () => Express = () => {
     //     res.render('error', {message: err.message, error: config.serverEnvironment === 'development' ? err : {}});
     // });
 
-    app.use(errorMiddleware);
+    expressServer.use(errorMiddleware);
 
-    return app;
+    return expressServer;
 };
 
-export default App;
+export default app;
