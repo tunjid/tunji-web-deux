@@ -11,6 +11,7 @@ import { createBrowserHistory, createMemoryHistory, History, LocationState } fro
 import { snackbarReducer } from './Snackbar';
 import ReactGA from 'react-ga';
 import clientConfig from '../config'
+import { openGraphReducer } from '@tunji-web/client/src/reducers/OpenGraph';
 
 interface ConnectedStore {
     history: History
@@ -22,6 +23,7 @@ const reducers: (history: History) => Reducer<StoreState> = (history) => combine
     home: homeReducer,
     auth: authReducer,
     archives: archiveReducer,
+    openGraph: openGraphReducer,
     snackbars: snackbarReducer,
     router: connectRouter<LocationState>(history),
 });

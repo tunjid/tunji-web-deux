@@ -8,8 +8,8 @@
     "packages/server"
   ],
   "devDependencies": {
-    "esbuild": "^0.9.6",
-    "ts-node": "^9.1.1",
+    "esbuild": "^0.14.13",
+    "ts-node": "^10.4.0",
     "typescript": "^4.2.3"
   },
   "scripts": {

@@ -1,46 +1,23 @@
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
-import * as React from "react";
-import { useEffect, useState } from "react";
-import ApiService from "../../rest/ApiService";
-import { Link } from "react-router-dom";
-import { Paper } from "@material-ui/core";
-import { horizontalMargin, StylelessAnchor } from "../../styles/Common";
-
-export interface OpenGraphData {
-    ogTitle: string;
-    ogDescription: string;
-    twitterTitle: string;
-    twitterDescription: string;
-    twitterCard: string;
-    twitterSiteId: string;
-    ogSiteName: string,
-    ogImage: OgImage;
-    twitterImage: TwitterImage;
-    ogLocale: string;
-    charset: string;
-    requestUrl: string;
-    success: boolean;
-}
-
-export interface OgImage {
-    url: string;
-    width?: null;
-    height?: null;
-    type: string;
-}
-
-export interface TwitterImage {
-    url: string;
-    width?: null;
-    height?: null;
-    alt?: null;
-}
-
+import * as React from 'react';
+import { useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { Paper } from '@material-ui/core';
+import { horizontalMargin, StylelessAnchor } from '../../styles/Common';
+import { OpenGraphData, OpenGraphState } from '@tunji-web/client/src/reducers/OpenGraph';
+import { useDispatch } from 'react-redux';
+import { StoreState } from '@tunji-web/client';
+import { OpenGraphActions } from '@tunji-web/client/src/actions/OpenGraph';
+import { createSelector } from 'reselect';
+import { useDeepEqualSelector } from '@tunji-web/client/src/hooks/UseDeepEqualSelector';
 
 const useStyles = makeStyles((theme) =>
     createStyles({
+        root: {
+            display: 'flex',
+        },
         anchor: {
             ...StylelessAnchor,
             '& > *': {
@@ -48,7 +25,7 @@ const useStyles = makeStyles((theme) =>
             },
             display: 'flex'
         },
-        root: {
+        cardRoot: {
             display: 'flex',
             margin: '0 auto',
             width: '100%',
@@ -71,25 +48,27 @@ const useStyles = makeStyles((theme) =>
 
 const truncate = (input: string) => input.length > 80 ? `${input.substring(0, 80)}...` : input;
 
+interface State {
+    openGraphData?: OpenGraphData
+}
+
+const selector = (url: string) => createSelector<StoreState, OpenGraphState, State>(
+    state => state.openGraph,
+    (openGraphState) => ({openGraphData: openGraphState.graphData[url]})
+);
+
 interface Props {
     url: string
 }
 
 const OpenGraphCard = ({url}: Props) => {
+    const dispatch = useDispatch();
     const classes = useStyles();
-    const [openGraphData, setOpenGraphData] = useState<OpenGraphData | undefined>(undefined);
+    const {openGraphData} = useDeepEqualSelector(selector(url));
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await ApiService.scrapeOpenGraph(url);
-                setOpenGraphData(response.data);
-            } catch (err: any) {
-            }
-        };
-
-        fetchData();
-    }, [url]);
+        dispatch(OpenGraphActions.openGraphScrape(url));
+    }, [url, dispatch]);
 
 
     const node = openGraphData
@@ -98,7 +77,7 @@ const OpenGraphCard = ({url}: Props) => {
              target="_blank"
              rel="noreferrer"
         >
-            <Paper className={classes.root} variant="outlined">
+            <Paper className={classes.cardRoot} variant="outlined">
                 <div className={classes.details}>
                     <Typography component="h5" variant="h5">
                         {openGraphData?.ogTitle ? truncate(openGraphData?.ogTitle) : ''}
@@ -117,9 +96,9 @@ const OpenGraphCard = ({url}: Props) => {
                 />
             </Paper>
         </a>
-        : <Link to={url}/>
+        : <Link to={url}/>;
 
-    return node;
+    return <div className={classes.root}>{node}</div>;
 };
 
 export default OpenGraphCard;
