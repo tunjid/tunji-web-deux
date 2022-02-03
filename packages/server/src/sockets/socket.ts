@@ -8,6 +8,8 @@ import { Article } from '@tunji-web/server/src/models/ArticleSchema';
 import { Project } from '@tunji-web/server/src/models/ProjectSchema';
 import { Talk } from '@tunji-web/server/src/models/TalkSchema';
 import { User } from '@tunji-web/server/src/models/UserSchema';
+import { SocketDeDupe } from '@tunji-web/server/src/models/SocketDedupeSchema';
+import { getErrorMessage } from '@tunji-web/server/src/controllers/Common';
 
 interface ServerToClientEvents {
     modelChanged: (collection: string, id: string) => void;
@@ -28,7 +30,7 @@ interface SocketData {
 }
 
 const MODEL_EVENTS_NAMESPACE = '/model-events';
-const MODEL_EVENTS_ROOM = 'archive-events';
+const MODEL_EVENTS_ROOM = 'model-events-room';
 
 const CONNECTION = 'connection';
 const DISCONNECT = 'disconnect';
@@ -54,25 +56,30 @@ const socketServer: (
 
     merge(...modelChangeEvents)
         .subscribe(changeEvent => {
-            const collection = changeEvent.ns.coll;
-            // This is only valid bc the db is unsharded
-            const id = changeEvent.documentKey?._id?.toString();
+            const deDupe = new SocketDeDupe({key: changeEvent._id._data});
+            console.log(new Date(), changeEvent);
+            deDupe.save(error => {
+                if (error) return;
+                const collection = changeEvent.ns.coll;
+                // This is only valid bc the db is unsharded
+                const id = changeEvent.documentKey?._id?.toString();
 
-            if (!!collection && !!id) switch (changeEvent.operationType) {
-                case 'insert':
-                case 'update':
-                    modelEventsNamespace
-                        .to(MODEL_EVENTS_ROOM)
-                        .emit('modelChanged', collection, id);
-                    break;
-                case 'delete':
-                    modelEventsNamespace
-                        .to(MODEL_EVENTS_ROOM)
-                        .emit('modelDeleted', collection, id);
-                    break;
-                default:
-                    break;
-            }
+                if (!!collection && !!id) switch (changeEvent.operationType) {
+                    case 'insert':
+                    case 'update':
+                        modelEventsNamespace
+                            .to(MODEL_EVENTS_ROOM)
+                            .emit('modelChanged', collection, id);
+                        break;
+                    case 'delete':
+                        modelEventsNamespace
+                            .to(MODEL_EVENTS_ROOM)
+                            .emit('modelDeleted', collection, id);
+                        break;
+                    default:
+                        break;
+                }
+            });
         });
 
     modelEventsNamespace.on(CONNECTION, (socket) => {
