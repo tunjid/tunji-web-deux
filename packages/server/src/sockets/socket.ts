@@ -57,8 +57,8 @@ const socketServer: (
     merge(...modelChangeEvents)
         .subscribe(changeEvent => {
             const deDupe = new SocketDeDupe({key: changeEvent._id._data});
-            console.log(new Date(), changeEvent);
             deDupe.save(error => {
+                console.log('Received change event: ', changeEvent, 'notified: ', error == null);
                 if (error) return;
                 const collection = changeEvent.ns.coll;
                 // This is only valid bc the db is unsharded
