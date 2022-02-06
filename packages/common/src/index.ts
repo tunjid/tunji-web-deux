@@ -15,6 +15,7 @@ export interface ArchiveLike {
     thumbnail?: string;
     author: Author,
     created: Date;
+    likes: number;
     spanCount?: number;
     tags: string[];
     categories: string[];

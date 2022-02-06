@@ -9,6 +9,7 @@ export interface Archive extends ArchiveLike {
     author: UserDocument['_id'];
     thumbnail?: string;
     created: Date;
+    likes: number;
     spanCount?: number;
     tags: string[];
     categories: string[];
@@ -31,6 +32,7 @@ export const ArchiveSchema = {
     body: {type: String, required: true},
     description: {type: String, required: true},
     thumbnail: {type: String},
+    likes: {type: Number, default: 0},
     author: {type: Schema.Types.ObjectId, ref: 'User', required: 'Author is required',},
     tags: {...TagOrCategory, default: ['untagged']},
     categories: {...TagOrCategory, default: ['uncategorized']},

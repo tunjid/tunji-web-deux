@@ -10,6 +10,7 @@ interface ArchiveController {
     remove: (res: Request, req: Response, next: NextFunction) => void;
     byId: (res: Request, req: Response, next: NextFunction, id: string) => void;
     find: (res: Request, req: Response, next: NextFunction) => void;
+    incrementLikes: (res: Request, req: Response, next: NextFunction) => void;
     summary: (res: Request, req: Response, next: NextFunction) => void;
     tagsOrCategories: (res: Request, req: Response, next: NextFunction) => void;
     hasAuthorization: (res: Request, req: Response, next: NextFunction) => void;
@@ -109,6 +110,20 @@ const archiveController = <T extends ArchiveDocument>(Model: ArchiveModel<T>): A
                 req.archive = archive;
                 next();
             });
+    },
+    incrementLikes: async (req, res, next) => {
+        Model.findById(req.archive.id, (error, archive) => {
+            if (error) return next(error);
+
+            const likeIncrement = parseInt(req.body.increment);
+            if (!likeIncrement) return res.json(archive);
+
+            archive.likes = archive.likes + likeIncrement;
+            archive.save((saveError, saved) => {
+                if (saveError) return next(saveError);
+                else res.json(saved);
+            });
+        });
     },
     tagsOrCategories: (req, res) => {
         const type = req.query.type;

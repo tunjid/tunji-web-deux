@@ -25,5 +25,8 @@ export default function <T extends ArchiveDocument>(app: Express, model: Archive
         .put(userController.requiresLogin, archives.put)
         .delete(userController.requiresLogin, archives.hasAuthorization, archives.remove);
 
+    app.route(`/api/${routeName}/:${paramName}/incrementLikes`)
+        .post(archives.incrementLikes);
+
     app.param(paramName, archives.byId);
 }
