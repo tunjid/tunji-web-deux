@@ -10,6 +10,7 @@ export const SET_ARCHIVE_DETAIL = 'SET_ARCHIVE_DETAIL';
 export const EDIT_ARCHIVE = 'EDIT_ARCHIVE';
 export const UPDATE_ARCHIVES = 'UPDATE_ARCHIVES';
 export const SAVE_ARCHIVE = 'SAVE_ARCHIVE';
+export const INCREMENT_ARCHIVE_LIKES = 'INCREMENT_ARCHIVE_LIKES';
 export const UPDATE_ARCHIVE_SUMMARY = 'UPDATE_ARCHIVE_SUMMARY';
 export const UPDATE_FETCH_STATUS = 'UPDATE_FETCH_STATUS';
 
@@ -19,6 +20,12 @@ export interface FetchArchiveRequest {
     id: string;
     view: ArchiveView;
     kind: ArchiveKind;
+}
+
+export interface IncrementArchiveLikesRequest {
+    id: string;
+    kind: ArchiveKind;
+    increment: number;
 }
 
 export interface FetchArchiveResponse {
@@ -39,6 +46,11 @@ export interface AddArchive {
 export interface EditArchive {
     type: typeof EDIT_ARCHIVE;
     edits: Partial<ArchiveLike>;
+}
+
+export interface IncrementArchiveLikes {
+    type: typeof INCREMENT_ARCHIVE_LIKES;
+    request: IncrementArchiveLikesRequest;
 }
 
 export interface SetArchiveDetail {
@@ -105,6 +117,7 @@ interface IArchiveActions {
     createArchive: (kind: ArchiveKind) => AppThunk
     readArchive: (request: FetchArchiveRequest) => AppThunk
     updateArchive: (kind: ArchiveKind) => AppThunk
+    incrementArchiveLikes: (request: IncrementArchiveLikesRequest) => AppThunk
     deleteArchive: (kind: ArchiveKind) => AppThunk
     archiveSummaries: (kind: ArchiveKind) => AppThunk
 }
@@ -152,6 +165,16 @@ export const ArchiveActions: IArchiveActions = {
             ApiService.deleteArchive(edited),
             dispatch,
             () => dispatch(RouterActions.pop())
+        );
+    },
+    incrementArchiveLikes: (request: IncrementArchiveLikesRequest) => async (dispatch, getState) => {
+        await onSuccessOrSnackbar(
+            ApiService.incrementArchiveLikes(request),
+            dispatch,
+            (fetched) => {
+                const archive = {...fetched, created: new Date(fetched.created)};
+                dispatch(ArchiveActions.addArchive({archive, view: 'detail'}));
+            }
         );
     },
     fetchArchives: (query: ArchivesQuery) => async (dispatch) => {
