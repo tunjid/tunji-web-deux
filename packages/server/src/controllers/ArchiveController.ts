@@ -112,8 +112,8 @@ const archiveController = <T extends ArchiveDocument>(Model: ArchiveModel<T>): A
                 if (!archive) return serverMessage(res, {
                     errorCode: ErrorCode.ModelNotFound,
                     statusCode: 400,
-                    model: Model.getKind.toString(),
-                    message: 'Failed to load blog post with id ' + id,
+                    model: Model.getKind(),
+                    message: 'Failed to find archive with id ' + id,
                 });
 
                 req.archive = archive;
