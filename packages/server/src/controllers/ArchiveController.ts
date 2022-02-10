@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import { ArchiveDocument, ArchiveModel } from '../models/Archive';
 import { ErrorCode, getErrorMessage, serverMessage } from './Common';
 import { ArchiveSummary } from '@tunji-web/common';
+import { CallbackError, HydratedDocument } from 'mongoose';
 
 interface ArchiveController {
     create: (res: Request, req: Response, next: NextFunction) => void;
@@ -91,7 +92,7 @@ const archiveController = <T extends ArchiveDocument>(Model: ArchiveModel<T>): A
         res.json(req.archive);
     },
     put: (req, res, next) => {
-        Model.findByIdAndUpdate(req.archive.id, req.body, (error, archive) => {
+        Model.findByIdAndUpdate(req.archive.id, req.body, (error: CallbackError, archive: HydratedDocument<T> | null) => {
             if (error) return next(error);
             else res.json(archive);
         });
@@ -120,8 +121,14 @@ const archiveController = <T extends ArchiveDocument>(Model: ArchiveModel<T>): A
             });
     },
     incrementLikes: async (req, res, next) => {
-        Model.findById(req.archive.id, (error, archive) => {
+        Model.findById(req.archive.id, (error: CallbackError, archive: HydratedDocument<T> | null) => {
             if (error) return next(error);
+            if (!archive) return serverMessage(res, {
+                errorCode: ErrorCode.ModelNotFound,
+                statusCode: 400,
+                model: Model.getKind.toString(),
+                message: 'Failed to find model',
+            });
 
             const likeIncrement = parseInt(req.body.increment);
             if (!likeIncrement) return res.json(archive);
