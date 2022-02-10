@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { ArchiveDocument, ArchiveModel } from '../models/Archive';
-import { errorMessage, getErrorMessage } from './Common';
+import { ErrorCode, getErrorMessage, serverMessage } from './Common';
 import { ArchiveSummary } from '@tunji-web/common';
 
 interface ArchiveController {
@@ -21,7 +21,10 @@ const archiveController = <T extends ArchiveDocument>(Model: ArchiveModel<T>): A
         const archive = new Model(req.body);
         archive.author = req.user?.id;
 
-        if (!archive.author) return errorMessage(res, 'A blog post needs an author', 400);
+        if (!archive.author) return serverMessage(res, {
+            statusCode: 400,
+            message: 'A blog post needs an author',
+        });
 
         archive.save(error => {
             if (error) return res.status(400).send({
@@ -105,7 +108,12 @@ const archiveController = <T extends ArchiveDocument>(Model: ArchiveModel<T>): A
             .exec(function (error, archive) {
                 if (error) return next(error);
 
-                if (!archive) return errorMessage(res, 'Failed to load blog post with id ' + id, 400);
+                if (!archive) return serverMessage(res, {
+                    errorCode: ErrorCode.ModelNotFound,
+                    statusCode: 400,
+                    model: Model.getKind.toString(),
+                    message: 'Failed to load blog post with id ' + id,
+                });
 
                 req.archive = archive;
                 next();
@@ -133,10 +141,16 @@ const archiveController = <T extends ArchiveDocument>(Model: ArchiveModel<T>): A
             excludedFields[type] = {$ne: null};
             Model.distinct(type, excludedFields, function (error, result) {
                 if (error) {
-                    return errorMessage(res, 'Error retrieving tags / categories', 500);
+                    return serverMessage(res, {
+                        statusCode: 500,
+                        message: 'Error retrieving tags / categories',
+                    });
                 } else res.json(result);
             });
-        } else return errorMessage(res, 'Must pick a tag or category', 400);
+        } else return serverMessage(res, {
+            statusCode: 400,
+            message: 'Must pick a tag or category',
+        });
     },
     summary: (req, res) => {
         Model.aggregate(
@@ -148,7 +162,10 @@ const archiveController = <T extends ArchiveDocument>(Model: ArchiveModel<T>): A
                 }
             }],
             (error: any, result: any[]) => {
-                if (error) return errorMessage(res, 'Error aggregating months', 500);
+                if (error) return serverMessage(res, {
+                    statusCode: 500,
+                    message: 'Error aggregating months',
+                });
                 res.json(result.map<ArchiveSummary>(({_id, ...data}) => ({...data, dateInfo: _id})));
             }
         );

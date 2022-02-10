@@ -1,5 +1,12 @@
 import { Response } from 'express';
 
+
+export enum ErrorCode {
+    NotLoggedIn = 'not-logged-in',
+    ModelNotFound = 'model-not-found',
+    RateLimited = 'rate-limited',
+}
+
 export const getErrorMessage = function (error: any): string {
     // Define the error message variable
     let message: string | undefined;
@@ -22,11 +29,16 @@ export const getErrorMessage = function (error: any): string {
     return message || 'Unknown server error';
 };
 
-export const errorMessage = (res: Response, message: string, statusCode: number) => {
-    if (statusCode) res.status(statusCode);
-    return basicMessage(res, message);
-};
-
-export const basicMessage = (res: Response, message: string) => {
-    return res.json({message: message});
+export const serverMessage = (res: Response, params: {
+    message: string,
+    statusCode: number,
+    errorCode?: ErrorCode,
+    model?: string
+}) => {
+    if (params.statusCode) res.status(params.statusCode);
+    return res.json({
+        errorCode: params.errorCode,
+        message: params.message,
+        model: params.model,
+    });
 };
