@@ -53,6 +53,7 @@ export const EmptyArchive: ArchiveLike = {
     link: '',
     title: '',
     body: '',
+    likes: 0,
     description: '',
     author: EmptyUser,
     created: new Date(),

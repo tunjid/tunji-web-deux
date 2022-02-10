@@ -1,7 +1,7 @@
 import { User, UserDocument } from '../models/UserSchema';
 import passport from 'passport';
 import { NextFunction, Request, Response } from 'express';
-import { basicMessage, errorMessage, getErrorMessage } from './Common';
+import { ErrorCode, getErrorMessage, serverMessage } from './Common';
 import { RateLimiter } from '../middleware/RateLimiter';
 
 export interface UserController {
@@ -56,6 +56,7 @@ const createUserController: (limiter: RateLimiter) => UserController = (limiter)
     requiresLogin: (req, res, next) => {
         if (!req.isAuthenticated()) {
             return res.status(401).send({
+                code: 'no-login',
                 message: 'User is not logged in'
             });
         }
@@ -76,18 +77,27 @@ const createUserController: (limiter: RateLimiter) => UserController = (limiter)
                 if (err) {
                     // Use the error handling method to get the error message
                     const message = getErrorMessage(err);
-                    return errorMessage(res, message, 500);
+                    return serverMessage(res, {
+                        statusCode: 500,
+                        message,
+                    });
                 }
 
                 // If the user was created successfully use the Passport 'login' method to login
                 req.login({...user, id: user._id.toString()}, err => {
                     // If a login error occurs move to the next middleware
-                    if (err) return errorMessage(res, 'Login error', 500);
+                    if (err) return serverMessage(res, {
+                        statusCode: 500,
+                        message: 'Login error',
+                    });
                     // Redirect the user back to the main application page
                     res.json(user);
                 });
             });
-        } else return errorMessage(res, 'You are already signed in', 400);
+        } else return serverMessage(res, {
+            statusCode: 400,
+            message: 'You are already signed in',
+        });
     },
     signIn: async (req, res, next) => {
         const username = req.body.username;
@@ -96,7 +106,11 @@ const createUserController: (limiter: RateLimiter) => UserController = (limiter)
         if (rlResUsername !== null && rlResUsername.consumedPoints > limiter.maxConsecutiveFailsByUsername) {
             const retrySecs = Math.round(rlResUsername.msBeforeNext / 1000) || 1;
             res.set('Retry-After', String(retrySecs));
-            return errorMessage(res, 'Too Many Requests', 429);
+            return serverMessage(res, {
+                errorCode: ErrorCode.RateLimited,
+                statusCode: 429,
+                message: 'Too Many Requests',
+            });
         }
 
         passport.authenticate('local', async function (err, user, status) {
@@ -106,14 +120,18 @@ const createUserController: (limiter: RateLimiter) => UserController = (limiter)
             if (!user) {
                 try {
                     await limiter.signInLimiterStore.consume(username);
-                    return status
-                        ? errorMessage(res, status.message, 400)
-                        : errorMessage(res, 'User does not exist', 404);
+                    return serverMessage(res, {
+                        statusCode: status ? 400 : 404,
+                        message: status ? status.message : 'User does not exist'
+                    });
                 } catch (rlRejected) {
                     if (rlRejected instanceof Error) throw rlRejected;
 
                     res.set('Retry-After', String(Math.round(rlRejected.msBeforeNext / 1000)) || '1');
-                    return errorMessage(res, 'Too Many Requests', 429);
+                    return serverMessage(res, {
+                        statusCode: 429,
+                        message: 'Too Many Requests',
+                    });
                 }
             }
 
@@ -129,11 +147,16 @@ const createUserController: (limiter: RateLimiter) => UserController = (limiter)
     signOut: (req, res) => {
         // Use the Passport 'logout' method to logout
         req.logout();
-        return basicMessage(res, 'Signed out');
+        return serverMessage(res, {statusCode: 200, message: 'Signed out'});
     },
     session: (req, res) => {
         if (req.user) return res.json(req.user);
-        return errorMessage(res, 'Not signed in', 400);
+        return serverMessage(res, {
+                errorCode: ErrorCode.NotLoggedIn,
+                statusCode: 400,
+                message: 'Not signed in'
+            }
+        );
     },
 });
 
@@ -142,10 +165,10 @@ const createUserController: (limiter: RateLimiter) => UserController = (limiter)
 //
 //     User.findOne({username: "tunji"}, "email twoFactPass", function (error, user) {
 //         if (error) {
-//             return errorMessage(res, "Unable to get user");
+//             return serverMessage(res, "Unable to get user");
 //         }
 //         else if (!user.email || !user.twoFactPass) {
-//             return errorMessage(res, "User is missing required details");
+//             return serverMessage(res, "User is missing required details");
 //         }
 //         else {
 //
@@ -178,10 +201,10 @@ const createUserController: (limiter: RateLimiter) => UserController = (limiter)
 //             smtpTransport.sendMail(mailOptions, function (error) {
 //                 if (error) {
 //                     const message = getErrorMessage(error);
-//                     return errorMessage(res, message);
+//                     return serverMessage(res, message);
 //                 }
 //                 else {
-//                     return errorMessage(res, "Email sent");
+//                     return serverMessage(res, "Email sent");
 //                 }
 //             });
 //         }
