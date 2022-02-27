@@ -6,33 +6,33 @@ import { User } from '@tunji-web/server/src/models/UserSchema';
 
 type ChangeType = 'create' | 'update' | 'delete'
 
-export interface CollectionChange {
+export interface ChangeList {
     changeType: ChangeType;
     modelId: Types.ObjectId;
     model: string;
     dedupeId: string
 }
 
-export interface CollectionChangeDocument extends Document, CollectionChange {
+export interface ChangeListDocument extends Document, ChangeList {
 }
 
-export interface CollectionChangeModel extends Model<CollectionChange> {
+export interface ChangeListModel extends Model<ChangeList> {
     getParentModel: () => Model<Document>
 }
 
-export const collectionChangeSchema = (model: Model<any>) => new Schema<CollectionChangeDocument, CollectionChangeModel>({
+const changeListSchema = (model: Model<any>) => new Schema<ChangeListDocument, ChangeListModel>({
     modelId: {type: Schema.Types.ObjectId, required: true, ref: model.collection.collectionName},
     model: {type: String, required: true},
     changeType: {type: String, required: true, enum: ['create', 'update', 'delete']},
     dedupeId: {type: String, required: true, index: {unique: true}},
 });
 
-function changeModel(
+function changeListModel(
     parentModel: Model<any>,
     name: string,
-): CollectionChangeModel {
+): ChangeListModel {
 
-    const schema = collectionChangeSchema(parentModel);
+    const schema = changeListSchema(parentModel);
 
     schema.statics.getParentModel = function () {
         return parentModel;
@@ -42,26 +42,26 @@ function changeModel(
         virtuals: true,
     });
 
-    return model<CollectionChangeDocument, CollectionChangeModel>(name, schema);
+    return model<ChangeListDocument, ChangeListModel>(name, schema);
 }
 
 
-export const ArticleChange = changeModel(
-    Article,
-    'ArticleChange',
-);
+export const ChangeListModels = [
+    changeListModel(
+        Article,
+        'ArticleChange',
+    ),
+    changeListModel(
+        Project,
+        'ProjectChange',
+    ),
+    changeListModel(
+        Talk,
+        'TalkChange',
+    ),
+    changeListModel(
+        User,
+        'UserChange',
+    ),
+];
 
-export const ProjectChange = changeModel(
-    Project,
-    'ProjectChange',
-);
-
-export const TalkChange = changeModel(
-    Talk,
-    'TalkChange',
-);
-
-export const UserChange = changeModel(
-    User,
-    'UserChange',
-);

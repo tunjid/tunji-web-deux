@@ -1,17 +1,9 @@
-import {
-    ArticleChange,
-    CollectionChangeDocument,
-    ProjectChange,
-    TalkChange,
-    UserChange
-} from '@tunji-web/server/src/models/ModelChangesSchema';
+import { ChangeListModels, ChangeListDocument } from '@tunji-web/server/src/models/ChangeListSchema';
 import { ChangeStreamDocument } from 'mongodb';
 import { fromEvent, merge, Observable } from 'rxjs';
 
-const changeModels = [ArticleChange, ProjectChange, TalkChange, UserChange];
-
-const recordModelChanges: () => void = () => {
-    changeModels.forEach(changeModel => changeModel
+const recordChangeLists: () => void = () => {
+    ChangeListModels.forEach(changeModel => changeModel
         .getParentModel()
         .watch<Document>()
         .on('change', change => {
@@ -50,10 +42,11 @@ const changeStreamDocumentId:
     (document) => document.documentKey?._id?.toString();
 
 
-export default recordModelChanges;
+export default recordChangeLists;
 
-export const modelChangeEvents: Observable<ChangeStreamDocument<CollectionChangeDocument>> = merge(...changeModels
-    .map(archiveModel => fromEvent<ChangeStreamDocument<CollectionChangeDocument>>(
-        archiveModel.watch<CollectionChangeDocument>(),
-        'change',
-    )));
+export const changeListEvents: Observable<ChangeStreamDocument<ChangeListDocument>> =
+    merge(...ChangeListModels
+        .map(archiveModel => fromEvent<ChangeStreamDocument<ChangeListDocument>>(
+            archiveModel.watch<ChangeListDocument>(),
+            'change',
+        )));

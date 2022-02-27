@@ -4,11 +4,11 @@ import { fromEvent, merge, share, takeUntil, tap } from 'rxjs';
 import { createAdapter } from '@socket.io/mongo-adapter';
 import { ChangeStreamDocument, Collection } from 'mongodb';
 import { SocketDeDupe } from '@tunji-web/server/src/models/SocketDedupeSchema';
-import { modelChangeEvents } from '@tunji-web/server/src/config/modelChanges';
-import { CollectionChange, CollectionChangeDocument } from '@tunji-web/server/src/models/ModelChangesSchema';
+import { changeListEvents } from '@tunji-web/server/src/config/changeLists';
+import { ChangeList, ChangeListDocument } from '@tunji-web/server/src/models/ChangeListSchema';
 
 interface ServerToClientEvents {
-    modelChanged: (change: CollectionChange) => void;
+    modelChanged: (change: ChangeList) => void;
 }
 
 interface ClientToServerEvents {
@@ -43,8 +43,8 @@ const socketServer: (
 
     const modelEventsNamespace = io.of(MODEL_EVENTS_NAMESPACE);
 
-    modelChangeEvents
-        .subscribe((changeEvent: ChangeStreamDocument<CollectionChangeDocument>) => {
+    changeListEvents
+        .subscribe((changeEvent: ChangeStreamDocument<ChangeListDocument>) => {
             // Multiple server instances. Dedupe on the event ID and the first to write sends the event.
             const collectionChange = changeEvent.fullDocument;
             if (!collectionChange) return;
