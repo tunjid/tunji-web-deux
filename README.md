@@ -1,6 +1,7 @@
 # Tunji Web Deux
 
-Welcome to my attempt at aa custom personal CMS.
+Welcome to my attempt at a custom personal CMS. It is a bare bones reactive server that notifies its clients
+when it's database models are modified and maintains a changelist for clients who may have missed notifications.
 
 There are 2 main directories:
 
@@ -9,22 +10,47 @@ Client: A single page web app bootstrapped with [Create React App](https://githu
 
 ## Getting started
 
-There are a few files you will want to ad that are not in version control.
+The server uses a MongoDb database. Install it from the official source [here](https://docs.mongodb.com/manual/installation/).
+
+Once installed, make sure the mongod process is running.
+
+NOTE:
+The sign up route in both the `UserController` and `UserRouter` files are commented out. Should you want to
+try these endpoints out, you should uncomment them first.
+
+There are a few files you will want to add that are not in version control.
 
 ### Server:
 
 In the project root:
-config.json: A json file containing meta data the server needs to run:
+
+serverConfig.json: A json file containing meta data the server needs to run:
 
 ```json
 {
+  "env": "dev",
   "mongoUrl": "mongodb://127.0.0.1:27017/tunji-web?gssapiServiceName=mongodb",
   "sessionSecret": "hush-hush",
-  "serverEnvironment": "development",
+  "apiEndpoint": "https://localhost:8080",
+  "rootIndexImage": "aPictureUrl.jpg",
+  "archiveListDefaultImage": "anotherPictureUrl.png",
+  "googleCloud": {
+    "type": "service_account",
+    "bucket": "your-bucket-name",
+    "project_id": "your-gcloud-project-id",
+    "private_key_id": "somePrivateKeyId",
+    "private_key": "-----BEGIN PRIVATE KEY-----\n-----\n-----END PRIVATE KEY-----\n",
+    "client_email": "service_account.gserviceaccount.com",
+    "client_id": "numbers",
+    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+    "token_uri": "https://oauth2.googleapis.com/token",
+    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+    "client_x509_cert_url": "aUrl"
+  },
   "corsAllowedOrigins": [
     "https://www.tunjid.com",
     "https://www.tunji.dev",
-    "http://localhost:3000"
+    "https://localhost:8080"
   ],
   "corsImageSources": [
     "'self'",
@@ -34,7 +60,7 @@ config.json: A json file containing meta data the server needs to run:
     "'self'",
     "https://www.tunjid.com",
     "https://www.tunji.dev",
-    "http://localhost:3000"
+    "https://localhost:8080"
   ],
   "corsScriptSources": [
     "'self'",
@@ -53,30 +79,36 @@ config.json: A json file containing meta data the server needs to run:
 }
 ```
 
+You do ddon't need the google cloud service account credentials if you do not plan to upload images.
+The server will run just fine without, image upload endpoints will simply error.
+
+
+clientConfig.json
+
+```json
+{
+  "env": "dev",
+  "googleAnalyticsId": "someId",
+  "apiEndpoint": "https://localhost:8080",
+  "rootIndexImage": "aUrl",
+  "archiveListDefaultImage": "anotherUrl"
+}
+```
+
 domain.crt and domain.key: SSL keys for https, I got mine through lets encrypt, but to run locally any made up ones should do
 
-### Client
-In the root of the `client` directory:
-
-A .env file resembling:
-
-```
-REACT_APP_API_ENDPOINT=https://localhost:8080
-REACT_APP_ABOUT_PROFILE_PICTURE=my-face.jpg
-INLINE_RUNTIME_CHUNK=false
-
-```
 
 ## Running it all
 
-The server and client have their own individual packages, so you will need to yarn install in both the root dir, and client dir.Client
+This project uses esbuild. In the root directory, run:
+`yarn install`
+`yarn build`
+`node ./packages/server/dist/index.js`
 
-If you would much rather not, just run
-
-`sh app.sh` in the root dir; it will configure both the client and server and start the server via `server.js` in the build dir.
+If you would much rather not, just run `sh app.sh` in the root dir; it will configure both the client and server and start
+the server via `index.js` in the build dir.
 
 The server is https only on port 8080. Visit it through:
 
 `https://localhost:8080`
 
-To iterate on the frontend client, run `yarn start` from the client dir.
