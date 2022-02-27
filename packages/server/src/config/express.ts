@@ -14,6 +14,7 @@ import config from './config';
 import session from './session';
 import userRouter from '../routes/UserRouter';
 import archiveRouter from '../routes/ArchiveRouter';
+import changeListRouter from '../routes/ChangeListRouter';
 import reactRouter from '../routes/ReactRouter';
 import errorMiddleware from '../middleware/ErrorMiddleware';
 import createRateLimiter from '../middleware/RateLimiter';
@@ -80,6 +81,7 @@ const app: (connection: Connection) => Express = (connection) => {
     expressServer.use(cookieParser());
 
 // Route mapping
+    changeListRouter(expressServer);
     userRouter(expressServer, userController);
     archiveRouter(expressServer, Article, userController);
     archiveRouter(expressServer, Project, userController);
