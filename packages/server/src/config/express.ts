@@ -14,6 +14,7 @@ import config from './config';
 import session from './session';
 import userRouter from '../routes/UserRouter';
 import archiveRouter from '../routes/ArchiveRouter';
+import changeListRouter from '../routes/ChangeListRouter';
 import reactRouter from '../routes/ReactRouter';
 import errorMiddleware from '../middleware/ErrorMiddleware';
 import createRateLimiter from '../middleware/RateLimiter';
@@ -84,6 +85,7 @@ const app: (connection: Connection) => Express = (connection) => {
     archiveRouter(expressServer, Article, userController);
     archiveRouter(expressServer, Project, userController);
     archiveRouter(expressServer, Talk, userController);
+    changeListRouter(expressServer);
     reactRouter(expressServer);
 
 // catch 404 and forward to error handler
