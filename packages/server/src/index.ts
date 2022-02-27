@@ -5,14 +5,17 @@ import mongooseConnection from '@tunji-web/server/src/config/Mongoose';
 import express from '@tunji-web/server/src/config/express';
 import passportConfiguration from '@tunji-web/server/src/config/passportConfiguraton';
 import { SocketIOAdapter } from '@tunji-web/server/src/models/SocketIOAdapterSchema';
+import recordModelChanges from '@tunji-web/server/src/config/modelChanges';
 
 mongooseConnection().then((connection) => {
     const expressServer = express(connection);
     passportConfiguration();
+    recordModelChanges();
     expressServer.set('port', 8080);
 
     const httpsServer = createServer(ssl.options, expressServer);
 
+    // Should be a microservice
     SocketIOAdapter.createCollection()
         .then(collection => {
             socketServer(
