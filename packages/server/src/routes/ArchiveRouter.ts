@@ -1,6 +1,7 @@
 import { Express } from 'express';
 import archiveController from '../controllers/ArchiveController';
 import { UserController } from '../controllers/UserController';
+import ImageUploader from '@tunji-web/server/src/controllers/UploadController';
 
 import { ArchiveDocument, ArchiveModel } from '../models/Archive';
 
@@ -23,6 +24,15 @@ export default function <T extends ArchiveDocument>(app: Express, model: Archive
     app.route(`/api/${routeName}/:${paramName}`)
         .get(archives.get)
         .put(userController.requiresLogin, archives.put)
+        .post(
+            userController.requiresLogin,
+            ImageUploader(
+                'photo',
+                (req) => `${routeName}/${req.archive.key}`,
+                (req) => req.archive.thumbnail,
+            ),
+            archives.uploadImage
+        )
         .delete(userController.requiresLogin, archives.hasAuthorization, archives.remove);
 
     app.route(`/api/${routeName}/:${paramName}/incrementLikes`)

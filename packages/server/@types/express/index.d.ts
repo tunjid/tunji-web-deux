@@ -13,6 +13,7 @@ declare global {
             pathUser: UserDocument
             archive: ArchiveDocument
             serverReduxStateNonce: string
+            filePublicUrl: string
         }
     }
 }

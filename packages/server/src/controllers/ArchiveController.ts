@@ -5,16 +5,17 @@ import { ArchiveSummary } from '@tunji-web/common';
 import { CallbackError, HydratedDocument } from 'mongoose';
 
 interface ArchiveController {
-    create: (res: Request, req: Response, next: NextFunction) => void;
-    get: (res: Request, req: Response, next: NextFunction) => void;
-    put: (res: Request, req: Response, next: NextFunction) => void;
-    remove: (res: Request, req: Response, next: NextFunction) => void;
-    byId: (res: Request, req: Response, next: NextFunction, id: string) => void;
-    find: (res: Request, req: Response, next: NextFunction) => void;
-    incrementLikes: (res: Request, req: Response, next: NextFunction) => void;
-    summary: (res: Request, req: Response, next: NextFunction) => void;
-    tagsOrCategories: (res: Request, req: Response, next: NextFunction) => void;
-    hasAuthorization: (res: Request, req: Response, next: NextFunction) => void;
+    create: (req: Request, res: Response, next: NextFunction) => void;
+    get: (req: Request, res: Response, next: NextFunction) => void;
+    put: (req: Request, res: Response, next: NextFunction) => void;
+    uploadImage: (req: Request, res: Response, next: NextFunction) => void;
+    remove: (req: Request, res: Response, next: NextFunction) => void;
+    byId: (req: Request, res: Response, next: NextFunction, id: string) => void;
+    find: (req: Request, res: Response, next: NextFunction) => void;
+    incrementLikes: (req: Request, res: Response, next: NextFunction) => void;
+    summary: (req: Request, res: Response, next: NextFunction) => void;
+    tagsOrCategories: (req: Request, res: Response, next: NextFunction) => void;
+    hasAuthorization: (req: Request, res: Response, next: NextFunction) => void;
 }
 
 const archiveController = <T extends ArchiveDocument>(Model: ArchiveModel<T>): ArchiveController => ({
@@ -93,6 +94,18 @@ const archiveController = <T extends ArchiveDocument>(Model: ArchiveModel<T>): A
     },
     put: (req, res, next) => {
         Model.findByIdAndUpdate(req.archive.id, req.body, (error: CallbackError, archive: HydratedDocument<T> | null) => {
+            if (error) return next(error);
+            else res.json(archive);
+        });
+    },
+    uploadImage: async (req, res, next) => {
+        const newUrl = req.filePublicUrl;
+        if (!req.file || !newUrl) return serverMessage(res, {
+            statusCode: 500,
+            model: Model.getKind(),
+            message: 'unable to upload file',
+        });
+        Model.findByIdAndUpdate(req.archive.id, {thumbnail: newUrl}, (error: CallbackError, archive: HydratedDocument<T> | null) => {
             if (error) return next(error);
             else res.json(archive);
         });
