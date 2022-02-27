@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
-import { ErrorCode, getErrorMessage, serverMessage } from './Common';
+import { serverMessage } from './Common';
 import { ChangeListModels } from '@tunji-web/server/src/models/ChangeListSchema';
+import { mongo } from 'mongoose';
 
 interface ChangeListController {
     changes: (req: Request, res: Response, next: NextFunction) => void;
@@ -11,12 +12,30 @@ const changeListController = (): ChangeListController => ({
     changes: async (req, res, next) => {
         const changeListModel = req.changeListModel;
 
-        const query = req.query['after'] ? {_id: {$gte: req.query.after}} : {};
+        const after = req.query['after'];
+        const query = (after && typeof after === 'string') ? {_id: {$gte: new mongo.ObjectId(after)}} : {};
 
         changeListModel.aggregate([
                 {'$match': query},
-                {'$group': {_id: {changeType: '$changeType', modelId: '$modelId'}}},
-                {'$project': {_id: 0, changeType: '$_id.changeType', modelId: '$_id.modelId'}}
+                {$sort: {_id: 1}},
+                {
+                    '$group': {
+                        _id: {changeType: '$changeType', modelId: '$modelId'},
+                        model: {$last: '$model'},
+                        id: {$last: '$_id'}
+                    }
+                },
+                {
+                    '$project': {
+                        _id: 0,
+                        changeType: '$_id.changeType',
+                        modelId: '$_id.modelId',
+                        model: '$model',
+                        id: '$id'
+                    }
+                },
+                {$set: {_id: '$id'}},
+                {$unset: 'id'},
             ],
             undefined,
             (error, changeList) => {

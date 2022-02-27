@@ -81,11 +81,11 @@ const app: (connection: Connection) => Express = (connection) => {
     expressServer.use(cookieParser());
 
 // Route mapping
+    changeListRouter(expressServer);
     userRouter(expressServer, userController);
     archiveRouter(expressServer, Article, userController);
     archiveRouter(expressServer, Project, userController);
     archiveRouter(expressServer, Talk, userController);
-    changeListRouter(expressServer);
     reactRouter(expressServer);
 
 // catch 404 and forward to error handler
