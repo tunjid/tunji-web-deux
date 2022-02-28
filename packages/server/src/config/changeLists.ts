@@ -11,13 +11,11 @@ const recordChangeLists: () => void = () => {
             const dedupeId = changeStreamDedupeId(change);
             if (!modelId || !dedupeId) return;
 
-            const changeType = change.operationType === 'insert'
-                ? 'create'
-                : (change.operationType === 'update' || change.operationType === 'replace')
-                    ? 'update'
-                    : change.operationType === 'delete'
-                        ? 'delete'
-                        : null;
+            const changeType = (change.operationType === 'update' || change.operationType === 'replace' || change.operationType === 'insert')
+                ? 'update'
+                : change.operationType === 'delete'
+                    ? 'delete'
+                    : null;
 
             if (!changeType) return;
             new changeModel({

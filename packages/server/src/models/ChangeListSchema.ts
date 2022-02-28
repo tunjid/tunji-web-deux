@@ -4,7 +4,7 @@ import { Article } from '@tunji-web/server/src/models/ArticleSchema';
 import { Project } from '@tunji-web/server/src/models/ProjectSchema';
 import { User } from '@tunji-web/server/src/models/UserSchema';
 
-type ChangeType = 'create' | 'update' | 'delete'
+type ChangeType = 'update' | 'delete'
 
 export interface ChangeList {
     changeType: ChangeType;
@@ -23,7 +23,7 @@ export interface ChangeListModel extends Model<ChangeList> {
 const changeListSchema = (model: Model<any>) => new Schema<ChangeListDocument, ChangeListModel>({
     modelId: {type: Schema.Types.ObjectId, required: true, ref: model.collection.collectionName},
     model: {type: String, required: true},
-    changeType: {type: String, required: true, enum: ['create', 'update', 'delete']},
+    changeType: {type: String, required: true, enum: ['update', 'delete']},
     dedupeId: {type: String, required: true, index: {unique: true}},
 });
 
@@ -44,7 +44,6 @@ function changeListModel(
 
     return model<ChangeListDocument, ChangeListModel>(name, schema);
 }
-
 
 export const ChangeListModels = [
     changeListModel(

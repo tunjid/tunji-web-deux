@@ -13,7 +13,9 @@ const changeListController = (): ChangeListController => ({
         const changeListModel = req.changeListModel;
 
         const after = req.query['after'];
-        const query = (after && typeof after === 'string') ? {_id: {$gte: new mongo.ObjectId(after)}} : {};
+        const query = (after && typeof after === 'string')
+            ? {_id: {$gt: new mongo.ObjectId(after)}}
+            : {};
 
         changeListModel.aggregate([
                 {'$match': query},
@@ -36,6 +38,7 @@ const changeListController = (): ChangeListController => ({
                 },
                 {$set: {_id: '$id'}},
                 {$unset: 'id'},
+                {$sort: {_id: 1}},
             ],
             undefined,
             (error, changeList) => {
