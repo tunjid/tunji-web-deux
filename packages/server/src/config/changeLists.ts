@@ -18,7 +18,7 @@ const recordChangeLists: () => void = () => {
                     : null;
 
             if (!changeType) return;
-            changeModel.updateOne(
+            changeModel.replaceOne(
                 {
                     modelId
                 },
