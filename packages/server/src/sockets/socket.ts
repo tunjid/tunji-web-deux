@@ -49,7 +49,7 @@ const socketServer: (
             const collectionChange = changeEvent.fullDocument;
             if (!collectionChange) return;
 
-            const deDupe = new SocketDeDupe({key: collectionChange.changeId});
+            const deDupe = new SocketDeDupe({key: collectionChange.dedupeId});
             deDupe.save(error => {
                 console.log('Received change event: ', changeEvent, 'notified: ', error == null);
                 if (error) return;
