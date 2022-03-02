@@ -14,33 +14,13 @@ const changeListController = (): ChangeListController => ({
 
         const after = req.query['after'];
         const query = (after && typeof after === 'string')
-            ? {_id: {$gt: new mongo.ObjectId(after)}}
+            ? {changeId: {$gt: new mongo.ObjectId(after)}}
             : {};
 
-        changeListModel.aggregate([
-                {'$match': query},
-                {$sort: {_id: 1}},
-                {
-                    '$group': {
-                        _id: {changeType: '$changeType', modelId: '$modelId'},
-                        model: {$last: '$model'},
-                        id: {$last: '$_id'}
-                    }
-                },
-                {
-                    '$project': {
-                        _id: 0,
-                        changeType: '$_id.changeType',
-                        modelId: '$_id.modelId',
-                        model: '$model',
-                        id: '$id'
-                    }
-                },
-                {$set: {_id: '$id'}},
-                {$unset: 'id'},
-                {$sort: {_id: 1}},
-            ],
-            undefined,
+        changeListModel.find(
+            query,
+            null,
+            {sort: {changeId: 1}},
             (error, changeList) => {
                 if (error) return next(error);
                 res.json(changeList);

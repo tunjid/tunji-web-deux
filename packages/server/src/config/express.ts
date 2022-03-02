@@ -64,7 +64,8 @@ const app: (connection: Connection) => Express = (connection) => {
                     'script-src': [...config.corsScriptSources, `'nonce-${serverReduxStateNonce}'`],
                     'frame-src': config.corsFrameSources,
                 },
-            }
+            },
+            crossOriginEmbedderPolicy: false
         });
         cspMiddleware(req, res, next);
     });
