@@ -1,6 +1,7 @@
 import { ChangeListModels, ChangeListDocument } from '@tunji-web/server/src/models/ChangeListSchema';
-import { ChangeStreamDocument } from 'mongodb';
+import { Types } from 'mongoose';
 import { fromEvent, merge, Observable } from 'rxjs';
+import { ChangeStreamDocument } from 'mongodb';
 
 const recordChangeLists: () => void = () => {
     ChangeListModels.forEach(changeModel => changeModel
@@ -8,8 +9,7 @@ const recordChangeLists: () => void = () => {
         .watch<Document>()
         .on('change', change => {
             const modelId = changeStreamDocumentId(change);
-            const dedupeId = changeStreamDedupeId(change);
-            if (!modelId || !dedupeId) return;
+            if (!modelId) return;
 
             const changeType = (change.operationType === 'update' || change.operationType === 'replace' || change.operationType === 'insert')
                 ? 'update'
@@ -18,21 +18,25 @@ const recordChangeLists: () => void = () => {
                     : null;
 
             if (!changeType) return;
-            new changeModel({
-                    changeType,
+            changeModel.updateOne(
+                {
+                    modelId
+                },
+                {
                     modelId,
-                    dedupeId,
+                    changeType,
+                    changeId: new Types.ObjectId(),
                     model: changeModel.getParentModel().collection.collectionName,
+                },
+                {
+                    upsert: true,
+                },
+                (error) => {
+                    if (error) console.log(error);
                 }
-            ).save((error) => {
-                console.log(error);
-            });
+            );
         }));
 };
-
-const changeStreamDedupeId:
-    (changeStream: ChangeStreamDocument<Document>) => string =
-    (document) => document._id?._data;
 
 // This is only valid bc the db is unsharded
 const changeStreamDocumentId:

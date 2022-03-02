@@ -8,9 +8,9 @@ type ChangeType = 'update' | 'delete'
 
 export interface ChangeList {
     changeType: ChangeType;
+    changeId: Types.ObjectId;
     modelId: Types.ObjectId;
     model: string;
-    dedupeId: string
 }
 
 export interface ChangeListDocument extends Document, ChangeList {
@@ -21,10 +21,19 @@ export interface ChangeListModel extends Model<ChangeList> {
 }
 
 const changeListSchema = (model: Model<any>) => new Schema<ChangeListDocument, ChangeListModel>({
-    modelId: {type: Schema.Types.ObjectId, required: true, ref: model.collection.collectionName},
+    modelId: {
+        type: Schema.Types.ObjectId,
+        required: true,
+        ref: model.collection.collectionName,
+        index: {unique: true}
+    },
+    changeId: {
+        type: Schema.Types.ObjectId,
+        required: true,
+        index: {unique: true}
+    },
     model: {type: String, required: true},
     changeType: {type: String, required: true, enum: ['update', 'delete']},
-    dedupeId: {type: String, required: true, index: {unique: true}},
 });
 
 function changeListModel(
