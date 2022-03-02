@@ -26,6 +26,7 @@ const recordChangeLists: () => void = () => {
                     modelId,
                     changeType,
                     changeId: new Types.ObjectId(),
+                    dedupeId: change._id._data,
                     model: changeModel.getParentModel().collection.collectionName,
                 },
                 {

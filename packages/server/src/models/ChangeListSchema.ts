@@ -10,6 +10,7 @@ export interface ChangeList {
     changeType: ChangeType;
     changeId: Types.ObjectId;
     modelId: Types.ObjectId;
+    dedupeId: string;
     model: string;
 }
 
@@ -29,6 +30,11 @@ const changeListSchema = (model: Model<any>) => new Schema<ChangeListDocument, C
     },
     changeId: {
         type: Schema.Types.ObjectId,
+        required: true,
+        index: {unique: true}
+    },
+    dedupeId: {
+        type: String,
         required: true,
         index: {unique: true}
     },
