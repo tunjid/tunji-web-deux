@@ -3,30 +3,38 @@ import { Types } from 'mongoose';
 import { fromEvent, merge, Observable } from 'rxjs';
 import { ChangeStreamDocument } from 'mongodb';
 
-const recordChangeLists: () => void = () => {
+const recordChangeLists: () => Promise<void> = async () => {
     ChangeListModels.forEach(changeModel => changeModel
         .getParentModel()
         .watch<Document>()
-        .on('change', change => {
-            const modelId = changeStreamDocumentId(change);
+        .on('change', async change => {
+            // This is only valid bc the db is unsharded
+            const modelId = change.documentKey?._id?.toString();
             if (!modelId) return;
 
-            const changeType = (change.operationType === 'update' || change.operationType === 'replace' || change.operationType === 'insert')
+            const dedupeId = change._id._data;
+            const existing = await changeModel.findOne({dedupeId}).exec();
+
+            if (existing) return;
+            const operationType = change.operationType;
+
+            const changeType = (operationType === 'update' || operationType === 'replace' || operationType === 'insert')
                 ? 'update'
-                : change.operationType === 'delete'
+                : operationType === 'delete'
                     ? 'delete'
                     : null;
 
             if (!changeType) return;
+
             changeModel.replaceOne(
                 {
                     modelId
                 },
                 {
                     modelId,
+                    dedupeId,
                     changeType,
                     changeId: new Types.ObjectId(),
-                    dedupeId: change._id._data,
                     model: changeModel.getParentModel().collection.collectionName,
                 },
                 {
@@ -39,17 +47,13 @@ const recordChangeLists: () => void = () => {
         }));
 };
 
-// This is only valid bc the db is unsharded
-const changeStreamDocumentId:
-    (changeStream: ChangeStreamDocument<Document>) => string =
-    (document) => document.documentKey?._id?.toString();
-
-
 export default recordChangeLists;
 
 export const changeListEvents: Observable<ChangeStreamDocument<ChangeListDocument>> =
-    merge(...ChangeListModels
-        .map(archiveModel => fromEvent<ChangeStreamDocument<ChangeListDocument>>(
-            archiveModel.watch<ChangeListDocument>(),
-            'change',
-        )));
+    merge(
+        ...ChangeListModels
+            .map(archiveModel => fromEvent<ChangeStreamDocument<ChangeListDocument>>(
+                archiveModel.watch<ChangeListDocument>(),
+                'change',
+            ))
+    );

@@ -7,10 +7,10 @@ import passportConfiguration from '@tunji-web/server/src/config/passportConfigur
 import { SocketIOAdapter } from '@tunji-web/server/src/models/SocketIOAdapterSchema';
 import recordChangeLists from '@tunji-web/server/src/config/changeLists';
 
-mongooseConnection().then((connection) => {
+mongooseConnection().then(async (connection) => {
     const expressServer = express(connection);
     passportConfiguration();
-    recordChangeLists();
+    await recordChangeLists();
     expressServer.set('port', 8080);
 
     const httpsServer = createServer(ssl.options, expressServer);
