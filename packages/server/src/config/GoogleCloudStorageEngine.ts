@@ -1,27 +1,19 @@
-import { Bucket, Storage } from '@google-cloud/storage';
+import { Bucket } from '@google-cloud/storage';
 import { Request } from 'express';
 import { StorageEngine } from 'multer';
-import config from './config';
 
 export class GoogleCloudStorageEngine implements StorageEngine {
 
     constructor(
         pathFunction: (req: Request) => string,
-        oldUrlFunction: (req: Request) => string,
+        bucket?: Bucket,
     ) {
         this.pathFunction = pathFunction;
-        this.oldUrlFunction = oldUrlFunction;
+        this.bucket = bucket;
     }
 
+    readonly bucket?: Bucket;
     readonly pathFunction: (req: Request) => string;
-    readonly oldUrlFunction: (req: Request) => string;
-
-    private readonly bucket?: Bucket | null = config.googleCloud
-        ? new Storage({
-            projectId: config.googleCloud.project_id,
-            credentials: config.googleCloud,
-        }).bucket(config.googleCloud.bucket)
-        : null;
 
     _handleFile(req: Request, file: Express.Multer.File, callback: (error?: any, info?: Partial<Express.Multer.File>) => void): void {
         if (!this.bucket) return callback(Error('No google cloud storage config'));
@@ -49,8 +41,7 @@ export class GoogleCloudStorageEngine implements StorageEngine {
     }
 
     uploadPath(req: Request, file: Express.Multer.File): string {
-        const ext = file.mimetype.indexOf('png') === -1 ? '.jpg' : '.png';
         const path = this.pathFunction(req);
-        return `${path}${ext}`;
+        return `${path}/${file.originalname}`;
     }
 }

@@ -4,6 +4,7 @@ import { UserController } from '../controllers/UserController';
 import ImageUploader from '@tunji-web/server/src/controllers/UploadController';
 
 import { ArchiveDocument, ArchiveModel } from '../models/Archive';
+import { serverMessage } from '@tunji-web/server/src/controllers/Common';
 
 export default function <T extends ArchiveDocument>(app: Express, model: ArchiveModel<T>, userController: UserController): void {
     const archives = archiveController(model);
@@ -22,21 +23,55 @@ export default function <T extends ArchiveDocument>(app: Express, model: Archive
         .get(archives.find);
 
     app.route(`/api/${routeName}/:${paramName}`)
-        .get(archives.get)
-        .put(userController.requiresLogin, archives.put)
+        .get(archives.sendArchive)
+        .put(
+            userController.requiresLogin,
+            archives.put,
+            archives.sendArchive
+        )
         .post(
             userController.requiresLogin,
-            ImageUploader(
-                'photo',
-                (req) => `${routeName}/${req.archive.key}`,
-                (req) => req.archive.thumbnail,
+            ...ImageUploader(
+                {
+                    key: 'photo',
+                    pathFunction: (req) => `${routeName}/${req.archive.key}`,
+                    deleteAfterUpload: true,
+                    postUpload: archives.uploadImage,
+                    respond: archives.sendArchive,
+                }
             ),
-            archives.uploadImage
         )
-        .delete(userController.requiresLogin, archives.hasAuthorization, archives.remove);
+        .delete(
+            userController.requiresLogin,
+            archives.hasAuthorization,
+            archives.remove,
+            archives.sendArchive
+        );
+
+    app.route(`/api/${routeName}/:${paramName}/photos`)
+        .post(
+            userController.requiresLogin,
+            ...ImageUploader(
+                {
+                    key: 'photo',
+                    pathFunction: (req) => `${routeName}/${req.archive.key}`,
+                    deleteAfterUpload: false,
+                    postUpload: (req, res, next) => next(),
+                    respond: (req, res) => {
+                        serverMessage(res, {
+                            statusCode: 200,
+                            message: 'Uploaded photo',
+                        });
+                    },
+                }
+            ),
+        );
 
     app.route(`/api/${routeName}/:${paramName}/incrementLikes`)
-        .post(archives.incrementLikes);
+        .post(
+            archives.incrementLikes,
+            archives.sendArchive
+        );
 
     app.param(paramName, archives.byId);
 }

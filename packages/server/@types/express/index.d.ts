@@ -1,5 +1,5 @@
-import { ArchiveDocument } from 'server/models/Archive';
-import { UserDocument } from 'server/models/UserSchema';
+import { ArchiveDocument } from '@tunji-web/server/src/models/Archive';
+import { UserDocument } from '@tunji-web/server/src/models/UserSchema';
 import { UserLike } from '@tunji-web/common';
 import { ChangeListModel } from '@tunji-web/server/src/models/ChangeListSchema';
 
@@ -16,6 +16,7 @@ declare global {
             changeListModel: ChangeListModel
             serverReduxStateNonce: string
             filePublicUrl: string
+            fileOldUrl: string | undefined
         }
     }
 }
