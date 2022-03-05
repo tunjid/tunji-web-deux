@@ -6,11 +6,11 @@ import { CallbackError, HydratedDocument } from 'mongoose';
 
 interface ArchiveController {
     create: (req: Request, res: Response, next: NextFunction) => void;
-    get: (req: Request, res: Response, next: NextFunction) => void;
     put: (req: Request, res: Response, next: NextFunction) => void;
     uploadImage: (req: Request, res: Response, next: NextFunction) => void;
     remove: (req: Request, res: Response, next: NextFunction) => void;
     byId: (req: Request, res: Response, next: NextFunction, id: string) => void;
+    sendArchive: (req: Request, res: Response, next: NextFunction) => void;
     find: (req: Request, res: Response, next: NextFunction) => void;
     incrementLikes: (req: Request, res: Response, next: NextFunction) => void;
     summary: (req: Request, res: Response, next: NextFunction) => void;
@@ -89,17 +89,22 @@ const archiveController = <T extends ArchiveDocument>(Model: ArchiveModel<T>): A
                 }
             });
     },
-    get: (req, res) => {
-        res.json(req.archive);
+    sendArchive: async (req, res) => {
+        if (req.archive) res.json(req.archive);
+        else serverMessage(res, {
+            statusCode: 500,
+            message: 'Archive not found',
+        });
     },
     put: (req, res, next) => {
         Model.findByIdAndUpdate(req.archive.id, req.body, (error: CallbackError, archive: HydratedDocument<T> | null) => {
             if (error) return next(error);
-            else res.json(archive);
+            else next();
         });
     },
     uploadImage: async (req, res, next) => {
         const newUrl = req.filePublicUrl;
+        req.fileOldUrl = req.archive.thumbnail;
         if (!req.file || !newUrl) return serverMessage(res, {
             statusCode: 500,
             model: Model.getKind(),
@@ -107,13 +112,13 @@ const archiveController = <T extends ArchiveDocument>(Model: ArchiveModel<T>): A
         });
         Model.findByIdAndUpdate(req.archive.id, {thumbnail: newUrl}, (error: CallbackError, archive: HydratedDocument<T> | null) => {
             if (error) return next(error);
-            else res.json(archive);
+            else next();
         });
     },
     remove: (req, res, next) => {
         Model.findByIdAndRemove(req.archive.id, {}, (error: any) => {
             if (error) return next(error);
-            else res.json(req.archive);
+            else next();
         });
     },
     byId: (req, res, next, id) => {
@@ -144,12 +149,16 @@ const archiveController = <T extends ArchiveDocument>(Model: ArchiveModel<T>): A
             });
 
             const likeIncrement = parseInt(req.body.increment);
-            if (!likeIncrement) return res.json(archive);
+            if (!likeIncrement) return serverMessage(res, {
+                statusCode: 400,
+                message: 'Like increment not specified',
+            });
 
             archive.likes = archive.likes + likeIncrement;
             archive.save((saveError, saved) => {
                 if (saveError) return next(saveError);
-                else res.json(saved);
+                req.archive = saved;
+                next();
             });
         });
     },
