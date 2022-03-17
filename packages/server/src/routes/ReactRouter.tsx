@@ -3,7 +3,7 @@ import path from 'path';
 import fs from 'fs';
 import promise from 'bluebird';
 import scraper from 'open-graph-scraper';
-import { ArchiveKind, ArchiveLike, describeRoute, OpenGraphScrapeEndpoint, RouteDescription } from '@tunji-web/common';
+import { ArchiveKind, ArchiveLike, describeRoute, OpenGraphScrapeQueryKey, RouteDescription } from '@tunji-web/common';
 
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
@@ -33,7 +33,7 @@ const archiveModels = [Article, Project, Talk];
 
 export default function (app: Express): void {
     const indexHtml = fs.readFileSync(path.join(__dirname, '../../', 'client', 'public', 'index.html'), 'utf8');
-    app.route(`/${OpenGraphScrapeEndpoint}`)
+    app.route(`/${OpenGraphScrapeQueryKey}`)
         .get(async (req: Request, res: Response) => {
             const url = req.query.url as unknown as string | undefined;
             if (!url) return res.status(400).send({

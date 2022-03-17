@@ -70,7 +70,7 @@ export interface RouteDescription {
 
 const isObjectIdLike = (plausibleId: string) => !!plausibleId.match(/^[0-9a-fA-F]{24}$/);
 
-export const OpenGraphScrapeEndpoint = 'open-graph-scrape';
+export const OpenGraphScrapeQueryKey = 'open-graph-scrape';
 
 export const normalizeArchiveKind = (text: string) => Object.values(ArchiveKind).find(item => item === text) || ArchiveKind.Articles;
 
