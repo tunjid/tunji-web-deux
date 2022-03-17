@@ -2,7 +2,7 @@ import * as React from "react";
 import { Components } from "react-markdown/src/ast-to-react";
 import ReactPlayer from "react-player";
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
-import { OpenGraphScrapeEndpoint } from "@tunji-web/common";
+import { OpenGraphScrapeQueryKey } from "@tunji-web/common";
 import OpenGraphCard from "../open-graph/OpenGraph";
 
 export const MarkdownBody = {
@@ -26,11 +26,9 @@ export const MarkdownComponents: Components = {
 
         const url = href as string;
 
-        const openGraphIndex = url.indexOf(OpenGraphScrapeEndpoint);
-        const openGraphUrl = openGraphIndex >= 0
-            ? new URLSearchParams(
-                url.slice(openGraphIndex + OpenGraphScrapeEndpoint.length)
-            ).get('url')
+        const searchParams = new URLSearchParams(new URL(url).search);
+        const openGraphUrl = searchParams.get(OpenGraphScrapeQueryKey) === 'true'
+            ? url
             : undefined
 
         const videoUrl = url.indexOf('youtube') >= 0 || url.indexOf('vimeo') >= 0 || url.indexOf('wistia') >= 0

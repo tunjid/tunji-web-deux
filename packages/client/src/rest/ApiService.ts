@@ -1,6 +1,6 @@
 import axios from 'axios';
 import clientConfig from '../config';
-import { ArchiveKind, ArchiveLike, ArchiveSummary, UserLike, OpenGraphScrapeEndpoint } from '@tunji-web/common';
+import { ArchiveKind, ArchiveLike, ArchiveSummary, UserLike, OpenGraphScrapeQueryKey } from '@tunji-web/common';
 import { SignInArgs } from '../actions/Auth';
 import { ArchivesQuery, IncrementArchiveLikesRequest, yearAndMonthParam } from '../actions/Archive';
 import { OpenGraphData } from '../reducers/OpenGraph';
@@ -28,7 +28,7 @@ const archiveSummaries = (kind: ArchiveKind) => transport.get<ArchiveSummary[]>(
 const updateArchive = (archive: ArchiveLike) => transport.put<ArchiveLike>(`${API_ENDPOINT}/api/${archive.kind}/${archive.key}`, archive);
 const incrementArchiveLikes = (request: IncrementArchiveLikesRequest) => transport.post<ArchiveLike>(`${API_ENDPOINT}/api/${request.kind}/${request.id}/incrementLikes`, {increment: request.increment});
 const deleteArchive = (archive: ArchiveLike) => transport.delete<ArchiveLike>(`${API_ENDPOINT}/api/${archive.kind}/${archive.key}`);
-const scrapeOpenGraph = (url: string) => transport.get<OpenGraphData>(`${API_ENDPOINT}/${OpenGraphScrapeEndpoint}?url=${url}`);
+const scrapeOpenGraph = (url: string) => transport.get<OpenGraphData>(`${API_ENDPOINT}/${OpenGraphScrapeQueryKey}?url=${url}`);
 
 const ApiService = {
     session,
