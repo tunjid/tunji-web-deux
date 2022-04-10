@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import { ArchiveDocument, ArchiveModel } from '../models/Archive';
 import { ErrorCode, getErrorMessage, serverMessage } from './Common';
 import { ArchiveSummary } from '@tunji-web/common';
-import { CallbackError, HydratedDocument } from 'mongoose';
+import { CallbackError, HydratedDocument, mongo } from 'mongoose';
 
 interface ArchiveController {
     create: (req: Request, res: Response, next: NextFunction) => void;
@@ -39,8 +39,10 @@ const archiveController = <T extends ArchiveDocument>(Model: ArchiveModel<T>): A
         const limit = Number(req.query.limit) || 0;
         const offset = Number(req.query.offset) || 0;
 
-        const {tag, category} = req.query;
+        const {id, tag, category} = req.query;
         const query = {} as any;
+
+        if (id) query._id = {$in: (Array.isArray(id) ? id : [id]).map(it => new mongo.ObjectId(it.toString()))};
 
         if (tag) query.tags = Array.isArray(tag)
             ? {$in: tag.map((item: any) => item.toString().toLowerCase())}
