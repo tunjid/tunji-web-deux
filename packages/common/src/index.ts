@@ -13,6 +13,7 @@ export interface ArchiveLike {
     body: string;
     description: string;
     thumbnail?: string;
+    videoUrl?: string;
     author: Author,
     created: Date;
     likes: number;

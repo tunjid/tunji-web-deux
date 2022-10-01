@@ -8,6 +8,7 @@ export interface Archive extends ArchiveLike {
     description: string;
     author: UserDocument['_id'];
     thumbnail?: string;
+    videoUrl?: string;
     created: Date;
     likes: number;
     spanCount?: number;

@@ -20,6 +20,8 @@ import { MarkdownBody, MarkdownComponents } from '../common/Markdown';
 import { useDeepEqualSelector } from '../../hooks/UseDeepEqualSelector';
 import LikeButton from '@tunji-web/client/src/components/like-button/LikeButton';
 import { useWidth } from '@tunji-web/client/src/hooks/UseWidth';
+import { ArchiveLike } from '@tunji-web/common';
+import ReactPlayer from 'react-player';
 
 const useStyles = makeStyles((theme) => createStyles({
         root: {
@@ -140,6 +142,21 @@ const ArchiveDetail = () => {
         /> : <div/>;
     };
 
+    const heroContent = (archive?: ArchiveLike) => {
+        return archive?.videoUrl ? <div className={classes.cardBackground}>
+            <ReactPlayer
+                url={archive?.videoUrl}
+                width={'100%'}
+                controls={true}
+            />
+        </div> : <Card className={classes.cardBackground} elevation={1}>
+            <CardMedia
+                className={classes.cardImage}
+                image={archive?.thumbnail}
+                title={archive?.title}
+            />
+        </Card>;
+    };
     return (
         <div className={classes.root}>
             <div className={classes.sideBar}>
@@ -179,13 +196,8 @@ const ArchiveDetail = () => {
                     />
                 </div>
 
-                <Card className={classes.cardBackground} elevation={1}>
-                    <CardMedia
-                        className={classes.cardImage}
-                        image={archive?.thumbnail}
-                        title={archive?.title}
-                    />
-                </Card>
+                {heroContent(archive)}
+
                 <ReactMarkdown
                     className={classes.archiveBody}
                     remarkPlugins={[gfm]}
