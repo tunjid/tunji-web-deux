@@ -14,7 +14,7 @@ export interface ArchiveLike {
     description: string;
     thumbnail?: string;
     videoUrl?: string;
-    author: Author,
+    author: string,
     created: Date;
     likes: number;
     spanCount?: number;
@@ -56,7 +56,7 @@ export const EmptyArchive: ArchiveLike = {
     body: '',
     likes: 0,
     description: '',
-    author: EmptyUser,
+    author: '',
     created: new Date(),
     tags: [],
     categories: [],

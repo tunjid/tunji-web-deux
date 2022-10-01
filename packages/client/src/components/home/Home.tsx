@@ -76,24 +76,29 @@ const selector = createSelector<StoreState, PersistentUiState, HomeState, AuthSt
 
 const querySelector = createSelector<StoreState, Search, Record<ArchiveKind, ArchivesQuery>>(
     getSearch,
-    (search) => ({
+    (search: Search) => ({
         [ArchiveKind.Articles]: {
-            params: new URLSearchParams(search),
+            params: populateAuthor(new URLSearchParams(search)),
             key: `Home-${ArchiveKind.Articles}`,
             kind: ArchiveKind.Articles,
         },
         [ArchiveKind.Projects]: {
-            params: new URLSearchParams(search),
+            params: populateAuthor(new URLSearchParams(search)),
             key: `Home-${ArchiveKind.Projects}`,
             kind: ArchiveKind.Projects,
         },
         [ArchiveKind.Talks]: {
-            params: new URLSearchParams(search),
+            params: populateAuthor(new URLSearchParams(search)),
             key: `Home-${ArchiveKind.Talks}`,
             kind: ArchiveKind.Talks,
         }
     })
 );
+
+const populateAuthor = (params: URLSearchParams) => {
+    params.append('populateAuthor', 'true');
+    return params;
+};
 
 const SayHiIcon = () => {
     return (

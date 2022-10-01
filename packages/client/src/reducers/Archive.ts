@@ -8,13 +8,14 @@ import {
     UPDATE_FETCH_STATUS
 } from '../actions/Archive';
 import _ from 'lodash';
-import { ArchiveKind, ArchiveLike, ArchiveSummary, EmptyArchive } from '@tunji-web/common';
+import { ArchiveKind, ArchiveSummary, EmptyArchive, EmptyUser } from '@tunji-web/common';
+import { PopulatedArchive } from '@tunji-web/client/src/models/PopulatedArchive';
 
 export interface ArchiveState {
     archivesFetchStatus: Record<string, boolean>;
-    kindToEditMap: Record<ArchiveKind, ArchiveLike>;
-    kindToDetailMap: Record<ArchiveKind, ArchiveLike>;
-    kindToArchivesMap: Record<ArchiveKind, ArchiveLike[]>;
+    kindToEditMap: Record<ArchiveKind, PopulatedArchive>;
+    kindToDetailMap: Record<ArchiveKind, PopulatedArchive>;
+    kindToArchivesMap: Record<ArchiveKind, PopulatedArchive[]>;
     summariesMap: Record<ArchiveKind, ArchiveSummary[]>;
 }
 
@@ -33,14 +34,14 @@ function transform<T>(record: Record<ArchiveKind, T>, mapper: (item: T) => T): R
         }, {} as Record<ArchiveKind, T>);
 }
 
-const touchUp = (a: ArchiveLike) => ({...a, created: new Date(a.created)});
+const touchUp = (a: PopulatedArchive) => ({...a, created: new Date(a.created)});
 
 const archiveReducer = (state = {
     archivesFetchStatus: {},
-    kindToEditMap: reduceKind(EmptyArchive),
-    kindToDetailMap: reduceKind(EmptyArchive),
-    kindToArchivesMap: reduceKind([] as ArchiveLike[]),
-    summariesMap: reduceKind([] as ArchiveSummary[]),
+    kindToEditMap: reduceKind({...EmptyArchive, author: EmptyUser}),
+    kindToDetailMap: reduceKind({...EmptyArchive, author: EmptyUser}),
+    kindToArchivesMap: reduceKind([] as PopulatedArchive[]),
+    summariesMap: reduceKind([] as PopulatedArchive[]),
 }, action: ArchiveAction) => {
     switch (action.type) {
         case ADD_ARCHIVE: {
