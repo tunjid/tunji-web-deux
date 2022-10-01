@@ -39,7 +39,7 @@ const archiveController = <T extends ArchiveDocument>(Model: ArchiveModel<T>): A
         const limit = Number(req.query.limit) || 0;
         const offset = Number(req.query.offset) || 0;
 
-        const {id, tag, category} = req.query;
+        const {id, tag, category, populateAuthor} = req.query;
         const query = {} as any;
 
         if (id) query._id = {$in: (Array.isArray(id) ? id : [id]).map(it => new mongo.ObjectId(it.toString()))};
@@ -75,11 +75,16 @@ const archiveController = <T extends ArchiveDocument>(Model: ArchiveModel<T>): A
             };
         }
 
-        Model.find(query)
+        const lookup = Model.find(query)
             .skip(offset)
             .limit(limit)
-            .sort({'created': -1})
-            .populate('author', 'firstName lastName fullName imageUrl')
+            .sort({'created': -1});
+
+        (
+            populateAuthor
+                ? lookup.populate('author', 'firstName lastName fullName imageUrl')
+                : lookup
+        )
             .exec(function (error, archives) {
                 if (error) {
                     console.log(error);
@@ -124,8 +129,12 @@ const archiveController = <T extends ArchiveDocument>(Model: ArchiveModel<T>): A
         });
     },
     byId: (req, res, next, id) => {
-        Model.findById(id)
-            .populate('author', 'firstName lastName fullName imageUrl')
+        const lookup = Model.findById(id);
+        (
+            req.query.populateAuthor
+                ? lookup.populate('author', 'firstName lastName fullName imageUrl')
+                : lookup
+        )
             .exec(function (error, archive) {
                 if (error) return next(error);
 
@@ -202,7 +211,8 @@ const archiveController = <T extends ArchiveDocument>(Model: ArchiveModel<T>): A
         );
     },
     hasAuthorization: (req: Request, res: Response, next: NextFunction) => {
-        if (req.archive.author.id.toString() !== req.user?.id?.toString()) {
+        const authorId = req.archive.author?.id?.toString() || req.archive.author?.toString() || req.archive.author;
+        if (authorId !== req.user?.id?.toString()) {
             return res.status(403).send({
                 message: 'User is not authorized'
             });

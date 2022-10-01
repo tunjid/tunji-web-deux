@@ -4,6 +4,7 @@ import { AppThunk } from './index';
 import { onSuccessOrSnackbar } from './Common';
 import { RouterActions } from './Router';
 import { SnackbarActions, SnackbarKind } from './Snackbar';
+import { PopulatedArchive, toArchive } from '@tunji-web/client/src/models/PopulatedArchive';
 
 export const ADD_ARCHIVE = 'ADD_ARCHIVE';
 export const SET_ARCHIVE_DETAIL = 'SET_ARCHIVE_DETAIL';
@@ -30,7 +31,7 @@ export interface IncrementArchiveLikesRequest {
 
 export interface FetchArchiveResponse {
     view: ArchiveView;
-    archive: ArchiveLike;
+    archive: PopulatedArchive;
 }
 
 export interface ArchivePayload<T> {
@@ -45,7 +46,7 @@ export interface AddArchive {
 
 export interface EditArchive {
     type: typeof EDIT_ARCHIVE;
-    edits: Partial<ArchiveLike>;
+    edits: Partial<PopulatedArchive>;
 }
 
 export interface IncrementArchiveLikes {
@@ -55,12 +56,12 @@ export interface IncrementArchiveLikes {
 
 export interface SetArchiveDetail {
     type: typeof SET_ARCHIVE_DETAIL;
-    payload: ArchivePayload<ArchiveLike>;
+    payload: ArchivePayload<PopulatedArchive>;
 }
 
 export interface UpdateArchives {
     type: typeof UPDATE_ARCHIVES;
-    payload: ArchivePayload<ArchiveLike[]>;
+    payload: ArchivePayload<PopulatedArchive[]>;
 }
 
 interface UpdateFetchStatusPayload {
@@ -108,12 +109,12 @@ export const yearAndMonthParam = ({params}: ArchivesQuery) => {
 
 interface IArchiveActions {
     fetchArchives: (query: ArchivesQuery) => AppThunk
-    editArchive: (edits: Partial<ArchiveLike>) => EditArchive
+    editArchive: (edits: Partial<PopulatedArchive>) => EditArchive
     addArchive: (response: FetchArchiveResponse) => AddArchive
-    addArchives: (payload: ArchivePayload<ArchiveLike[]>) => UpdateArchives
+    addArchives: (payload: ArchivePayload<PopulatedArchive[]>) => UpdateArchives
     updateArchiveFetchStatus: (payload: UpdateFetchStatusPayload) => UpdateFetchStatus
     updateArchiveSummaries: (payload: ArchivePayload<ArchiveSummary[]>) => UpdateArchiveSummary
-    setArchiveDetail: (payload: ArchivePayload<ArchiveLike>) => SetArchiveDetail
+    setArchiveDetail: (payload: ArchivePayload<PopulatedArchive>) => SetArchiveDetail
     createArchive: (kind: ArchiveKind) => AppThunk
     readArchive: (request: FetchArchiveRequest) => AppThunk
     updateArchive: (kind: ArchiveKind) => AppThunk
@@ -127,7 +128,7 @@ export const ArchiveActions: IArchiveActions = {
         const state = getState();
         const edited = {...state.archives.kindToEditMap[kind]};
         await onSuccessOrSnackbar(
-            ApiService.createArchive(edited),
+            ApiService.createArchive(toArchive(edited)),
             dispatch,
             (created) => {
                 dispatch(RouterActions.replace(`/${created.kind}/${created.key}/edit`));
@@ -148,7 +149,7 @@ export const ArchiveActions: IArchiveActions = {
         const state = getState();
         const edited = state.archives.kindToEditMap[kind];
         await onSuccessOrSnackbar(
-            ApiService.updateArchive(edited),
+            ApiService.updateArchive(toArchive(edited)),
             dispatch,
             (archive) => dispatch(SnackbarActions.enqueueSnackbar({
                     key: archive.key,
@@ -162,7 +163,7 @@ export const ArchiveActions: IArchiveActions = {
         const state = getState();
         const edited = state.archives.kindToEditMap[kind];
         await onSuccessOrSnackbar(
-            ApiService.deleteArchive(edited),
+            ApiService.deleteArchive(toArchive(edited)),
             dispatch,
             () => dispatch(RouterActions.pop())
         );
@@ -206,11 +207,11 @@ export const ArchiveActions: IArchiveActions = {
         type: ADD_ARCHIVE,
         payload: response
     }),
-    editArchive: (edits: Partial<ArchiveLike>) => ({
+    editArchive: (edits: Partial<PopulatedArchive>) => ({
         type: EDIT_ARCHIVE,
         edits
     }),
-    addArchives: (payload: ArchivePayload<ArchiveLike[]>) => ({
+    addArchives: (payload: ArchivePayload<PopulatedArchive[]>) => ({
         type: UPDATE_ARCHIVES,
         payload
     }),
@@ -222,7 +223,7 @@ export const ArchiveActions: IArchiveActions = {
         type: UPDATE_FETCH_STATUS,
         payload
     }),
-    setArchiveDetail: (payload: ArchivePayload<ArchiveLike>) => ({
+    setArchiveDetail: (payload: ArchivePayload<PopulatedArchive>) => ({
         type: SET_ARCHIVE_DETAIL,
         payload
     }),

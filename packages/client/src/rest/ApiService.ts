@@ -4,6 +4,7 @@ import { ArchiveKind, ArchiveLike, ArchiveSummary, UserLike, OpenGraphScrapeQuer
 import { SignInArgs } from '../actions/Auth';
 import { ArchivesQuery, IncrementArchiveLikesRequest, yearAndMonthParam } from '../actions/Archive';
 import { OpenGraphData } from '../reducers/OpenGraph';
+import { PopulatedArchive } from '@tunji-web/client/src/models/PopulatedArchive';
 
 const API_ENDPOINT = clientConfig.apiEndpoint || '';
 
@@ -20,13 +21,13 @@ const fetchArchives = (query: ArchivesQuery) => {
         query.params.append('year', yearAndMonth.year.toString());
     }
 
-    return transport.get<ArchiveLike[]>(`${API_ENDPOINT}/api/${query.kind}?${query.params.toString()}`);
+    return transport.get<PopulatedArchive[]>(`${API_ENDPOINT}/api/${query.kind}?${query.params.toString()}`);
 };
-const createArchive = (archive: ArchiveLike) => transport.post<ArchiveLike>(`${API_ENDPOINT}/api/${archive.kind}/${archive.key}`, archive);
-const readArchive = (kind: ArchiveKind, id: string) => transport.get<ArchiveLike>(`${API_ENDPOINT}/api/${kind}/${id}`);
+const createArchive = (archive: ArchiveLike) => transport.post<PopulatedArchive>(`${API_ENDPOINT}/api/${archive.kind}/${archive.key}`, archive);
+const readArchive = (kind: ArchiveKind, id: string) => transport.get<PopulatedArchive>(`${API_ENDPOINT}/api/${kind}/${id}?populateAuthor=true`);
 const archiveSummaries = (kind: ArchiveKind) => transport.get<ArchiveSummary[]>(`${API_ENDPOINT}/api/${kind}/summary`);
-const updateArchive = (archive: ArchiveLike) => transport.put<ArchiveLike>(`${API_ENDPOINT}/api/${archive.kind}/${archive.key}`, archive);
-const incrementArchiveLikes = (request: IncrementArchiveLikesRequest) => transport.post<ArchiveLike>(`${API_ENDPOINT}/api/${request.kind}/${request.id}/incrementLikes`, {increment: request.increment});
+const updateArchive = (archive: ArchiveLike) => transport.put<PopulatedArchive>(`${API_ENDPOINT}/api/${archive.kind}/${archive.key}?populateAuthor=true`, archive);
+const incrementArchiveLikes = (request: IncrementArchiveLikesRequest) => transport.post<PopulatedArchive>(`${API_ENDPOINT}/api/${request.kind}/${request.id}/incrementLikes?populateAuthor=true`, {increment: request.increment});
 const deleteArchive = (archive: ArchiveLike) => transport.delete<ArchiveLike>(`${API_ENDPOINT}/api/${archive.kind}/${archive.key}`);
 const scrapeOpenGraph = (url: string) => transport.get<OpenGraphData>(`${API_ENDPOINT}/${OpenGraphScrapeQueryKey}?url=${url}`);
 

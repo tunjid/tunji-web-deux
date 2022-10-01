@@ -79,7 +79,7 @@ serverConfig.json: A json file containing meta data the server needs to run:
 }
 ```
 
-You do ddon't need the google cloud service account credentials if you do not plan to upload images.
+You don't need the google cloud service account credentials if you do not plan to upload images.
 The server will run just fine without, image upload endpoints will simply error.
 
 

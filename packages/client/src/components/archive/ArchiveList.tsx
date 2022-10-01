@@ -106,6 +106,7 @@ const querySelector = createSelector<StoreState, Search, RouterState, ArchivesQu
         const params = new URLSearchParams(search);
         params.delete('limit');
         params.append('limit', '13');
+        params.append('populateAuthor', 'true');
 
         return {
             kind,
