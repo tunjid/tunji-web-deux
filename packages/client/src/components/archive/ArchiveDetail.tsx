@@ -1,6 +1,6 @@
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import * as React from 'react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Avatar, CircularProgress } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import { useDispatch } from 'react-redux';
@@ -141,13 +141,21 @@ const ArchiveDetail = () => {
             onClose={setLikes}
         /> : <div/>;
     };
+    const [showUrl, setShowUrl] = useState(true);
+    const onPlayerReady = () => setShowUrl(false);
+
+    const ssrVideoUrl = () => {
+        return showUrl ? <a href={archive?.videoUrl}>Video link</a> : <div/>;
+    };
 
     const heroContent = (archive?: ArchiveLike) => {
         return archive?.videoUrl ? <div className={classes.cardBackground}>
+            {ssrVideoUrl()}
             <ReactPlayer
                 url={archive?.videoUrl}
                 width={'100%'}
                 controls={true}
+                onReady={onPlayerReady}
             />
         </div> : <Card className={classes.cardBackground} elevation={1}>
             <CardMedia
