@@ -33,6 +33,7 @@ export const ArchiveSchema = {
     body: {type: String, required: true},
     description: {type: String, required: true},
     thumbnail: {type: String},
+    videoUrl: {type: String},
     likes: {type: Number, default: 0},
     author: {type: Schema.Types.ObjectId, ref: 'User', required: 'Author is required',},
     tags: {...TagOrCategory, default: ['untagged']},
