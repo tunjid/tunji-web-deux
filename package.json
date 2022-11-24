@@ -1,6 +1,6 @@
 {
   "name": "tunji-web-deux",
-  "version": "1.2.10",
+  "version": "1.2.11",
   "private": true,
   "workspaces": [
     "packages/common",
