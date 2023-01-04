@@ -1,3 +1,5 @@
+import { Schema } from 'mongoose';
+
 export interface UserLike {
     id: string;
     firstName: string;
@@ -39,6 +41,15 @@ export enum ArchiveKind {
     Articles = 'articles',
     Projects = 'projects',
     Talks = 'talks',
+}
+
+export interface ArchiveFile {
+    url: string;
+    mimetype: string;
+    kind: ArchiveKind;
+    archiveId: Schema.Types.ObjectId;
+    uploader: Schema.Types.ObjectId;
+    created: Date;
 }
 
 export const EmptyUser: UserLike = {

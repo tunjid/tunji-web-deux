@@ -7,7 +7,7 @@ import { CallbackError, HydratedDocument, mongo } from 'mongoose';
 interface ArchiveController {
     create: (req: Request, res: Response, next: NextFunction) => void;
     put: (req: Request, res: Response, next: NextFunction) => void;
-    uploadImage: (req: Request, res: Response, next: NextFunction) => void;
+    updateThumbnail: (req: Request, res: Response, next: NextFunction) => void;
     remove: (req: Request, res: Response, next: NextFunction) => void;
     byId: (req: Request, res: Response, next: NextFunction, id: string) => void;
     sendArchive: (req: Request, res: Response, next: NextFunction) => void;
@@ -109,7 +109,7 @@ const archiveController = <T extends ArchiveDocument>(Model: ArchiveModel<T>): A
             else next();
         });
     },
-    uploadImage: async (req, res, next) => {
+    updateThumbnail: async (req, res, next) => {
         const newUrl = req.filePublicUrl;
         req.fileOldUrl = req.archive.thumbnail;
         if (!req.file || !newUrl) return serverMessage(res, {
@@ -211,8 +211,9 @@ const archiveController = <T extends ArchiveDocument>(Model: ArchiveModel<T>): A
         );
     },
     hasAuthorization: (req: Request, res: Response, next: NextFunction) => {
-        const authorId = req.archive.author?.id?.toString() || req.archive.author?.toString() || req.archive.author;
-        if (authorId !== req.user?.id?.toString()) {
+        const authorId = new mongo.ObjectId(req.archive.author?.id || req.archive.author).toString();
+        const userId = new mongo.ObjectId(req.user?.id).toString();
+        if (authorId !== userId) {
             return res.status(403).send({
                 message: 'User is not authorized'
             });

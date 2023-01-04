@@ -9,9 +9,8 @@ import config from '@tunji-web/server/src/config/config';
 interface ImageUploadParams {
     key: string,
     pathFunction: (req: Request) => string,
-    deleteAfterUpload: boolean,
-    postUpload: RequestHandler
-    respond: RequestHandler
+    permittedMimeTypes: Array<string> | undefined,
+    handlers: Array<RequestHandler>
 }
 
 const bucket: Bucket | undefined = config.googleCloud
@@ -29,17 +28,18 @@ const ImageUploader: (
     {
         key,
         pathFunction,
-        deleteAfterUpload,
-        postUpload,
-        respond,
+        permittedMimeTypes,
+        handlers,
     }
 ) => {
     const result = [
         multer({
             fileFilter(req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) {
                 const mimeType = file.mimetype;
-                const isLegalFile = mimeType.indexOf('image/jpeg') !== -1
-                    || mimeType.indexOf('image/png') !== -1;
+                const filteredMimeTypes = permittedMimeTypes == undefined
+                    ? []
+                    : permittedMimeTypes.filter((testMimeType) => mimeType.indexOf(testMimeType) !== -1);
+                const isLegalFile = permittedMimeTypes == undefined || filteredMimeTypes.length > 0;
 
                 return isLegalFile
                     ? cb(null, true)
@@ -49,30 +49,24 @@ const ImageUploader: (
         }).single(key)
     ];
 
-    result.push(postUpload);
+    return result.concat(handlers);
+};
 
-    if (deleteAfterUpload) result.push(
-        (req, res, next) => {
-            const toDelete = req.fileOldUrl;
-            if (!toDelete) return serverMessage(res, {
-                statusCode: 500,
-                message: 'Unable to finish processing upload. The initial may have been successful',
-            });
+export const FileDeleter: RequestHandler = (req, res, next) => {
+    const toDelete = req.fileOldUrl;
+    if (!toDelete) return serverMessage(res, {
+        statusCode: 500,
+        message: 'Unable to finish processing upload. The initial may have been successful',
+    });
 
-            if(!toDelete.startsWith(uploadRootDir)) return next();
-            const filePath = toDelete.substring(uploadRootDir.length, toDelete.length);
+    if (!toDelete.startsWith(uploadRootDir)) return next();
+    const filePath = toDelete.substring(uploadRootDir.length, toDelete.length);
 
-            bucket?.file(filePath).delete((error) => {
-                // Ignore error, just log it
-                console.log(error);
-                next();
-            });
-        }
-    );
-
-    result.push(respond);
-
-    return result;
+    bucket?.file(filePath).delete((error) => {
+        // Ignore error, just log it
+        console.log(error);
+        next();
+    });
 };
 
 export default ImageUploader;
