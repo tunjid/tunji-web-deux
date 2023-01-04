@@ -74,6 +74,18 @@ export const ChangeListModels = [
         'TalkChange',
     ),
     changeListModel(
+        Article.fileModel(),
+        'ArticleFileChange',
+    ),
+    changeListModel(
+        Project.fileModel(),
+        'ProjectFileChange',
+    ),
+    changeListModel(
+        Talk.fileModel(),
+        'TalkFileChange',
+    ),
+    changeListModel(
         User,
         'UserChange',
     ),

@@ -1,13 +1,15 @@
 import { Express } from 'express';
 import archiveController from '../controllers/ArchiveController';
 import { UserController } from '../controllers/UserController';
-import ImageUploader from '@tunji-web/server/src/controllers/UploadController';
+import ImageUploader, { FileDeleter } from '@tunji-web/server/src/controllers/UploadController';
 
 import { ArchiveDocument, ArchiveModel } from '../models/Archive';
 import { serverMessage } from '@tunji-web/server/src/controllers/Common';
+import archiveFileController from '@tunji-web/server/src/controllers/ArchiveFileController';
 
 export default function <T extends ArchiveDocument>(app: Express, model: ArchiveModel<T>, userController: UserController): void {
     const archives = archiveController(model);
+    const archiveFiles = archiveFileController(model);
     const modelPath = model.modelName.toLowerCase();
     const routeName = `${modelPath}s`;
     const paramName = `${modelPath}Id`;
@@ -26,43 +28,55 @@ export default function <T extends ArchiveDocument>(app: Express, model: Archive
         .get(archives.sendArchive)
         .put(
             userController.requiresLogin,
+            archives.hasAuthorization,
             archives.put,
             archives.sendArchive
         )
         .post(
             userController.requiresLogin,
+            archives.hasAuthorization,
             ...ImageUploader(
                 {
                     key: 'photo',
                     pathFunction: (req) => `${routeName}/${req.archive.key}`,
-                    deleteAfterUpload: true,
-                    postUpload: archives.uploadImage,
-                    respond: archives.sendArchive,
+                    permittedMimeTypes: [
+                        'image/jpeg',
+                        'image/png',
+                        'image/gif',
+                    ],
+                    handlers: [
+                        archiveFiles.create,
+                        archives.updateThumbnail,
+                        archiveFiles.removeByUrl,
+                        FileDeleter,
+                        archives.sendArchive
+                    ]
                 }
             ),
         )
         .delete(
-            userController.requiresLogin,
-            archives.hasAuthorization,
             archives.remove,
             archives.sendArchive
         );
 
-    app.route(`/api/${routeName}/:${paramName}/photos`)
+    app.route(`/api/${routeName}/:${paramName}/files`)
         .post(
             userController.requiresLogin,
+            archives.hasAuthorization,
             ...ImageUploader(
                 {
-                    key: 'photo',
+                    key: 'file',
                     pathFunction: (req) => `${routeName}/${req.archive.key}`,
-                    deleteAfterUpload: false,
-                    postUpload: (req, res, next) => next(),
-                    respond: (req, res) => {
-                        serverMessage(res, {
-                            statusCode: 200,
-                            message: 'Uploaded photo',
-                        });
-                    },
+                    permittedMimeTypes: undefined,
+                    handlers: [
+                        archiveFiles.create,
+                        (req, res) => {
+                            serverMessage(res, {
+                                statusCode: 200,
+                                message: 'Uploaded file',
+                            });
+                        }
+                    ]
                 }
             ),
         );

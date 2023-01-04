@@ -1,6 +1,7 @@
 import { Document, model, Model, Schema } from 'mongoose';
 import { UserDocument } from './UserSchema';
 import { ArchiveKind, ArchiveLike } from '@tunji-web/common';
+import { ArchiveFileDocument, ArchiveFileSchema } from '@tunji-web/server/src/models/ArchiveFileSchema';
 
 export interface Archive extends ArchiveLike {
     title: string;
@@ -20,6 +21,7 @@ export type ArchiveDocument = Document & Archive
 
 export interface ArchiveModel<T extends ArchiveDocument = ArchiveDocument> extends Model<T> {
     getKind: () => ArchiveKind
+    fileModel: () => Model<ArchiveFileDocument>
 }
 
 const TagOrCategory = {
@@ -58,9 +60,14 @@ function slugify(string: string) {
 
 export default function archiveModel<D extends ArchiveDocument>(name: string, schema: Schema<D, ArchiveModel<D>>): ArchiveModel<D> {
     const kind = `${name.toLowerCase()}s` as ArchiveKind;
+    const archiveFileSchema = ArchiveFileSchema(name);
 
     schema.statics.getKind = function () {
         return kind;
+    };
+
+    schema.statics.fileModel = function () {
+        return model<ArchiveFileDocument>(`${name}File`, archiveFileSchema);
     };
 
     schema.virtual('key')
