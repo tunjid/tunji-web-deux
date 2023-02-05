@@ -4,7 +4,7 @@ import { UserController } from '../controllers/UserController';
 import { ArchiveDocument, ArchiveModel } from '../models/Archive';
 import archiveFileController from '@tunji-web/server/src/controllers/ArchiveFileController';
 import archiveController from '@tunji-web/server/src/controllers/ArchiveController';
-import { FileDeleter } from '@tunji-web/server/src/controllers/UploadController';
+import { FileDeleter, FileReader } from '@tunji-web/server/src/controllers/UploadController';
 
 export default function <T extends ArchiveDocument>(app: Express, model: ArchiveModel<T>, userController: UserController): void {
     const fileModel = model.fileModel();
@@ -28,5 +28,11 @@ export default function <T extends ArchiveDocument>(app: Express, model: Archive
             archiveFiles.sendArchiveFile
         );
 
+    app.route('/files/*')
+        .get(
+            archiveFiles.fileByPath,
+            FileReader
+        );
+    
     app.param(paramName, archiveFiles.byId);
 }

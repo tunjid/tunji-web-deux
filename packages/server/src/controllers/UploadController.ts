@@ -52,21 +52,57 @@ const ImageUploader: (
     return result.concat(handlers);
 };
 
+export const publicUrlToPath = (url: string) => url.substring(uploadRootDir.length, url.length);
+
+export const pathToPublicUrl = (path: string) => `${uploadRootDir}${path}`;
+
 export const FileDeleter: RequestHandler = (req, res, next) => {
     const toDelete = req.fileOldUrl;
-    if (!toDelete) return serverMessage(res, {
+    if (!toDelete || !bucket) return serverMessage(res, {
         statusCode: 500,
         message: 'Unable to finish processing upload. The initial may have been successful',
     });
 
-    if (!toDelete.startsWith(uploadRootDir)) return next();
-    const filePath = toDelete.substring(uploadRootDir.length, toDelete.length);
+    if (!toDelete.startsWith(uploadRootDir)) return serverMessage(res, {
+        statusCode: 400,
+        message: 'Invalid file path',
+    });
+    const filePath = publicUrlToPath(toDelete);
 
     bucket?.file(filePath).delete((error) => {
         // Ignore error, just log it
         console.log(error);
         next();
     });
+};
+
+export const FileReader: RequestHandler = async (req, res, next) => {
+    const publicUrl = req.filePublicUrl;
+    if (!bucket) return serverMessage(res, {
+        statusCode: 500,
+        message: 'Unable to stream file',
+    });
+
+    if (!publicUrl.startsWith(uploadRootDir)) return serverMessage(res, {
+        statusCode: 400,
+        message: 'Invalid file path',
+    });
+    const filePath = publicUrlToPath(publicUrl);
+    const file = bucket.file(filePath);
+    const metadata = await file.getMetadata();
+
+    // Add headers to describe file
+    const headers = {
+        'Content-Disposition': `attachment;filename=${metadata[0].name}`,
+        'Content-Type': `${metadata[0].contentType}`
+    };
+
+    // Streams are supported for reading files.
+    const remoteReadStream = file.createReadStream();
+
+    // Set the response code & headers and pipe content to response
+    res.status(200).set(headers);
+    remoteReadStream.pipe(res);
 };
 
 export default ImageUploader;

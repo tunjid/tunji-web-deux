@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import { ArchiveDocument, ArchiveModel } from '../models/Archive';
 import { ErrorCode, getErrorMessage, serverMessage } from './Common';
 import { mongo } from 'mongoose';
+import { pathToPublicUrl } from '@tunji-web/server/src/controllers/UploadController';
 
 interface ArchiveFileController {
     create: (req: Request, res: Response, next: NextFunction) => void;
@@ -9,6 +10,9 @@ interface ArchiveFileController {
     sendArchiveFile: (req: Request, res: Response, next: NextFunction) => void;
     remove: (req: Request, res: Response, next: NextFunction) => void;
     removeByUrl: (req: Request, res: Response, next: NextFunction) => void;
+
+    fileByPath: (req: Request, res: Response, next: NextFunction) => void;
+
     byId: (req: Request, res: Response, next: NextFunction, id: string) => void;
 }
 
@@ -88,6 +92,11 @@ const archiveFileController = <T extends ArchiveDocument>(Model: ArchiveModel<T>
             next();
         });
         else next();
+    },
+    fileByPath: (req, res, next) => {
+        const split = req.path.split('files/');
+        req.filePublicUrl = pathToPublicUrl(split[split.length - 1]);
+        next();
     },
     byId: (req, res, next, id) => {
         const FileModel = Model.fileModel();

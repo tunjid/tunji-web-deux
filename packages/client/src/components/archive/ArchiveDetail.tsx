@@ -22,6 +22,7 @@ import LikeButton from '@tunji-web/client/src/components/like-button/LikeButton'
 import { useWidth } from '@tunji-web/client/src/hooks/UseWidth';
 import { ArchiveLike } from '@tunji-web/common';
 import ReactPlayer from 'react-player';
+import rehypeRaw from "rehype-raw";
 
 const useStyles = makeStyles((theme) => createStyles({
         root: {
@@ -171,10 +172,6 @@ const ArchiveDetail = () => {
                 {conditionalLikeButton(!isSmallOrLess)}
             </div>
             <div className={classes.content}>
-                <Helmet>
-                    <title>{archive?.title}</title>
-                    <meta name="description" content={archive?.description}/>
-                </Helmet>
                 <Typography className={classes.title} gutterBottom variant="h3">
                     {archive?.title || ''}
                 </Typography>
@@ -209,6 +206,7 @@ const ArchiveDetail = () => {
                 <ReactMarkdown
                     className={classes.archiveBody}
                     remarkPlugins={[gfm]}
+                    rehypePlugins={[rehypeRaw]}
                     children={archive?.body || ''}
                     components={MarkdownComponents}
                 />

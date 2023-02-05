@@ -20,6 +20,8 @@ import { ArchiveDocument } from '@tunji-web/server/src/models/Archive';
 import { Store } from 'redux';
 
 import config from '../config/config';
+import { ArchiveFileDocument } from '@tunji-web/server/src/models/ArchiveFileSchema';
+import { publicUrlToPath } from '@tunji-web/server/src/controllers/UploadController';
 
 interface OpenGraphParams {
     title: string;
@@ -27,6 +29,8 @@ interface OpenGraphParams {
     image: string;
     url: string;
     siteName: string;
+    extraScripts?: string[];
+    extraStylesheets?: string[];
 }
 
 const archiveModels = [Article, Project, Talk];
@@ -80,10 +84,18 @@ export default function (app: Express): void {
             );
             webPage = webPage.replace(
                 ' <script>window.__PRELOADED_STATE__ = undefined</script>',
-                `<script nonce="${req.serverReduxStateNonce}">window.__PRELOADED_STATE__ = ${JSON.stringify(connectedStore.store.getState()).replace(
-                    /</g,
-                    '\\u003c'
-                )}</script>`
+                `<script nonce="${req.serverReduxStateNonce}">window.__PRELOADED_STATE__ = ${
+                    JSON.stringify(connectedStore.store.getState())
+                        .replace(/</g, '\\u003c')
+                }</script>`
+            );
+            webPage = webPage.replace(
+                '<script>extraScripts</script>',
+                extraScriptTags(params)
+            );
+            webPage = webPage.replace(
+                '<link>extraStylesheets</link>',
+                extraStylesheetTags(params)
             );
 
             res.send(webPage);
@@ -130,6 +142,15 @@ async function openGraphParams(
                     ?.populate('author', 'firstName lastName fullName imageUrl')
                     .exec();
 
+            const files: ArchiveFileDocument[] = modelAndId
+                ? await modelAndId.model.fileModel()
+                    .find({
+                        mimetype: {$in: ['text/javascript', 'text/css']},
+                        archiveId: modelAndId.id
+                    })
+                    .exec()
+                : [];
+
             if (document) store.dispatch(ArchiveActions.setArchiveDetail({
                 kind,
                 item: document.toJSON()
@@ -145,6 +166,14 @@ async function openGraphParams(
                 image: document?.thumbnail || config.archiveListDefaultImage,
                 url: document?.link || `https://tunjid.com/${root.toLowerCase()}`,
                 siteName: 'tunjid.com',
+                extraScripts: files
+                    .filter(file => file.mimetype === 'text/javascript')
+                    .map(file => file.url)
+                    .map(bucketUrlToApiUrl),
+                extraStylesheets: files
+                    .filter(file => file.mimetype === 'text/css')
+                    .map(file => file.url)
+                    .map(bucketUrlToApiUrl),
             };
         }
         default: {
@@ -173,3 +202,20 @@ async function openGraphParams(
         }
     }
 }
+
+
+const extraScriptTags = (params: OpenGraphParams) =>
+    (
+        params.extraScripts
+        ? params.extraScripts.map(script => `<script src="${script}"></script>`)
+        : []
+    ).join('\n');
+
+const extraStylesheetTags = (params: OpenGraphParams) =>
+    (
+        params.extraStylesheets
+            ? params.extraStylesheets.map(sheet => `<link href="${sheet}" rel="stylesheet" type="text/css"/>`)
+            : []
+    ).join('\n');
+
+const bucketUrlToApiUrl = (url: string) => `${config.apiEndpoint}/files/${publicUrlToPath(url)}`;
