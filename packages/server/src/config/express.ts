@@ -66,6 +66,9 @@ const app: (connection: Connection) => Express = (connection) => {
                     'frame-src': config.corsFrameSources,
                 },
             },
+            crossOriginResourcePolicy: {
+                policy: 'same-site'
+            },
             crossOriginEmbedderPolicy: false
         });
         cspMiddleware(req, res, next);

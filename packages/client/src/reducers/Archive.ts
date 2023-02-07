@@ -2,13 +2,13 @@ import {
     ADD_ARCHIVE,
     ArchiveAction,
     EDIT_ARCHIVE,
-    SET_ARCHIVE_DETAIL,
+    SET_ARCHIVE_DETAIL, UPDATE_ARCHIVE_FILES,
     UPDATE_ARCHIVE_SUMMARY,
     UPDATE_ARCHIVES,
     UPDATE_FETCH_STATUS
 } from '../actions/Archive';
 import _ from 'lodash';
-import { ArchiveKind, ArchiveSummary, EmptyArchive, EmptyUser } from '@tunji-web/common';
+import { ArchiveFile, ArchiveKind, ArchiveSummary, EmptyArchive, EmptyUser } from '@tunji-web/common';
 import { PopulatedArchive } from '@tunji-web/client/src/models/PopulatedArchive';
 
 export interface ArchiveState {
@@ -17,6 +17,8 @@ export interface ArchiveState {
     kindToDetailMap: Record<ArchiveKind, PopulatedArchive>;
     kindToArchivesMap: Record<ArchiveKind, PopulatedArchive[]>;
     summariesMap: Record<ArchiveKind, ArchiveSummary[]>;
+
+    archiveIdToFilesMap: Record<string, ArchiveFile[]>;
 }
 
 function reduceKind<T>(item: T): Record<ArchiveKind, T> {
@@ -42,6 +44,7 @@ const archiveReducer = (state = {
     kindToDetailMap: reduceKind({...EmptyArchive, author: EmptyUser}),
     kindToArchivesMap: reduceKind([] as PopulatedArchive[]),
     summariesMap: reduceKind([] as PopulatedArchive[]),
+    archiveIdToFilesMap: {},
 }, action: ArchiveAction) => {
     switch (action.type) {
         case ADD_ARCHIVE: {
@@ -95,6 +98,22 @@ const archiveReducer = (state = {
                     [action.payload.kind]: action.payload.item
                 },
             };
+        }
+        case UPDATE_ARCHIVE_FILES: {
+            const {item} = action.payload;
+            const archiveIdToFilesMap = item.reduce<Record<string, ArchiveFile[]>>(
+                (map, file) => {
+                    const existingFiles = map[file.archiveId.toString()];
+                    const files = existingFiles ? existingFiles : [];
+                    const updatedFiles = [...files, file];
+                    return {
+                        ...map,
+                        [file.archiveId.toString()]: _.uniqBy(updatedFiles, file => file.url)
+                    };
+                },
+                state.archiveIdToFilesMap
+            );
+            return {...state, archiveIdToFilesMap};
         }
         case UPDATE_FETCH_STATUS: {
             const {queryKey, isLoading} = action.payload;

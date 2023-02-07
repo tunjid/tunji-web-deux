@@ -20,9 +20,9 @@ import { MarkdownBody, MarkdownComponents } from '../common/Markdown';
 import { useDeepEqualSelector } from '../../hooks/UseDeepEqualSelector';
 import LikeButton from '@tunji-web/client/src/components/like-button/LikeButton';
 import { useWidth } from '@tunji-web/client/src/hooks/UseWidth';
-import { ArchiveLike } from '@tunji-web/common';
+import { ArchiveFile, ArchiveLike } from '@tunji-web/common';
 import ReactPlayer from 'react-player';
-import rehypeRaw from "rehype-raw";
+import rehypeRaw from 'rehype-raw';
 
 const useStyles = makeStyles((theme) => createStyles({
         root: {
@@ -98,10 +98,88 @@ const useStyles = makeStyles((theme) => createStyles({
     }
 ));
 
+const fileToStyleSheet: (file: ArchiveFile) => HTMLLinkElement = file => {
+    const sheet = document.createElement('link');
+    sheet.rel = 'stylesheet';
+    sheet.href = file.url;
+    sheet.type = file.mimetype;
+
+    return sheet;
+};
+
+const fileToScript: (file: ArchiveFile) => HTMLScriptElement = file => {
+    const script = document.createElement('script');
+    script.src = file.url;
+    script.type = file.mimetype;
+    return script;
+};
+
+function scriptsAbsentFromDOM(archiveFiles: ArchiveFile[]) {
+    const existingScriptSources = new Set<string>();
+    for (let i = 0; i < document.scripts.length; i++) {
+        const script = document.scripts.item(i);
+        if (script) existingScriptSources.add(script.src);
+    }
+
+    const scriptsToAdd = archiveFiles
+        ?.filter(file => file.mimetype === 'text/javascript' && !existingScriptSources.has(file.url))
+        ?.map(fileToScript);
+    return scriptsToAdd;
+}
+
+function domScriptsIn(archiveFiles: ArchiveFile[]): HTMLScriptElement[] {
+    if (!archiveFiles) return [];
+    const result: HTMLScriptElement[] = [];
+    const scriptSources = new Set<string>();
+    archiveFiles
+        ?.filter(file => file.mimetype === 'text/javascript')
+        ?.map(file => file.url)
+        ?.forEach(url => scriptSources.add(url));
+
+    for (let i = 0; i < document.scripts.length; i++) {
+        const script = document.scripts.item(i);
+        if (script && scriptSources.has(script.src)) result.push(script);
+    }
+
+    return result;
+}
+
+function styleSheetsAbsentFromDOM(archiveFiles: ArchiveFile[]) {
+    if (!archiveFiles) return [];
+    const existingStyleSheets = document.querySelectorAll<HTMLLinkElement>('link[rel=stylesheet]');
+    const existingStyleSheetRefs = new Set<string>();
+    for (let i = 0; i < existingStyleSheets.length; i++) {
+        const sheet = existingStyleSheets.item(i);
+        if (sheet) existingStyleSheetRefs.add(sheet.href);
+    }
+
+    const styleSheetsToAdd = archiveFiles
+        ?.filter(file => file.mimetype === 'text/css' && !existingStyleSheetRefs.has(file.url))
+        ?.map(fileToStyleSheet);
+    return styleSheetsToAdd;
+}
+
+function domStyleSheetsIn(archiveFiles: ArchiveFile[]): HTMLLinkElement[] {
+    const result: HTMLLinkElement[] = [];
+    const sheetSources = new Set<string>();
+    archiveFiles
+        ?.filter(file => file.mimetype === 'text/css')
+        ?.map(file => file.url)
+        ?.forEach(url => sheetSources.add(url));
+
+    const existingStyleSheets = document.querySelectorAll<HTMLLinkElement>('link[rel=stylesheet]');
+    for (let i = 0; i < existingStyleSheets.length; i++) {
+        const styleSheet = existingStyleSheets.item(i);
+        if (styleSheet && sheetSources.has(styleSheet.href)) result.push(styleSheet);
+    }
+
+    return result;
+}
+
 const ArchiveDetail = () => {
     const classes = useStyles();
     const dispatch = useDispatch();
-    const {isSignedIn, kind, archiveId, archive} = useDeepEqualSelector(archiveSelector('detail'));
+    const {isSignedIn, kind, archiveId, archive, archiveFiles} = useDeepEqualSelector(archiveSelector('detail'));
 
     const width = useWidth();
     const isxSmallScreen = /xs/.test(width);
@@ -127,6 +205,19 @@ const ArchiveDetail = () => {
             } : undefined
         }));
     }, [archiveId, kind, isSignedIn, dispatch]);
+
+    useEffect(() => {
+        const scriptsToAdd = scriptsAbsentFromDOM(archiveFiles);
+        scriptsToAdd?.forEach(script => document.body.appendChild(script));
+
+        const styleSheetsToAdd = styleSheetsAbsentFromDOM(archiveFiles);
+        styleSheetsToAdd?.forEach(sheet => document.head.appendChild(sheet));
+
+        return () => {
+            domScriptsIn(archiveFiles)?.forEach(script => document.body.removeChild(script));
+            domStyleSheetsIn(archiveFiles)?.forEach(sheet => document.head.removeChild(sheet));
+        };
+    }, [archiveFiles]);
 
     const setLikes: (count: number) => void = (count) => {
         dispatch(ArchiveActions.incrementArchiveLikes({
@@ -172,6 +263,10 @@ const ArchiveDetail = () => {
                 {conditionalLikeButton(!isSmallOrLess)}
             </div>
             <div className={classes.content}>
+                <Helmet>
+                    <title>{archive?.title}</title>
+                    <meta name="description" content={archive?.description}/>
+                </Helmet>
                 <Typography className={classes.title} gutterBottom variant="h3">
                     {archive?.title || ''}
                 </Typography>
@@ -194,7 +289,7 @@ const ArchiveDetail = () => {
 
                 <div className={classes.chipContainer}>
                     <ChipInput
-                        name='Categories: '
+                        name="Categories: "
                         type={ChipType.Category}
                         kind={archive?.kind}
                         chips={archive?.categories}
@@ -213,7 +308,7 @@ const ArchiveDetail = () => {
 
                 <div className={classes.chipContainer}>
                     <ChipInput
-                        name='Tags: '
+                        name="Tags: "
                         type={ChipType.Tag}
                         kind={archive?.kind}
                         chips={archive?.tags}

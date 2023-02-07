@@ -1,15 +1,19 @@
-import { ArchiveKind, ArchiveLike, ArchiveSummary } from '@tunji-web/common';
+import { ArchiveFile, ArchiveKind, ArchiveLike, ArchiveSummary } from '@tunji-web/common';
 import ApiService from '../rest/ApiService';
 import { AppThunk } from './index';
-import { onSuccessOrSnackbar } from './Common';
+import { onHttpResponse, onSuccessOrSnackbar } from './Common';
 import { RouterActions } from './Router';
 import { SnackbarActions, SnackbarKind } from './Snackbar';
 import { PopulatedArchive, toArchive } from '@tunji-web/client/src/models/PopulatedArchive';
 
 export const ADD_ARCHIVE = 'ADD_ARCHIVE';
+
 export const SET_ARCHIVE_DETAIL = 'SET_ARCHIVE_DETAIL';
 export const EDIT_ARCHIVE = 'EDIT_ARCHIVE';
 export const UPDATE_ARCHIVES = 'UPDATE_ARCHIVES';
+
+export const UPDATE_ARCHIVE_FILES = 'UPDATE_ARCHIVE_FILES';
+
 export const SAVE_ARCHIVE = 'SAVE_ARCHIVE';
 export const INCREMENT_ARCHIVE_LIKES = 'INCREMENT_ARCHIVE_LIKES';
 export const UPDATE_ARCHIVE_SUMMARY = 'UPDATE_ARCHIVE_SUMMARY';
@@ -64,6 +68,11 @@ export interface UpdateArchives {
     payload: ArchivePayload<PopulatedArchive[]>;
 }
 
+export interface UpdateArchiveFiles {
+    type: typeof UPDATE_ARCHIVE_FILES;
+    payload: ArchivePayload<ArchiveFile[]>;
+}
+
 interface UpdateFetchStatusPayload {
     queryKey: string,
     isLoading: boolean
@@ -91,12 +100,13 @@ export type ArchiveAction =
     | SaveArchive
     | UpdateArchiveSummary
     | UpdateFetchStatus
-    | SetArchiveDetail;
+    | SetArchiveDetail
+    | UpdateArchiveFiles;
 
 export interface ArchivesQuery {
     key: string;
     kind: ArchiveKind;
-    params: URLSearchParams
+    params: URLSearchParams;
 }
 
 export const yearAndMonthParam = ({params}: ArchivesQuery) => {
@@ -118,6 +128,9 @@ interface IArchiveActions {
     createArchive: (kind: ArchiveKind) => AppThunk
     readArchive: (request: FetchArchiveRequest) => AppThunk
     updateArchive: (kind: ArchiveKind) => AppThunk
+
+    updateArchiveFiles: (payload: ArchivePayload<ArchiveFile[]>) => UpdateArchiveFiles;
+
     incrementArchiveLikes: (request: IncrementArchiveLikesRequest) => AppThunk
     deleteArchive: (kind: ArchiveKind) => AppThunk
     archiveSummaries: (kind: ArchiveKind) => AppThunk
@@ -136,6 +149,12 @@ export const ArchiveActions: IArchiveActions = {
         );
     },
     readArchive: (request: FetchArchiveRequest) => async (dispatch) => {
+        await onHttpResponse(
+            ApiService.archiveFiles(request.kind, request.id),
+            (files) => {
+                dispatch(ArchiveActions.updateArchiveFiles({kind: request.kind, item: files}));
+            }
+        );
         await onSuccessOrSnackbar(
             ApiService.readArchive(request.kind, request.id),
             dispatch,
@@ -217,6 +236,10 @@ export const ArchiveActions: IArchiveActions = {
     }),
     updateArchiveSummaries: (payload: ArchivePayload<ArchiveSummary[]>) => ({
         type: UPDATE_ARCHIVE_SUMMARY,
+        payload
+    }),
+    updateArchiveFiles: (payload: ArchivePayload<ArchiveFile[]>) => ({
+        type: UPDATE_ARCHIVE_FILES,
         payload
     }),
     updateArchiveFetchStatus: (payload: UpdateFetchStatusPayload) => ({
