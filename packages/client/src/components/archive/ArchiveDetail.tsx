@@ -98,24 +98,23 @@ const useStyles = makeStyles((theme) => createStyles({
     }
 ));
 
-const fileToStyleSheet : (file: ArchiveFile) => HTMLLinkElement = file => {
+const fileToStyleSheet: (file: ArchiveFile) => HTMLLinkElement = file => {
     const sheet = document.createElement('link');
-    sheet.rel  = 'stylesheet';
+    sheet.rel = 'stylesheet';
     sheet.href = file.url;
     sheet.type = file.mimetype;
 
     return sheet;
-}
+};
 
-const fileToScript : (file: ArchiveFile) => HTMLScriptElement = file => {
+const fileToScript: (file: ArchiveFile) => HTMLScriptElement = file => {
     const script = document.createElement('script');
-    script.async = true;
     script.src = file.url;
     script.type = file.mimetype;
     return script;
-}
+};
 
-function scriptsAbsentFromDOM(archiveFiles: any) {
+function scriptsAbsentFromDOM(archiveFiles: ArchiveFile[]) {
     const existingScriptSources = new Set<string>();
     for (let i = 0; i < document.scripts.length; i++) {
         const script = document.scripts.item(i);
@@ -128,7 +127,25 @@ function scriptsAbsentFromDOM(archiveFiles: any) {
     return scriptsToAdd;
 }
 
-function styleSheetsAbsentFromDOM(archiveFiles: any) {
+function domScriptsIn(archiveFiles: ArchiveFile[]): HTMLScriptElement[] {
+    if (!archiveFiles) return [];
+    const result: HTMLScriptElement[] = [];
+    const scriptSources = new Set<string>();
+    archiveFiles
+        ?.filter(file => file.mimetype === 'text/javascript')
+        ?.map(file => file.url)
+        ?.forEach(url => scriptSources.add(url));
+
+    for (let i = 0; i < document.scripts.length; i++) {
+        const script = document.scripts.item(i);
+        if (script && scriptSources.has(script.src)) result.push(script);
+    }
+
+    return result;
+}
+
+function styleSheetsAbsentFromDOM(archiveFiles: ArchiveFile[]) {
+    if (!archiveFiles) return [];
     const existingStyleSheets = document.querySelectorAll<HTMLLinkElement>('link[rel=stylesheet]');
     const existingStyleSheetRefs = new Set<string>();
     for (let i = 0; i < existingStyleSheets.length; i++) {
@@ -140,6 +157,23 @@ function styleSheetsAbsentFromDOM(archiveFiles: any) {
         ?.filter(file => file.mimetype === 'text/css' && !existingStyleSheetRefs.has(file.url))
         ?.map(fileToStyleSheet);
     return styleSheetsToAdd;
+}
+
+function domStyleSheetsIn(archiveFiles: ArchiveFile[]): HTMLLinkElement[] {
+    const result: HTMLLinkElement[] = [];
+    const sheetSources = new Set<string>();
+    archiveFiles
+        ?.filter(file => file.mimetype === 'text/css')
+        ?.map(file => file.url)
+        ?.forEach(url => sheetSources.add(url));
+
+    const existingStyleSheets = document.querySelectorAll<HTMLLinkElement>('link[rel=stylesheet]');
+    for (let i = 0; i < existingStyleSheets.length; i++) {
+        const styleSheet = existingStyleSheets.item(i);
+        if (styleSheet && sheetSources.has(styleSheet.href)) result.push(styleSheet);
+    }
+
+    return result;
 }
 
 const ArchiveDetail = () => {
@@ -180,8 +214,8 @@ const ArchiveDetail = () => {
         styleSheetsToAdd?.forEach(sheet => document.head.appendChild(sheet));
 
         return () => {
-            scriptsToAdd?.forEach(script => document.body.removeChild(script));
-            styleSheetsToAdd?.forEach(sheet => document.head.removeChild(sheet));
+            domScriptsIn(archiveFiles)?.forEach(script => document.body.removeChild(script));
+            domStyleSheetsIn(archiveFiles)?.forEach(sheet => document.head.removeChild(sheet));
         };
     }, [archiveFiles]);
 
