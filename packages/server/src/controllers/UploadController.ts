@@ -56,6 +56,8 @@ export const publicUrlToPath = (url: string) => url.substring(uploadRootDir.leng
 
 export const pathToPublicUrl = (path: string) => `${uploadRootDir}${path}`;
 
+export const publicUrlToApiUrl = (url: string) => `${config.apiEndpoint}/files/${publicUrlToPath(url)}`;
+
 export const FileDeleter: RequestHandler = (req, res, next) => {
     const toDelete = req.fileOldUrl;
     if (!toDelete || !bucket) return serverMessage(res, {

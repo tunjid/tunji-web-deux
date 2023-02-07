@@ -1,4 +1,4 @@
-import { ArchiveKind, ArchiveLike, UserLike } from "@tunji-web/common";
+import { ArchiveFile, ArchiveKind, ArchiveLike, UserLike } from '@tunji-web/common';
 import { createSelector } from "reselect";
 import _ from "lodash";
 import { StoreState } from "../../types";
@@ -20,6 +20,8 @@ export interface ArchiveResourceProps {
     kind: ArchiveKind;
     archiveId?: string;
     archive?: ArchiveLike;
+
+    archiveFiles?: ArchiveFile[];
 }
 
 export const archiveSelector = (archiveViewType: ArchiveView) => createSelector<StoreState, UserLike | undefined, string, ArchiveState, ArchiveResourceProps>(
@@ -35,7 +37,8 @@ export const archiveSelector = (archiveViewType: ArchiveView) => createSelector<
             isSignedIn: signedInUser !== undefined,
             kind,
             archiveId,
-            archive: archiveViewType === 'detail' ? archiveState.kindToDetailMap[kind] : archiveState.kindToEditMap[kind]
+            archive: archiveViewType === 'detail' ? archiveState.kindToDetailMap[kind] : archiveState.kindToEditMap[kind],
+            archiveFiles: archiveId ? archiveState.archiveIdToFilesMap[archiveId] : [],
         };
     }
 );

@@ -3,6 +3,7 @@ import { ArchiveDocument, ArchiveModel } from '../models/Archive';
 import { ErrorCode, getErrorMessage, serverMessage } from './Common';
 import { ArchiveSummary } from '@tunji-web/common';
 import { CallbackError, HydratedDocument, mongo } from 'mongoose';
+import { publicUrlToApiUrl, publicUrlToPath } from '@tunji-web/server/src/controllers/UploadController';
 
 interface ArchiveController {
     create: (req: Request, res: Response, next: NextFunction) => void;
@@ -12,6 +13,9 @@ interface ArchiveController {
     byId: (req: Request, res: Response, next: NextFunction, id: string) => void;
     sendArchive: (req: Request, res: Response, next: NextFunction) => void;
     find: (req: Request, res: Response, next: NextFunction) => void;
+
+    filesForId: (req: Request, res: Response, next: NextFunction) => void;
+
     incrementLikes: (req: Request, res: Response, next: NextFunction) => void;
     summary: (req: Request, res: Response, next: NextFunction) => void;
     tagsOrCategories: (req: Request, res: Response, next: NextFunction) => void;
@@ -93,6 +97,27 @@ const archiveController = <T extends ArchiveDocument>(Model: ArchiveModel<T>): A
                     });
                 } else {
                     res.json(archives);
+                }
+            });
+    },
+    filesForId: (req, res) => {
+        Model.fileModel().find(
+            {
+                archiveId: req.archive.id,
+                mimetype: {$in: ['text/javascript', 'text/css']}
+            }
+        )
+            .exec(function (error, files) {
+                if (error) {
+                    console.log(error);
+                    return res.status(400).send({
+                        message: getErrorMessage(error)
+                    });
+                } else {
+                    res.json(files.map(file => {
+                        const fileJson = file.toJSON();
+                        return {...fileJson, url: publicUrlToApiUrl(fileJson.url)};
+                    }));
                 }
             });
     },

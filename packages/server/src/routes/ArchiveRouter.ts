@@ -60,6 +60,7 @@ export default function <T extends ArchiveDocument>(app: Express, model: Archive
         );
 
     app.route(`/api/${routeName}/:${paramName}/files`)
+        .get(archives.filesForId)
         .post(
             userController.requiresLogin,
             archives.hasAuthorization,

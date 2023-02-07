@@ -21,7 +21,7 @@ import { Store } from 'redux';
 
 import config from '../config/config';
 import { ArchiveFileDocument } from '@tunji-web/server/src/models/ArchiveFileSchema';
-import { publicUrlToPath } from '@tunji-web/server/src/controllers/UploadController';
+import { publicUrlToApiUrl } from '@tunji-web/server/src/controllers/UploadController';
 
 interface OpenGraphParams {
     title: string;
@@ -169,11 +169,11 @@ async function openGraphParams(
                 extraScripts: files
                     .filter(file => file.mimetype === 'text/javascript')
                     .map(file => file.url)
-                    .map(bucketUrlToApiUrl),
+                    .map(publicUrlToApiUrl),
                 extraStylesheets: files
                     .filter(file => file.mimetype === 'text/css')
                     .map(file => file.url)
-                    .map(bucketUrlToApiUrl),
+                    .map(publicUrlToApiUrl),
             };
         }
         default: {
@@ -217,5 +217,3 @@ const extraStylesheetTags = (params: OpenGraphParams) =>
             ? params.extraStylesheets.map(sheet => `<link href="${sheet}" rel="stylesheet" type="text/css"/>`)
             : []
     ).join('\n');
-
-const bucketUrlToApiUrl = (url: string) => `${config.apiEndpoint}/files/${publicUrlToPath(url)}`;

@@ -20,9 +20,9 @@ import { MarkdownBody, MarkdownComponents } from '../common/Markdown';
 import { useDeepEqualSelector } from '../../hooks/UseDeepEqualSelector';
 import LikeButton from '@tunji-web/client/src/components/like-button/LikeButton';
 import { useWidth } from '@tunji-web/client/src/hooks/UseWidth';
-import { ArchiveLike } from '@tunji-web/common';
+import { ArchiveFile, ArchiveLike } from '@tunji-web/common';
 import ReactPlayer from 'react-player';
-import rehypeRaw from "rehype-raw";
+import rehypeRaw from 'rehype-raw';
 
 const useStyles = makeStyles((theme) => createStyles({
         root: {
@@ -98,10 +98,54 @@ const useStyles = makeStyles((theme) => createStyles({
     }
 ));
 
+const fileToStyleSheet : (file: ArchiveFile) => HTMLLinkElement = file => {
+    const sheet = document.createElement('link');
+    sheet.rel  = 'stylesheet';
+    sheet.href = file.url;
+    sheet.type = file.mimetype;
+
+    return sheet;
+}
+
+const fileToScript : (file: ArchiveFile) => HTMLScriptElement = file => {
+    const script = document.createElement('script');
+    script.async = true;
+    script.src = file.url;
+    script.type = file.mimetype;
+    return script;
+}
+
+function scriptsAbsentFromDOM(archiveFiles: any) {
+    const existingScriptSources = new Set<string>();
+    for (let i = 0; i < document.scripts.length; i++) {
+        const script = document.scripts.item(i);
+        if (script) existingScriptSources.add(script.src);
+    }
+
+    const scriptsToAdd = archiveFiles
+        ?.filter(file => file.mimetype === 'text/javascript' && !existingScriptSources.has(file.url))
+        ?.map(fileToScript);
+    return scriptsToAdd;
+}
+
+function styleSheetsAbsentFromDOM(archiveFiles: any) {
+    const existingStyleSheets = document.querySelectorAll<HTMLLinkElement>('link[rel=stylesheet]');
+    const existingStyleSheetRefs = new Set<string>();
+    for (let i = 0; i < existingStyleSheets.length; i++) {
+        const sheet = existingStyleSheets.item(i);
+        if (sheet) existingStyleSheetRefs.add(sheet.href);
+    }
+
+    const styleSheetsToAdd = archiveFiles
+        ?.filter(file => file.mimetype === 'text/css' && !existingStyleSheetRefs.has(file.url))
+        ?.map(fileToStyleSheet);
+    return styleSheetsToAdd;
+}
+
 const ArchiveDetail = () => {
     const classes = useStyles();
     const dispatch = useDispatch();
-    const {isSignedIn, kind, archiveId, archive} = useDeepEqualSelector(archiveSelector('detail'));
+    const {isSignedIn, kind, archiveId, archive, archiveFiles} = useDeepEqualSelector(archiveSelector('detail'));
 
     const width = useWidth();
     const isxSmallScreen = /xs/.test(width);
@@ -127,6 +171,19 @@ const ArchiveDetail = () => {
             } : undefined
         }));
     }, [archiveId, kind, isSignedIn, dispatch]);
+
+    useEffect(() => {
+        const scriptsToAdd = scriptsAbsentFromDOM(archiveFiles);
+        scriptsToAdd?.forEach(script => document.body.appendChild(script));
+
+        const styleSheetsToAdd = styleSheetsAbsentFromDOM(archiveFiles);
+        styleSheetsToAdd?.forEach(sheet => document.head.appendChild(sheet));
+
+        return () => {
+            scriptsToAdd?.forEach(script => document.body.removeChild(script));
+            styleSheetsToAdd?.forEach(sheet => document.head.removeChild(sheet));
+        };
+    }, [archiveFiles]);
 
     const setLikes: (count: number) => void = (count) => {
         dispatch(ArchiveActions.incrementArchiveLikes({
@@ -172,6 +229,10 @@ const ArchiveDetail = () => {
                 {conditionalLikeButton(!isSmallOrLess)}
             </div>
             <div className={classes.content}>
+                <Helmet>
+                    <title>{archive?.title}</title>
+                    <meta name="description" content={archive?.description}/>
+                </Helmet>
                 <Typography className={classes.title} gutterBottom variant="h3">
                     {archive?.title || ''}
                 </Typography>
@@ -194,7 +255,7 @@ const ArchiveDetail = () => {
 
                 <div className={classes.chipContainer}>
                     <ChipInput
-                        name='Categories: '
+                        name="Categories: "
                         type={ChipType.Category}
                         kind={archive?.kind}
                         chips={archive?.categories}
@@ -213,7 +274,7 @@ const ArchiveDetail = () => {
 
                 <div className={classes.chipContainer}>
                     <ChipInput
-                        name='Tags: '
+                        name="Tags: "
                         type={ChipType.Tag}
                         kind={archive?.kind}
                         chips={archive?.tags}
