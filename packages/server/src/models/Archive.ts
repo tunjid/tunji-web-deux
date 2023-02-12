@@ -43,7 +43,7 @@ export const ArchiveSchema = {
     created: {type: Date, default: Date.now}
 };
 
-function slugify(string: string) {
+export function slugify(string: string) {
     const a = 'àáâäæãåāăąçćčđďèéêëēėęěğǵḧîïíīįìłḿñńǹňôöòóœøōõőṕŕřßśšşșťțûüùúūǘůűųẃẍÿýžźż·/_,:;';
     const b = 'aaaaaaaaaacccddeeeeeeeegghiiiiiilmnnnnoooooooooprrsssssttuuuuuuuuuwxyyzzz------';
     const p = new RegExp(a.split('').join('|'), 'g');
