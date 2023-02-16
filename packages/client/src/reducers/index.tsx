@@ -12,6 +12,7 @@ import { snackbarReducer } from './Snackbar';
 import ReactGA from 'react-ga';
 import clientConfig from '../config'
 import { openGraphReducer } from '@tunji-web/client/src/reducers/OpenGraph';
+import { detailReducer } from '@tunji-web/client/src/reducers/Detail';
 
 interface ConnectedStore {
     history: History
@@ -22,6 +23,7 @@ const reducers: (history: History) => Reducer<StoreState> = (history) => combine
     persistentUI: persistentUiReducer,
     home: homeReducer,
     auth: authReducer,
+    detail: detailReducer,
     archives: archiveReducer,
     openGraph: openGraphReducer,
     snackbars: snackbarReducer,
