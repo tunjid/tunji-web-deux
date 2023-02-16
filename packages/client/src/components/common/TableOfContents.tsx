@@ -1,6 +1,58 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { slugify } from '@tunji-web/server/src/models/Archive';
+import React, { useEffect, useRef, useState } from 'react';
+import { createStyles, makeStyles } from '@material-ui/core/styles';
+import { horizontalPadding } from '@tunji-web/client/src/styles/Common';
+import { slugify } from '@tunji-web/common';
 
+const linkBar = {
+    content: '\'\'',
+    backgroundColor: '#05202E',
+    position: 'absolute',
+    left: '-6px',
+    bottom: '0px',
+    width: '3px',
+    height: '0px',
+    zIndex: -1,
+    transition: 'all .3s ease-in-out'
+}
+
+const useStyles = makeStyles((theme) => createStyles({
+        tableOfContentsNav: {
+            'border-left': '1px solid #000',
+            ...horizontalPadding(theme.spacing(2)),
+        },
+        list: {
+            'padding-left': '12px',
+            'list-style-type': 'none',
+        },
+        listItem: {
+            [theme.breakpoints.up('md')]: {
+                padding: '3px 0',
+            },
+            padding: '6px 0',
+        },
+        tableOfContentsActiveLink: {
+            'color': 'inherit',
+            'text-decoration': 'none',
+            position: 'relative',
+            '&::before': {
+                ...linkBar,
+                height: '100%',
+            },
+        },
+        tableOfContentsLink: {
+            'color': 'inherit',
+            'text-decoration': 'none',
+            position: 'relative',
+            '&::before': {
+                ...linkBar
+            },
+            '&:hover::before': {
+                bottom: '0',
+                height: '100%'
+            },
+        },
+    }
+));
 
 interface Heading {
     id: string;
@@ -17,52 +69,44 @@ interface HeadingProps {
  * This renders an item in the table of contents list.
  * scrollIntoView is used to ensure that when a user clicks on an item, it will smoothly scroll.
  */
-const Headings: (props: HeadingProps) => JSX.Element = ({headings, activeId}) => (
-    <ul>
-        {headings.map((heading) => (
-            <li key={heading.id} className={heading.id === activeId ? 'active' : ''}>
-                <a
-                    href={`#${heading.id}`}
-                    onClick={(e) => {
-                        e.preventDefault();
-                        document.querySelector(`#${heading.id}`)?.scrollIntoView({
-                            behavior: 'smooth'
-                        });
-                    }}
+const Headings: (props: HeadingProps) => JSX.Element = ({headings, activeId}) => {
+    const classes = useStyles();
+    return (
+        <ul className={classes.list}>
+            {headings.map((heading) => (
+                <li
+                    key={heading.id}
+                    className={classes.listItem}
                 >
-                    {heading.title}
-                </a>
-                {heading.items.length > 0 && (
-                    <ul>
-                        {heading.items.map((child) => (
-                            <li
-                                key={child.id}
-                                className={child.id === activeId ? 'active' : ''}
-                            >
-                                <a
-                                    href={`#${child.id}`}
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        document.querySelector(`#${child.id}`)?.scrollIntoView({
-                                            behavior: 'smooth'
-                                        });
-                                    }}
-                                >
-                                    {child.title}
-                                </a>
-                            </li>
-                        ))}
-                    </ul>
-                )}
-            </li>
-        ))}
-    </ul>
-);
-const useIntersectionObserver = (setActiveId: (a: string) => void) => {
+                    <a className={heading.id === activeId ? classes.tableOfContentsActiveLink : classes.tableOfContentsLink}
+                       href={`#${heading.id}`}
+                       onClick={(e) => {
+                           e.preventDefault();
+                           const yOffset = -80;
+                           const element = document.getElementById(`${heading.id}`);
+                           const y = (element?.getBoundingClientRect().top || 0) + window.scrollY + yOffset;
+
+                           window.scrollTo({top: y, behavior: 'smooth'});
+                       }}
+                    >
+                        {heading.title}
+                    </a>
+                    {heading.items.length > 0 && <Headings headings={heading.items} activeId={activeId}/>}
+                </li>
+            ))}
+        </ul>
+    );
+};
+
+function flattenHeading(heading: Heading): Heading[] {
+    return heading.items.length === 0 ? [heading] : heading.items.map(flattenHeading).flat();
+};
+
+const useIntersectionObserver = (headings: Heading[], setActiveId: (a: string) => void) => {
     const headingElementsRef = useRef<Record<string, IntersectionObserverEntry>>({});
     useEffect(() => {
-        const callback: IntersectionObserverCallback = (headings) => {
-            headingElementsRef.current = headings.reduce((map, headingElement) => {
+        const callback: IntersectionObserverCallback = (headingEntries) => {
+            headingElementsRef.current = headingEntries.reduce((map, headingElement) => {
                 map[headingElement.target.id] = headingElement;
                 return map;
             }, headingElementsRef.current);
@@ -74,9 +118,6 @@ const useIntersectionObserver = (setActiveId: (a: string) => void) => {
                 if (headingElement.isIntersecting) visibleHeadings.push(headingElement);
             });
 
-            const getIndexFromId: (id: string) => number = (id) =>
-                headingElements.findIndex((heading) => heading.id === id);
-
             // If there is only one visible heading, this is our "active" heading
             if (visibleHeadings.length === 1) {
                 setActiveId(visibleHeadings[0].target.id);
@@ -84,24 +125,26 @@ const useIntersectionObserver = (setActiveId: (a: string) => void) => {
                 // choose the one that is closest to the top of the page
             } else if (visibleHeadings.length > 1) {
                 const sortedVisibleHeadings = visibleHeadings.sort(
-                    (a, b) => getIndexFromId(a.target.id) - getIndexFromId(b.target.id)
+                    (a, b) => {
+                        return Math.abs(a.target.getBoundingClientRect().top) - Math.abs(b.target.getBoundingClientRect().top);
+                    }
                 );
-
                 setActiveId(sortedVisibleHeadings[0].target.id);
             }
         };
+        const observer = new IntersectionObserver(callback);
 
-        const observer = new IntersectionObserver(callback, {
-            root: document.querySelector('iframe'),
-            rootMargin: '500px'
-        });
+        const headingIds = headings
+            .map(flattenHeading)
+            .flat()
+            .map(heading => `#${heading.id}`)
+            .join(', ');
 
-        const headingElements: HTMLHeadingElement[] = Array.from(document.querySelectorAll('h2, h3'));
-
+        const headingElements: HTMLHeadingElement[] = headingIds ? Array.from(document.querySelectorAll(headingIds)) : [];
         headingElements.forEach((element) => observer.observe(element));
 
         return () => observer.disconnect();
-    }, [setActiveId]);
+    }, [headings, setActiveId]);
 };
 
 export interface TOCProps {
@@ -109,7 +152,7 @@ export interface TOCProps {
 }
 
 const extractHeadings = (markdown: string) => {
-    const levelsToShow = 3;
+    const levelsToShow = 4;
     const headings: Heading[] = [];
     let isCodeBlock = false;
     let topLevel = NaN;
@@ -169,13 +212,18 @@ const extractHeadings = (markdown: string) => {
  * Renders the table of contents.
  */
 export const TableOfContents: (props: TOCProps) => JSX.Element = ({markdown}) => {
+    const classes = useStyles();
+
     const [activeId, setActiveId] = useState<string>();
-    const nestedHeadings = extractHeadings(markdown);
-    useIntersectionObserver(setActiveId);
+    const headings = extractHeadings(markdown);
+    useIntersectionObserver(headings, setActiveId);
 
     return (
-        <nav aria-label="Table of contents">
-            <Headings headings={nestedHeadings} activeId={activeId}/>
+        <nav className={classes.tableOfContentsNav} aria-label="On this page">
+            {headings.length > 0 && (
+                <h2>On this page</h2>
+            )}
+            <Headings headings={headings} activeId={activeId}/>
         </nav>
     );
 };

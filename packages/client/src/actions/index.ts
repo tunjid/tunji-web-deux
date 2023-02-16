@@ -7,9 +7,10 @@ import { StoreState } from '../types';
 import { RouterAction } from './Router';
 import { SnackbarAction } from './Snackbar';
 import { OpenGraphAction } from '@tunji-web/client/src/actions/OpenGraph';
+import { DetailAction } from '@tunji-web/client/src/actions/Detail';
 
 export type SynchronousAppAction =
-    ArchiveAction | HomeAction | AuthAction |
+    ArchiveAction | HomeAction | AuthAction | DetailAction |
     PersistentUiAction | RouterAction | OpenGraphAction |
     SnackbarAction;
 
