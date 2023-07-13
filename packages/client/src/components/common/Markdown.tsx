@@ -3,42 +3,74 @@ import { ReactNode } from 'react';
 import { Components } from 'react-markdown/src/ast-to-react';
 import ReactPlayer from 'react-player';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import style from 'react-syntax-highlighter/dist/cjs/styles/prism/ghcolors';
 import { OpenGraphScrapeQueryKey, slugify } from '@tunji-web/common';
 import OpenGraphCard from '../open-graph/OpenGraph';
 import gfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 import ReactMarkdown from 'react-markdown';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
+import Card from '@material-ui/core/Card';
 
 export const MarkdownBody = {
     '& h1': {
         fontFamily: '"Muli", sans-serif',
-        fontSize: "40px",
-        letterSpacing: "0px",
-        fontWeight: "normal",
-        lineHeight: "90%"
+        fontSize: '40px',
+        letterSpacing: '0px',
+        fontWeight: 'normal',
+        lineHeight: '90%'
     },
     '& h2': {
         fontFamily: '"Muli", sans-serif',
-        fontSize: "32px",
-        letterSpacing: "0px",
-        fontWeight: "lighter",
-        lineHeight: "90%"
+        fontSize: '32px',
+        letterSpacing: '0px',
+        fontWeight: 'lighter',
+        lineHeight: '90%'
     },
     '& h3': {
         fontFamily: '"Muli", sans-serif',
-        fontSize: "24px",
-        letterSpacing: "0px",
-        fontWeight: "lighter",
-        lineHeight: "80%"
+        fontSize: '24px',
+        letterSpacing: '0px',
+        fontWeight: 'lighter',
+        lineHeight: '80%'
     },
-    "& p, & li, & ul": {
+    '& h4': {
         fontFamily: '"Muli", sans-serif',
-        fontSize: "18px",
-        letterSpacing: "0px",
-        fontWeight: "normal",
-        lineHeight: "125%"
-    }
+        fontSize: '22px',
+        letterSpacing: '0px',
+        fontWeight: 'lighter',
+        lineHeight: '80%'
+    },
+    '& h5': {
+        fontFamily: '"Muli", sans-serif',
+        fontSize: '20px',
+        letterSpacing: '0px',
+        fontWeight: 'lighter',
+        lineHeight: '80%'
+    },
+    '& h6': {
+        fontFamily: '"Muli", sans-serif',
+        fontSize: '20px',
+        letterSpacing: '0px',
+        fontWeight: 'lighter',
+        lineHeight: '80%'
+    },
+    '& p, & li': {
+        fontFamily: '"Muli", sans-serif',
+        fontSize: '18px',
+        letterSpacing: '0px',
+        fontWeight: 'normal',
+        lineHeight: '180%',
+    },
+    '& td': {
+        '& p, & li': {
+            fontFamily: '"Muli", sans-serif',
+            fontSize: '14px',
+            letterSpacing: '0px',
+            fontWeight: 'normal',
+            lineHeight: '140%',
+        }
+    },
 };
 
 export const MarkdownComponents: Components = {
@@ -97,23 +129,26 @@ export const MarkdownComponents: Components = {
         const classname = className as string;
         const match = /language-(\w+)/.exec(classname || '');
         return !inline && match
-            ? <SyntaxHighlighter
-                showLineNumbers={true}
-                language={match[1]}
-                PreTag="div"
-                customStyle={{
-                    display: 'block',
-                    margin: '0 auto'
-                }}
-                codeTagProps={
-                    {
-                        style: {
-                            lineHeight: 'inherit',
-                            fontSize: 'inherit'
+            ? <Card>
+                <SyntaxHighlighter
+                    showLineNumbers={true}
+                    language={match[1]}
+                    style={style}
+                    PreTag="div"
+                    customStyle={{
+                        display: 'block',
+                        margin: '0 auto'
+                    }}
+                    codeTagProps={
+                        {
+                            style: {
+                                lineHeight: 'inherit',
+                                fontSize: 'inherit'
+                            }
                         }
                     }
-                }
-                children={String(children).replace(/\n$/, '')} {...props} />
+                    children={String(children).replace(/\n$/, '')} {...props} />
+            </Card>
             : <code
                 className={classname}
                 children={children}
@@ -132,16 +167,16 @@ interface MarkdownProps {
 }
 
 const useStyles = makeStyles((theme) => createStyles({
-    ".markDown": {},
-    ".markDown ul": {
-        marginTop: "1em",
-        marginBottom: "1em",
-        listStyle: "disc outside none"
+    '.markDown': {},
+    '.markDown ul': {
+        marginTop: '1em',
+        marginBottom: '1em',
+        listStyle: 'disc outside none'
     },
-    ".markDown ul li": {
-        marginLeft: "2em",
-        display: "list-item",
-        textAlign: "-webkit-match-parent"
+    '.markDown ul li': {
+        marginLeft: '2em',
+        display: 'list-item',
+        textAlign: '-webkit-match-parent'
     },
     archiveBody: {
         [theme.breakpoints.up('md')]: {
