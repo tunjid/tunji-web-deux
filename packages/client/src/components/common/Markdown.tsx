@@ -11,6 +11,7 @@ import rehypeRaw from 'rehype-raw';
 import ReactMarkdown from 'react-markdown';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
+import { Alert } from '@material-ui/lab';
 
 export const MarkdownBody = {
     '& h1': {
@@ -134,6 +135,15 @@ export const MarkdownComponents: Components = {
                     controls={true}
                 />
                 : <a{...props}/>;
+    },
+    p: ({node, ...props}) => {
+        const text = props.children.length > 0
+            ? props.children[0].toString().toLowerCase()
+            : "";
+        if (text.indexOf('error:') === 0) return <Alert severity="error" {...props}></Alert>;
+        if (text.indexOf('warning:') === 0) return <Alert severity="warning" {...props}></Alert>;
+        if (text.indexOf('success:') === 0) return <Alert severity="success" {...props}></Alert>;
+        return <p{...props}/>;
     },
     code({node, inline, className, children, ...props}) {
         const classname = className as string;
