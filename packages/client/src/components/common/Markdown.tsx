@@ -173,7 +173,7 @@ export const MarkdownComponents: Components = {
             : <code
                 className={classname}
                 children={children}
-                style={{backgroundColor: '#F2F2F2'}}
+                style={{'font-weight': '300'}}
                 {...props}
             />;
     }
