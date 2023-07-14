@@ -18,42 +18,36 @@ export const MarkdownBody = {
         fontSize: '40px',
         letterSpacing: '0px',
         fontWeight: 'normal',
-        lineHeight: '90%'
     },
     '& h2': {
         fontFamily: '"Muli", sans-serif',
         fontSize: '32px',
         letterSpacing: '0px',
         fontWeight: 'lighter',
-        lineHeight: '90%'
     },
     '& h3': {
         fontFamily: '"Muli", sans-serif',
         fontSize: '24px',
         letterSpacing: '0px',
         fontWeight: 'lighter',
-        lineHeight: '80%'
     },
     '& h4': {
         fontFamily: '"Muli", sans-serif',
         fontSize: '22px',
         letterSpacing: '0px',
         fontWeight: 'lighter',
-        lineHeight: '80%'
     },
     '& h5': {
         fontFamily: '"Muli", sans-serif',
         fontSize: '20px',
         letterSpacing: '0px',
         fontWeight: 'lighter',
-        lineHeight: '80%'
     },
     '& h6': {
         fontFamily: '"Muli", sans-serif',
         fontSize: '20px',
         letterSpacing: '0px',
         fontWeight: 'lighter',
-        lineHeight: '80%'
     },
     '& p, & li': {
         fontFamily: '"Muli", sans-serif',
