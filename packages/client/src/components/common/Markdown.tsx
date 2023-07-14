@@ -62,7 +62,23 @@ export const MarkdownBody = {
         fontWeight: 'normal',
         lineHeight: '180%',
     },
+    '& table': {
+        'border-collapse': 'collapse',
+    },
+    '& thead': {
+        padding: '16px',
+        '&:not(:only-child)': {
+            'border': '1px solid #ddd',
+            'background': '#F0F3F4',
+        },
+    },
+    '& tr': {
+        '&:not(:only-child)': {
+            'border': '1px solid #ddd'
+        },
+    },
     '& td': {
+        padding: '16px',
         '& p, & li': {
             fontFamily: '"Muli", sans-serif',
             fontSize: '14px',
