@@ -11,6 +11,7 @@ import rehypeRaw from 'rehype-raw';
 import ReactMarkdown from 'react-markdown';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
+import { Alert } from '@material-ui/lab';
 
 export const MarkdownBody = {
     '& h1': {
@@ -18,42 +19,36 @@ export const MarkdownBody = {
         fontSize: '40px',
         letterSpacing: '0px',
         fontWeight: 'normal',
-        lineHeight: '90%'
     },
     '& h2': {
         fontFamily: '"Muli", sans-serif',
         fontSize: '32px',
         letterSpacing: '0px',
         fontWeight: 'lighter',
-        lineHeight: '90%'
     },
     '& h3': {
         fontFamily: '"Muli", sans-serif',
         fontSize: '24px',
         letterSpacing: '0px',
         fontWeight: 'lighter',
-        lineHeight: '80%'
     },
     '& h4': {
         fontFamily: '"Muli", sans-serif',
         fontSize: '22px',
         letterSpacing: '0px',
         fontWeight: 'lighter',
-        lineHeight: '80%'
     },
     '& h5': {
         fontFamily: '"Muli", sans-serif',
         fontSize: '20px',
         letterSpacing: '0px',
         fontWeight: 'lighter',
-        lineHeight: '80%'
     },
     '& h6': {
         fontFamily: '"Muli", sans-serif',
         fontSize: '20px',
         letterSpacing: '0px',
         fontWeight: 'lighter',
-        lineHeight: '80%'
     },
     '& p, & li': {
         fontFamily: '"Muli", sans-serif',
@@ -62,7 +57,23 @@ export const MarkdownBody = {
         fontWeight: 'normal',
         lineHeight: '180%',
     },
+    '& table': {
+        'border-collapse': 'collapse',
+    },
+    '& thead': {
+        padding: '16px',
+        '&:not(:only-child)': {
+            'border': '1px solid #ddd',
+            'background': '#F0F3F4',
+        },
+    },
+    '& tr': {
+        '&:not(:only-child)': {
+            'border': '1px solid #ddd'
+        },
+    },
     '& td': {
+        padding: '16px',
         '& p, & li': {
             fontFamily: '"Muli", sans-serif',
             fontSize: '14px',
@@ -124,6 +135,15 @@ export const MarkdownComponents: Components = {
                     controls={true}
                 />
                 : <a{...props}/>;
+    },
+    p: ({node, ...props}) => {
+        const text = props.children.length > 0
+            ? props.children[0].toString().toLowerCase()
+            : "";
+        if (text.indexOf('error:') === 0) return <Alert severity="error" {...props}></Alert>;
+        if (text.indexOf('warning:') === 0) return <Alert severity="warning" {...props}></Alert>;
+        if (text.indexOf('success:') === 0) return <Alert severity="success" {...props}></Alert>;
+        return <p{...props}/>;
     },
     code({node, inline, className, children, ...props}) {
         const classname = className as string;
