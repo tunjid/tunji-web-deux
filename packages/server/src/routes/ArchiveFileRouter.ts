@@ -16,7 +16,7 @@ export default function <T extends ArchiveDocument>(app: Express, model: Archive
 
 
     app.route(`/api/${routeName}`)
-        .get(userController.requiresLogin, archiveFiles.find);
+        .get(archiveFiles.find);
 
     app.route(`/api/${routeName}/:${paramName}`)
         .get(archiveFiles.sendArchiveFile)
