@@ -52,20 +52,21 @@ I love to build things, like bad puns, and enjoy football.
 # Career
 Mechanical Engineering undergrad, Manufacturing engineering in grad school, software engineering professionally.
 
-Currently on the Developer Relations Team at Google.
+Currently a software engineer at Airbnb.
 
 # Some things I've done
 
 1. Led teams and orchestrated large level refactors.
 2. Onboarded, taught and mentored junior engineers.
-3. Haggled with product managers on pushing delivery of a feature in the short term to better scale in the long term.
-4. Mordernized and rearchitected a top 10 app on the [Google Play Store](https://play.google.com/store/apps/details?id=com.gc.teammanager).
-5. Designed and built the architecture for the backend and frontend of the [Now in Android App](https://play.google.com/store/apps/details?id=com.google.samples.apps.nowinandroid).
-6. Worked with low level apis for live video streaming, and made them consumable them in a high level API.
-7. Worked across the full stack from the backend to both web and mobile frontend clients.
-8. Performed manufacturing research and a little embedded programming.
-9. Dabbled in home automation.
-10. Tried my hand at a startup.
+3. Helped define and set the direction for the next generation of Android Jetpack libraries for Android at Google.
+4. Haggled with product managers on pushing delivery of a feature in the short term to better scale in the long term.
+5. Mordernized and rearchitected a top 10 app on the [Google Play Store](https://play.google.com/store/apps/details?id=com.gc.teammanager).
+6. Designed and built the architecture for the backend and frontend of the [Now in Android App](https://play.google.com/store/apps/details?id=com.google.samples.apps.nowinandroid).
+7. Worked with low level apis for live video streaming, and made them consumable them in a high level API.
+8. Worked across the full stack from the backend to both web and mobile frontend clients.
+9. Performed manufacturing research and a little embedded programming.
+10. Dabbled in home automation.
+11. Tried my hand at a startup.
 
 This website is my latest attempt at learning the web frontend flavor du jour after the original Angular in the 2010's.
 
