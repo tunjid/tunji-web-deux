@@ -61,13 +61,14 @@ const archiveFileController = <T extends ArchiveDocument>(Model: ArchiveModel<T>
             .skip(offset)
             .limit(limit)
             .sort({'created': -1})
-            .exec(function (error, archives) {
+            .then(function (archives) {
+                res.json(archives);
+            })
+            .catch(function (error) {
                 if (error) {
                     return res.status(400).send({
                         message: getErrorMessage(error)
                     });
-                } else {
-                    res.json(archives);
                 }
             });
     },
@@ -102,19 +103,21 @@ const archiveFileController = <T extends ArchiveDocument>(Model: ArchiveModel<T>
         const FileModel = Model.fileModel();
         const lookup = FileModel.findById(id);
 
-        lookup.exec(function (error, archiveFile) {
-            if (error) return next(error);
+        lookup
+            .then(function (archiveFile) {
+                if (!archiveFile) return serverMessage(res, {
+                    errorCode: ErrorCode.ModelNotFound,
+                    statusCode: 400,
+                    model: Model.getKind(),
+                    message: 'Failed to find archive media with id ' + id,
+                });
 
-            if (!archiveFile) return serverMessage(res, {
-                errorCode: ErrorCode.ModelNotFound,
-                statusCode: 400,
-                model: Model.getKind(),
-                message: 'Failed to find archive media with id ' + id,
+                req.archiveFile = archiveFile;
+                next();
+            })
+            .catch(function (error) {
+                if (error) return next(error);
             });
-
-            req.archiveFile = archiveFile;
-            next();
-        });
     },
 });
 

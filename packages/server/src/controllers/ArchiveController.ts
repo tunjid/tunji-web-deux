@@ -89,14 +89,15 @@ const archiveController = <T extends ArchiveDocument>(Model: ArchiveModel<T>): A
                 ? lookup.populate('author', 'firstName lastName fullName imageUrl')
                 : lookup
         )
-            .exec(function (error, archives) {
+            .then(function (archives) {
+                res.json(archives);
+            })
+            .catch(function (error) {
                 if (error) {
                     console.log(error);
                     return res.status(400).send({
                         message: getErrorMessage(error)
                     });
-                } else {
-                    res.json(archives);
                 }
             });
     },
@@ -107,17 +108,18 @@ const archiveController = <T extends ArchiveDocument>(Model: ArchiveModel<T>): A
                 mimetype: {$in: ['text/javascript', 'text/css']}
             }
         )
-            .exec(function (error, files) {
+            .then(function (files) {
+                res.json(files.map(file => {
+                    const fileJson = file.toJSON();
+                    return {...fileJson, url: publicUrlToApiUrl(fileJson.url)};
+                }));
+            })
+            .catch(function (error) {
                 if (error) {
                     console.log(error);
                     return res.status(400).send({
                         message: getErrorMessage(error)
                     });
-                } else {
-                    res.json(files.map(file => {
-                        const fileJson = file.toJSON();
-                        return {...fileJson, url: publicUrlToApiUrl(fileJson.url)};
-                    }));
                 }
             });
     },
@@ -160,9 +162,7 @@ const archiveController = <T extends ArchiveDocument>(Model: ArchiveModel<T>): A
                 ? lookup.populate('author', 'firstName lastName fullName imageUrl')
                 : lookup
         )
-            .exec(function (error, archive) {
-                if (error) return next(error);
-
+            .then(function ( archive) {
                 if (!archive) return serverMessage(res, {
                     errorCode: ErrorCode.ModelNotFound,
                     statusCode: 400,
@@ -172,6 +172,9 @@ const archiveController = <T extends ArchiveDocument>(Model: ArchiveModel<T>): A
 
                 req.archive = archive;
                 next();
+            })
+            .catch(function (error) {
+                if (error) return next(error);
             });
     },
     incrementLikes: async (req, res, next) => {
