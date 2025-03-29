@@ -10,8 +10,12 @@
     "node": "22.x"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
     "@google-cloud/storage": "7.15.2",
     "@material-ui/styles": "4.11.5",
+    "@mui/icons-material": "^7.0.1",
+    "@mui/material": "^7.0.1",
     "@socket.io/mongo-adapter": "0.3.2",
     "@tunji-web/client": "1.0.0",
     "@tunji-web/common": "1.0.0",
@@ -47,6 +51,7 @@
     "express-session": "1.18.1",
     "firebase-admin": "13.2.0",
     "helmet": "8.1.0",
+    "markdown-to-jsx": "^7.7.4",
     "mongodb": "6.15.0",
     "mongoose": "8.13.1",
     "morgan": "1.10.0",
