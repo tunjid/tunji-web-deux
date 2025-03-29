@@ -1,26 +1,27 @@
-import {Location} from 'history';
-import {Component} from 'react'
-import {withRouter} from 'react-router-dom'
+import { PropsWithChildren, useEffect, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 
-interface State {
-    location: Location
+interface Props {
 }
 
-class ScrollToTop extends Component<State> {
-    componentDidUpdate(prevState: State) {
-        if (this.props.location.pathname !== prevState.location.pathname) {
+const ScrollToTop = ({children}: PropsWithChildren<Props>) => {
+    const location = useLocation();
+    const prevLocationPathNameRef = useRef<string | null>(null);
+
+    useEffect(() => {
+        const prevLocationPathName = prevLocationPathNameRef.current;
+        if (!prevLocationPathName || location.pathname !== prevLocationPathName) {
             window.scrollTo(0, 0);
-        }
-        else if (this.props.location.hash) {
-            const element = document.querySelector(this.props.location.hash);
+        } else if (location.hash) {
+            const element = document.querySelector(location.hash);
             if (element) element.scrollIntoView({behavior: 'smooth'});
         }
-    }
+        prevLocationPathNameRef.current = location.pathname;
+    });
 
-    render() {
-        return this.props.children;
-    }
-}
+    return children || null;
+};
+
 
 // @ts-ignore
-export default withRouter(ScrollToTop);
+export default ScrollToTop;

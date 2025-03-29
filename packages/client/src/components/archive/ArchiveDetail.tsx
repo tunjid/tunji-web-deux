@@ -26,6 +26,7 @@ import { createSelector } from 'reselect';
 import { DetailState } from '@tunji-web/client/src/reducers/Detail';
 import { DetailActions } from '@tunji-web/client/src/actions/Detail';
 import MenuIcon from '@material-ui/icons/Menu';
+import { useLocation } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => createStyles({
         root: {
@@ -290,7 +291,8 @@ const Body: (props: DetailProps) => JSX.Element = ({archive}) => {
 const ArchiveDetail = () => {
     const classes = useStyles();
     const dispatch = useDispatch();
-    const {isSignedIn, kind, archiveId, archive, archiveFiles} = useDeepEqualSelector(archiveSelector('detail'));
+    const location = useLocation();
+    const {isSignedIn, kind, archiveId, archive, archiveFiles} = useDeepEqualSelector(archiveSelector('detail', location.pathname));
 
     const {tocOpen} = useDeepEqualSelector(selector);
     const closeDrawer = () => dispatch(DetailActions.toggleToc());

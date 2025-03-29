@@ -5,10 +5,13 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { clientStore } from './reducers';
 import { Provider } from 'react-redux';
+import { BrowserRouter } from 'react-router-dom';
 
 ReactDOM.hydrate(
     <Provider store={clientStore.store}>
-        <App history={clientStore.history}/>
+        <BrowserRouter>
+            <App/>
+        </BrowserRouter>
     </Provider>,
     document.getElementById('root')
 );

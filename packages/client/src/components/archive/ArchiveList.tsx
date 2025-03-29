@@ -3,7 +3,6 @@ import * as React from 'react';
 import { useCallback, useEffect, useState } from 'react';
 import ArchiveCards from '../cards/ArchiveCards';
 import { useDispatch } from 'react-redux';
-import { getSearch, RouterState } from 'connected-react-router';
 import { Search } from 'history';
 import { PersistentUiActions } from '../../actions/PersistentUi';
 import { createSelector } from 'reselect';
@@ -11,14 +10,14 @@ import { StoreState } from '../../types';
 import { ArchiveKind, ArchiveLike, ArchiveSummary, describeRoute } from '@tunji-web/common';
 import { ArchiveState } from '../../reducers/Archive';
 import { theme } from '../../styles/PersistentUi';
-import { ArchiveActions, ArchivesQuery } from '../../actions/Archive';
+import { ArchiveActions, ArchivesQuery, ArchiveView } from '../../actions/Archive';
 import Typography from '@material-ui/core/Typography';
 import { CircularProgress, Divider } from '@material-ui/core';
 import _ from 'lodash';
 import { horizontalMargin, StylelessAnchor, verticalMargin } from '../../styles/Common';
 import { archivesSelector, capitalizeFirst, ShortMonthNames } from '../common/Common';
 import { Helmet } from 'react-helmet';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useSearchParams } from 'react-router-dom';
 import { useDeepEqualSelector } from '../../hooks/UseDeepEqualSelector';
 import ChipInput, { ChipType } from './ChipInput';
 import { RouterActions } from '../../actions/Router';
@@ -78,15 +77,13 @@ interface State {
     summaries: ArchiveSummary[];
 }
 
-const selector = createSelector<StoreState, Search, RouterState, ArchiveState, State>(
-    getSearch,
-    state => state.router,
+const createSelector = (pathname: String, searchParams: URLSearchParams) => createSelector<StoreState, ArchiveState, State>(
     state => state.archives,
-    (search, routerState, archiveState) => {
-        const params = new URLSearchParams(search);
+    (archiveState) => {
+        const params = new URLSearchParams(searchParams);
         const queryTags = params.getAll(ChipType.Tag);
         const queryCategories = params.getAll(ChipType.Category);
-        const kind = describeRoute(routerState.location.pathname).kind || ArchiveKind.Articles;
+        const kind = describeRoute(pathname).kind || ArchiveKind.Articles;
 
         return {
             kind,
@@ -98,12 +95,10 @@ const selector = createSelector<StoreState, Search, RouterState, ArchiveState, S
     }
 );
 
-const querySelector = createSelector<StoreState, Search, RouterState, ArchivesQuery>(
-    getSearch,
-    state => state.router,
-    (search, routerState) => {
-        const kind = describeRoute(routerState.location.pathname).kind || ArchiveKind.Articles;
-        const params = new URLSearchParams(search);
+const createQuerySelector = (pathname: String, searchParams: URLSearchParams) => createSelector<StoreState, ArchivesQuery>(
+    () => {
+        const kind = describeRoute(pathname).kind || ArchiveKind.Articles;
+        const params = new URLSearchParams(searchParams);
         params.delete('limit');
         params.append('limit', '13');
         params.append('populateAuthor', 'true');
@@ -119,6 +114,10 @@ const querySelector = createSelector<StoreState, Search, RouterState, ArchivesQu
 const ArchiveList = () => {
     const classes = useStyles();
     const dispatch = useDispatch();
+    const location = useLocation();
+    const [searchParams] = useSearchParams();
+    const selector = createSelector(location.pathname, searchParams);
+    const querySelector = createQuerySelector(location.pathname, searchParams);
     const {kind, queryTags, queryCategories, availableCategories, summaries} = useDeepEqualSelector(selector);
     const query = useDeepEqualSelector(querySelector);
     const archives = useDeepEqualSelector(archivesSelector(querySelector));
@@ -225,7 +224,7 @@ const ArchiveList = () => {
             <div className={classes.contentColumn}>
                 <div className={classes.chips}>
                     <ChipInput
-                        name='Categories: '
+                        name="Categories: "
                         type={ChipType.Category}
                         kind={kind}
                         chips={queryCategories}
@@ -236,7 +235,7 @@ const ArchiveList = () => {
                     />
                     <p>&</p>
                     <ChipInput
-                        name='Tags: '
+                        name="Tags: "
                         type={ChipType.Tag}
                         kind={kind}
                         chips={queryTags}

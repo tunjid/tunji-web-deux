@@ -14,11 +14,10 @@ import { AuthState } from '../../reducers/Auth';
 import Fab from '@material-ui/core/Fab';
 import { Helmet } from 'react-helmet';
 import { ArchiveKind } from '@tunji-web/common';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { ArchiveActions, ArchivesQuery } from '../../actions/Archive';
 import { archivesSelector } from '../common/Common';
 import { useDeepEqualSelector } from '../../hooks/UseDeepEqualSelector';
-import { getSearch } from 'connected-react-router';
 import { Search } from 'history';
 
 const useStyles = makeStyles((theme) => createStyles({
@@ -74,21 +73,20 @@ const selector = createSelector<StoreState, PersistentUiState, HomeState, AuthSt
     })
 );
 
-const querySelector = createSelector<StoreState, Search, Record<ArchiveKind, ArchivesQuery>>(
-    getSearch,
-    (search: Search) => ({
+const querySelector = (searchParams: URLSearchParams) => createSelector<StoreState, Record<ArchiveKind, ArchivesQuery>>(
+    () => ({
         [ArchiveKind.Articles]: {
-            params: populateAuthor(new URLSearchParams(search)),
+            params: populateAuthor(new URLSearchParams(searchParams)),
             key: `Home-${ArchiveKind.Articles}`,
             kind: ArchiveKind.Articles,
         },
         [ArchiveKind.Projects]: {
-            params: populateAuthor(new URLSearchParams(search)),
+            params: populateAuthor(new URLSearchParams(searchParams)),
             key: `Home-${ArchiveKind.Projects}`,
             kind: ArchiveKind.Projects,
         },
         [ArchiveKind.Talks]: {
-            params: populateAuthor(new URLSearchParams(search)),
+            params: populateAuthor(new URLSearchParams(searchParams)),
             key: `Home-${ArchiveKind.Talks}`,
             kind: ArchiveKind.Talks,
         }
@@ -118,7 +116,8 @@ const Home = () => {
         selectedTab,
         isSignedIn,
     } = useDeepEqualSelector(selector);
-    const queries = useDeepEqualSelector(querySelector);
+    const [searchParams] = useSearchParams();
+    const queries = useDeepEqualSelector(querySelector(searchParams));
     const articles = useDeepEqualSelector(archivesSelector(() => queries[ArchiveKind.Articles], 13));
     const projects = useDeepEqualSelector(archivesSelector(() => queries[ArchiveKind.Projects], 13));
     const talks = useDeepEqualSelector(archivesSelector(() => queries[ArchiveKind.Talks], 13));

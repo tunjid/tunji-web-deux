@@ -23,6 +23,8 @@ import config from '../config/config';
 import { ArchiveFileDocument } from '@tunji-web/server/src/models/ArchiveFileSchema';
 import { publicUrlToApiUrl } from '@tunji-web/server/src/controllers/UploadController';
 
+import { StaticRouter } from'react-router-dom';
+
 interface OpenGraphParams {
     title: string;
     description: string;
@@ -62,7 +64,9 @@ export default function (app: Express): void {
             const app = ReactDOMServer.renderToString(
                 sheets.collect(
                     <Provider store={connectedStore.store}>
-                        <App history={connectedStore.history}/>
+                        <StaticRouter location={req.url}>
+                            <App/>
+                        </StaticRouter>
                     </Provider>
                 )
             );
@@ -177,7 +181,10 @@ async function openGraphParams(
             };
         }
         default: {
-            const archives: { item: ArchiveLike[]; kind: ArchiveKind }[] = await promise.all(archiveModels.map(async model => {
+            const archives: {
+                item: ArchiveLike[];
+                kind: ArchiveKind
+            }[] = await promise.all(archiveModels.map(async model => {
                 const archives = await model.find()
                     .limit(13)
                     .sort({'created': -1})
@@ -207,8 +214,8 @@ async function openGraphParams(
 const extraScriptTags = (params: OpenGraphParams) =>
     (
         params.extraScripts
-        ? params.extraScripts.map(script => `<script src="${script}"></script>`)
-        : []
+            ? params.extraScripts.map(script => `<script src="${script}"></script>`)
+            : []
     ).join('\n');
 
 const extraStylesheetTags = (params: OpenGraphParams) =>

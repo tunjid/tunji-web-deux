@@ -13,8 +13,6 @@ import { StoreState } from './types';
 import { createSelector, OutputSelector } from 'reselect';
 import { UserLike } from '@tunji-web/common';
 import { AuthActions } from './actions/Auth';
-import { ConnectedRouter } from 'connected-react-router';
-import { History } from 'history';
 import { SnackbarProvider } from 'notistack';
 import SnackbarManager from './containers/SnackbarManager';
 import MainFab from './components/appBar/MainFab';
@@ -34,7 +32,6 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 }));
 
 interface Props {
-    history: History
 }
 
 interface State {
@@ -51,7 +48,7 @@ const selector: OutputSelector<StoreState, State, (a: boolean, b?: UserLike) => 
     })
 );
 
-const App = ({history}: Props) => {
+const App = ({}: Props) => {
     const classes = useStyles();
     const dispatch = useDispatch();
     const {hasAppBarSpacer, signedInUser}: State = useSelector(selector, shallowEqual);
@@ -71,17 +68,15 @@ const App = ({history}: Props) => {
         <div className={classes.root}>
             <ThemeProvider theme={theme}>
                 <SnackbarProvider maxSnack={3}>
-                    <ConnectedRouter history={history}>
-                        <CssBaseline/>
-                        <SnackbarManager/>
-                        <MainAppBar/>
-                        <AppBarIconsOverflow/>
-                        <main className={classes.content}>
-                            {appBarSpacer}
-                            <Routes/>
-                        </main>
-                        <MainFab/>
-                    </ConnectedRouter>
+                    <CssBaseline/>
+                    <SnackbarManager/>
+                    <MainAppBar/>
+                    <AppBarIconsOverflow/>
+                    <main className={classes.content}>
+                        {appBarSpacer}
+                        <Routes/>
+                    </main>
+                    <MainFab/>
                 </SnackbarProvider>
             </ThemeProvider>
         </div>

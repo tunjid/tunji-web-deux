@@ -1,21 +1,22 @@
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import * as React from 'react';
-import { theme } from "../../styles/PersistentUi";
-import { createSelector } from "reselect";
-import { StoreState } from "../../types";
-import { PersistentUiState } from "../../reducers/PersistentUi";
-import { useDispatch } from "react-redux";
-import { PersistentUiActions } from "../../actions/PersistentUi";
-import { Avatar, Tab, Tabs, withStyles } from "@material-ui/core";
-import { HomeState } from "../../reducers/Home";
-import { HomeActions } from "../../actions/Home";
-import useEventListener from "../../hooks/UseEventListener";
-import { AuthState } from "../../reducers/Auth";
+import { theme } from '../../styles/PersistentUi';
+import { createSelector } from 'reselect';
+import { StoreState } from '../../types';
+import { PersistentUiState } from '../../reducers/PersistentUi';
+import { useDispatch } from 'react-redux';
+import { PersistentUiActions } from '../../actions/PersistentUi';
+import { Avatar, Tab, Tabs, withStyles } from '@material-ui/core';
+import { HomeState } from '../../reducers/Home';
+import { HomeActions } from '../../actions/Home';
+import useEventListener from '../../hooks/UseEventListener';
+import { AuthState } from '../../reducers/Auth';
 import { ArchiveKind } from '@tunji-web/common';
-import { capitalizeFirst } from "../common/Common";
-import { useDeepEqualSelector } from "../../hooks/UseDeepEqualSelector";
-import Typography from "@material-ui/core/Typography";
-import clientConfig from '../../config'
+import { capitalizeFirst } from '../common/Common';
+import { useDeepEqualSelector } from '../../hooks/UseDeepEqualSelector';
+import Typography from '@material-ui/core/Typography';
+import clientConfig from '../../config';
+import { useLocation } from 'react-router-dom';
 
 const throttle = require('lodash/throttle');
 
@@ -45,14 +46,14 @@ const useStyles = makeStyles(() => createStyles({
             textColorSecondary: '#FFFFFF',
         },
         tab: {
-            color: "#FFFFFF"
+            color: '#FFFFFF'
         },
     }
 ));
 
 const WhiteTextTypography = withStyles({
     root: {
-        color: "#FFFFFF"
+        color: '#FFFFFF'
     }
 })(Typography);
 
@@ -69,14 +70,12 @@ const selector = createSelector<StoreState, PersistentUiState, HomeState, AuthSt
     state => state.persistentUI,
     state => state.home,
     state => state.auth,
-    state => !!state.router.location.pathname,
-    (persistentUI, home, auth, onHomePage) => ({
+    (persistentUI, home, auth) => ({
         appBarColor: persistentUI.appBarColor,
         hasAppBarShadow: persistentUI.hasAppBarShadow,
         selectedTab: home.selectedTab,
         tabs: home.tabs,
         isSignedIn: !!auth.signedInUser,
-        onHomePage,
     })
 );
 
@@ -84,16 +83,18 @@ const selector = createSelector<StoreState, PersistentUiState, HomeState, AuthSt
 const HomeHeader = () => {
     const classes = useStyles();
     const dispatch = useDispatch();
+    const location = useLocation();
     const {
         appBarColor,
         hasAppBarShadow,
         selectedTab,
-        onHomePage,
         tabs,
     } = useDeepEqualSelector(selector);
 
+    const onHomePage = !!location.pathname;
+
     const onScroll = () => {
-        const transparent = '#00000000'
+        const transparent = '#00000000';
         if (!appBarColor || !onHomePage) return;
 
         const position = (window.pageYOffset !== undefined)
@@ -109,7 +110,7 @@ const HomeHeader = () => {
             hasAppBarShadow: !currentlyAtTop,
             appBarColor: currentlyAtTop ? transparent : theme.palette.secondary.main,
         }));
-    }
+    };
 
     const scrollListener = () => throttle(onScroll, 100)();
 
@@ -145,6 +146,6 @@ const HomeHeader = () => {
             </Tabs>
         </div>
     );
-}
+};
 
 export default HomeHeader;
