@@ -21,16 +21,14 @@ export interface UserController {
 const createUserController: (limiter: RateLimiter) => UserController = (limiter) => ({
     create: (req, res, next) => {
         const user = new User(req.body);
-        user.save(error => {
-            if (error) return next(error);
-            res.json(user);
-        });
+        user.save()
+            .then(savedUser => res.json(savedUser))
+            .catch(error => next(error));
     },
     find: (req, res, next) => {
-        User.find({}, (error, users) => {
-            if (error) return next(error);
-            res.json(users);
-        });
+        User.find({})
+            .then(users => res.json(users))
+            .catch(error => next(error));
     },
     get: (req, res) => {
         res.json(req.pathUser);
@@ -47,11 +45,12 @@ const createUserController: (limiter: RateLimiter) => UserController = (limiter)
         next('Unimplemented');
     },
     byId: (req, res, next, id) => {
-        User.findOne({_id: id}, (error: any, user: UserDocument) => {
-            if (error) return next(error);
-            req.pathUser = user;
-            next();
-        });
+        User.findOne({ _id: id })
+            .then(user => {
+                req.pathUser = user;
+                next();
+            })
+            .catch(error => next(error));
     },
     requiresLogin: (req, res, next) => {
         if (!req.isAuthenticated()) {
@@ -72,28 +71,28 @@ const createUserController: (limiter: RateLimiter) => UserController = (limiter)
             user.provider = 'local';
 
             // Try saving the new user document
-            user.save(function (err) {
-                // If an error occurs, use flash messages to report the error
-                if (err) {
+            user.save()
+                .then(savedUser => {
+                    // If the user was created successfully use the Passport 'login' method to login
+                    req.login({ ...savedUser, id: savedUser._id.toString() }, err => {
+                        // If a login error occurs move to the next middleware
+                        if (err) return serverMessage(res, {
+                            statusCode: 500,
+                            message: 'Login error',
+                        });
+                        // Redirect the user back to the main application page
+                        res.json(savedUser);
+                    });
+                })
+                .catch(err => {
+                    // If an error occurs, use flash messages to report the error
                     // Use the error handling method to get the error message
                     const message = getErrorMessage(err);
                     return serverMessage(res, {
                         statusCode: 500,
                         message,
                     });
-                }
-
-                // If the user was created successfully use the Passport 'login' method to login
-                req.login({...user, id: user._id.toString()}, err => {
-                    // If a login error occurs move to the next middleware
-                    if (err) return serverMessage(res, {
-                        statusCode: 500,
-                        message: 'Login error',
-                    });
-                    // Redirect the user back to the main application page
-                    res.json(user);
                 });
-            });
         } else return serverMessage(res, {
             statusCode: 400,
             message: 'You are already signed in',
@@ -147,7 +146,7 @@ const createUserController: (limiter: RateLimiter) => UserController = (limiter)
     signOut: (req, res) => {
         // Use the Passport 'logout' method to logout
         req.logout();
-        return serverMessage(res, {statusCode: 200, message: 'Signed out'});
+        return serverMessage(res, { statusCode: 200, message: 'Signed out' });
     },
     session: (req, res) => {
         if (req.user) return res.json(req.user);

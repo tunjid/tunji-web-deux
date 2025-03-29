@@ -2,8 +2,8 @@ import { NextFunction, Request, Response } from 'express';
 import { ArchiveDocument, ArchiveModel } from '../models/Archive';
 import { ErrorCode, getErrorMessage, serverMessage } from './Common';
 import { ArchiveSummary } from '@tunji-web/common';
-import { CallbackError, HydratedDocument, mongo } from 'mongoose';
-import { publicUrlToApiUrl, publicUrlToPath } from '@tunji-web/server/src/controllers/UploadController';
+import { mongo } from 'mongoose';
+import { publicUrlToApiUrl } from '@tunji-web/server/src/controllers/UploadController';
 
 interface ArchiveController {
     create: (req: Request, res: Response, next: NextFunction) => void;
@@ -32,12 +32,9 @@ const archiveController = <T extends ArchiveDocument>(Model: ArchiveModel<T>): A
             message: 'A blog post needs an author',
         });
 
-        archive.save(error => {
-            if (error) return res.status(400).send({
-                message: getErrorMessage(error)
-            });
-            else res.json(archive);
-        });
+        archive.save()
+            .then(savedArchive => res.json(savedArchive))
+            .catch(error => res.status(400).send({message: getErrorMessage(error)}));
     },
     find: (req, res) => {
         const limit = Number(req.query.limit) || 0;
@@ -89,16 +86,10 @@ const archiveController = <T extends ArchiveDocument>(Model: ArchiveModel<T>): A
                 ? lookup.populate('author', 'firstName lastName fullName imageUrl')
                 : lookup
         )
-            .then(function (archives) {
-                res.json(archives);
-            })
-            .catch(function (error) {
-                if (error) {
-                    console.log(error);
-                    return res.status(400).send({
-                        message: getErrorMessage(error)
-                    });
-                }
+            .then(archives => res.json(archives))
+            .catch(error => {
+                console.error(error);
+                return res.status(400).send({message: getErrorMessage(error)});
             });
     },
     filesForId: (req, res) => {
@@ -108,19 +99,15 @@ const archiveController = <T extends ArchiveDocument>(Model: ArchiveModel<T>): A
                 mimetype: {$in: ['text/javascript', 'text/css']}
             }
         )
-            .then(function (files) {
+            .then(files => {
                 res.json(files.map(file => {
                     const fileJson = file.toJSON();
                     return {...fileJson, url: publicUrlToApiUrl(fileJson.url)};
                 }));
             })
-            .catch(function (error) {
-                if (error) {
-                    console.log(error);
-                    return res.status(400).send({
-                        message: getErrorMessage(error)
-                    });
-                }
+            .catch(error => {
+                console.error(error);
+                return res.status(400).send({message: getErrorMessage(error)});
             });
     },
     sendArchive: async (req, res) => {
@@ -131,10 +118,9 @@ const archiveController = <T extends ArchiveDocument>(Model: ArchiveModel<T>): A
         });
     },
     put: (req, res, next) => {
-        Model.findByIdAndUpdate(req.archive.id, req.body, (error: CallbackError, archive: HydratedDocument<T> | null) => {
-            if (error) return next(error);
-            else next();
-        });
+        Model.findByIdAndUpdate(req.archive.id, req.body)
+            .then(() => next())
+            .catch(error => next(error));
     },
     updateThumbnail: async (req, res, next) => {
         const newUrl = req.filePublicUrl;
@@ -144,16 +130,14 @@ const archiveController = <T extends ArchiveDocument>(Model: ArchiveModel<T>): A
             model: Model.getKind(),
             message: 'unable to upload file',
         });
-        Model.findByIdAndUpdate(req.archive.id, {thumbnail: newUrl}, (error: CallbackError, archive: HydratedDocument<T> | null) => {
-            if (error) return next(error);
-            else next();
-        });
+        Model.findByIdAndUpdate(req.archive.id, {thumbnail: newUrl})
+            .then(() => next())
+            .catch(error => next(error));
     },
     remove: (req, res, next) => {
-        Model.findByIdAndRemove(req.archive.id, {}, (error: any) => {
-            if (error) return next(error);
-            else next();
-        });
+        Model.findByIdAndRemove(req.archive.id)
+            .then(() => next())
+            .catch(error => next(error));
     },
     byId: (req, res, next, id) => {
         const lookup = Model.findById(id);
@@ -162,7 +146,7 @@ const archiveController = <T extends ArchiveDocument>(Model: ArchiveModel<T>): A
                 ? lookup.populate('author', 'firstName lastName fullName imageUrl')
                 : lookup
         )
-            .then(function ( archive) {
+            .then(archive => {
                 if (!archive) return serverMessage(res, {
                     errorCode: ErrorCode.ModelNotFound,
                     statusCode: 400,
@@ -173,33 +157,35 @@ const archiveController = <T extends ArchiveDocument>(Model: ArchiveModel<T>): A
                 req.archive = archive;
                 next();
             })
-            .catch(function (error) {
-                if (error) return next(error);
-            });
+            .catch(error => next(error));
     },
     incrementLikes: async (req, res, next) => {
-        Model.findById(req.archive.id, (error: CallbackError, archive: HydratedDocument<T> | null) => {
-            if (error) return next(error);
-            if (!archive) return serverMessage(res, {
-                errorCode: ErrorCode.ModelNotFound,
-                statusCode: 400,
-                model: Model.getKind.toString(),
-                message: 'Failed to find model',
-            });
+        try {
+            const archive = await Model.findById(req.archive.id);
+            if (!archive) {
+                return serverMessage(res, {
+                    errorCode: ErrorCode.ModelNotFound,
+                    statusCode: 400,
+                    model: Model.getKind.toString(),
+                    message: 'Failed to find model',
+                });
+            }
 
             const likeIncrement = parseInt(req.body.increment);
-            if (!likeIncrement) return serverMessage(res, {
-                statusCode: 400,
-                message: 'Like increment not specified',
-            });
+            if (!likeIncrement) {
+                return serverMessage(res, {
+                    statusCode: 400,
+                    message: 'Like increment not specified',
+                });
+            }
 
             archive.likes = archive.likes + likeIncrement;
-            archive.save((saveError, saved) => {
-                if (saveError) return next(saveError);
-                req.archive = saved;
-                next();
-            });
-        });
+            const saved = await archive.save();
+            req.archive = saved;
+            next();
+        } catch (error) {
+            next(error);
+        }
     },
     tagsOrCategories: (req, res) => {
         const type = req.query.type;
@@ -207,14 +193,14 @@ const archiveController = <T extends ArchiveDocument>(Model: ArchiveModel<T>): A
         if (type == 'tags' || type == 'categories') {
             const excludedFields = {} as any;
             excludedFields[type] = {$ne: null};
-            Model.distinct(type, excludedFields, function (error, result) {
-                if (error) {
+            Model.distinct(type, excludedFields)
+                .then(result => res.json(result))
+                .catch(error => {
                     return serverMessage(res, {
                         statusCode: 500,
                         message: 'Error retrieving tags / categories',
                     });
-                } else res.json(result);
-            });
+                });
         } else return serverMessage(res, {
             statusCode: 400,
             message: 'Must pick a tag or category',
@@ -228,15 +214,15 @@ const archiveController = <T extends ArchiveDocument>(Model: ArchiveModel<T>): A
                     count: {$sum: 1},
                     titles: {$push: '$title'}
                 }
-            }],
-            (error: any, result: any[]) => {
-                if (error) return serverMessage(res, {
-                    statusCode: 500,
-                    message: 'Error aggregating months',
-                });
+            }]
+        )
+            .then(result => {
                 res.json(result.map<ArchiveSummary>(({_id, ...data}) => ({...data, dateInfo: _id})));
-            }
-        );
+            })
+            .catch(error => serverMessage(res, {
+                statusCode: 500,
+                message: 'Error aggregating months',
+            }));
     },
     hasAuthorization: (req: Request, res: Response, next: NextFunction) => {
         const authorId = new mongo.ObjectId(req.archive.author?.id || req.archive.author).toString();
