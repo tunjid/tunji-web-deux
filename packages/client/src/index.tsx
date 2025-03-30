@@ -6,11 +6,21 @@ import reportWebVitals from './reportWebVitals';
 import { clientStore } from './reducers';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
+import CssBaseline from '@mui/material/CssBaseline';
+import { CacheProvider } from '@emotion/react';
+import { AppTheme, createEmotionCache } from '@tunji-web/client';
+
+const cache = createEmotionCache();
 
 ReactDOM.hydrate(
     <Provider store={clientStore.store}>
         <BrowserRouter>
-            <App/>
+            <CacheProvider value={cache}>
+                <AppTheme>
+                    <CssBaseline/>
+                    <App/>
+                </AppTheme>
+            </CacheProvider>,
         </BrowserRouter>
     </Provider>,
     document.getElementById('root')

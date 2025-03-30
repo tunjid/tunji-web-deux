@@ -8,7 +8,7 @@ import { ArchiveKind, ArchiveLike, describeRoute, OpenGraphScrapeQueryKey, Route
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 import { ServerStyleSheets } from '@material-ui/core/styles';
-import { App, ArchiveActions, serverStore, StoreState } from '@tunji-web/client';
+import { App, ArchiveActions, serverStore, StoreState, createEmotionCache, AppTheme } from '@tunji-web/client';
 
 import { Article } from '../models/ArticleSchema';
 import { Project } from '../models/ProjectSchema';
@@ -23,7 +23,12 @@ import config from '../config/config';
 import { ArchiveFileDocument } from '@tunji-web/server/src/models/ArchiveFileSchema';
 import { publicUrlToApiUrl } from '@tunji-web/server/src/controllers/UploadController';
 
-import { StaticRouter } from'react-router-dom';
+import { StaticRouter } from 'react-router-dom';
+
+import { CacheProvider } from '@emotion/react';
+import createEmotionServer from '@emotion/server/create-instance';
+import { ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
 
 interface OpenGraphParams {
     title: string;
@@ -56,19 +61,35 @@ export default function (app: Express): void {
         '*',
         async (req: Request, res: Response) => {
             let webPage = indexHtml;
+            const cache = createEmotionCache();
+            const {extractCriticalToChunks, constructStyleTagsFromChunks} =
+                createEmotionServer(cache);
+
             const sheets = new ServerStyleSheets();
             const connectedStore = serverStore(req.path);
 
             const params = await openGraphParams(connectedStore.store, describeRoute(req.path));
 
             const app = ReactDOMServer.renderToString(
-                sheets.collect(
-                    <Provider store={connectedStore.store}>
-                        <StaticRouter location={req.url}>
-                            <App/>
-                        </StaticRouter>
-                    </Provider>
-                )
+                <Provider store={connectedStore.store}>
+                    <StaticRouter location={req.url}>
+                        <CacheProvider value={cache}>
+                            <AppTheme>
+                                <CssBaseline/>
+                                <App/>
+                            </AppTheme>
+                        </CacheProvider>,
+                    </StaticRouter>
+                </Provider>
+            );
+
+            // Grab the CSS from emotion
+            const emotionChunks = extractCriticalToChunks(app);
+            const emotionCss = constructStyleTagsFromChunks(emotionChunks);
+
+            webPage = webPage.replace(
+                '<style id="emotion-css"></style>',
+                emotionCss
             );
 
             // replace the special strings with server generated strings
