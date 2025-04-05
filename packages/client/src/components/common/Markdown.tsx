@@ -12,10 +12,11 @@ import gfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 import ReactMarkdown from 'react-markdown';
 import Typography from '@mui/material/Typography';
-import { Alert } from '@mui/material';
+import { Alert as MuiAlert } from '@mui/material';
 import Card from '@mui/material/Card';
 import { useColorScheme } from '@mui/material/styles';
 import { css } from '@emotion/react';
+import Box from '@mui/material/Box';
 
 
 export const MarkdownBody = {
@@ -54,6 +55,12 @@ const StyledParagraph = (props: any) => {
     return <Typography variant="body1" color={'textSecondary'} gutterBottom {...props}>
         {props.children}
     </Typography>;
+};
+
+const Alert = (props: any) => {
+    return <Box sx={{display: 'flex', flexDirection: 'column', my: 2}}>
+        <MuiAlert  {...props}></MuiAlert>
+    </Box>;
 };
 
 const headerProps = (headerType: string) => ({
@@ -136,7 +143,7 @@ export const MarkdownComponents: Components = {
     code({node, inline, className, children, ...props}) {
         const classname = className as string;
         const match = /language-(\w+)/.exec(classname || '');
-        const { mode, systemMode } = useColorScheme();
+        const {mode, systemMode} = useColorScheme();
         const resolvedMode = (systemMode || mode) as 'light' | 'dark';
         const codeTheme = {
             light: lightCodeTheme.default,
@@ -171,16 +178,18 @@ export const MarkdownComponents: Components = {
             />;
     },
     pre: ({node, ...props}) => {
-        return <Card
-            sx={{
-                width: '100%',
-                padding: 0,
-            }}>
+        return <Box sx={{display: 'flex', flexDirection: 'column', my: 2}}>
+            <Card
+                sx={{
+                    width: '100%',
+                    padding: 0,
+                }}>
             <pre
                 style={{'margin': 0}}
                 {...props}
             />
-        </Card>;
+            </Card>
+        </Box>;
     }
 };
 

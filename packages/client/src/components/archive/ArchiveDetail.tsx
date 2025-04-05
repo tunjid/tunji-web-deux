@@ -260,7 +260,9 @@ const ArchiveDetail = () => {
                         <meta name="description" content={archive?.description}/>
                     </Helmet>
                     <Header archive={archive}/>
-                    <BlogMarkdown body={archive?.body}/>
+                    <Box sx={{display: 'flex', flexDirection: 'column', gap: 1}}>
+                        <BlogMarkdown body={archive?.body}/>
+                    </Box>
                     <ChipInput
                         name="Tags: "
                         type={ChipType.Tag}
