@@ -5,7 +5,7 @@ import { archiveDate, archiveSelector, readTime } from '../common/Common';
 import { ArchiveActions } from '@tunji-web/client';
 import ChipInput, { ChipType } from './ChipInput';
 import { Helmet } from 'react-helmet';
-import BlogMarkdown from '../common/Markdown';
+import BlogMarkdown, { MarkdownBody } from '../common/Markdown';
 import { useDeepEqualSelector } from '../../hooks/UseDeepEqualSelector';
 import { ArchiveFile } from '@tunji-web/common';
 import ReactPlayer from 'react-player';
@@ -21,6 +21,7 @@ import CardMedia from '@mui/material/CardMedia';
 import { TableOfContents } from '@tunji-web/client/src/components/common/TableOfContents';
 import AppAppBar from '@tunji-web/client/src/blog/components/AppAppBar';
 import LikeButton from '@tunji-web/client/src/components/like-button/LikeButton';
+import { css } from '@emotion/react';
 
 const fileToStyleSheet: (file: ArchiveFile) => HTMLLinkElement = file => {
     const sheet = document.createElement('link');
@@ -118,32 +119,37 @@ const Header: (props: DetailProps) => JSX.Element = ({archive}) => {
     };
 
     const heroContent = (archive?: PopulatedArchive) => {
-        return archive?.videoUrl
-            ? <div>
+        const element = archive?.videoUrl
+            ? <div style={{
+                width: '100%',
+                aspectRatio: '16 / 9',
+            }}>
                 {ssrVideoUrl()}
                 <ReactPlayer
                     url={archive?.videoUrl}
                     width={'100%'}
+                    height={'100%'}
                     controls={true}
                     onReady={onPlayerReady}
                 />
             </div>
-            : <Card
+            : <CardMedia
                 sx={{
                     width: '100%',
                     aspectRatio: '16 / 9',
-                    padding: 0,
                 }}
-            >
-                <CardMedia
-                    sx={{
-                        width: '100%',
-                        aspectRatio: '16 / 9',
-                    }}
-                    image={archive?.thumbnail}
-                    title={archive?.title}
-                />
-            </Card>;
+                image={archive?.thumbnail}
+                title={archive?.title}
+            />;
+        return <Card
+            sx={{
+                width: '100%',
+                aspectRatio: '16 / 9',
+                padding: 0,
+            }}
+        >
+            {element}
+        </Card>;
     };
 
     return <Box
