@@ -69,7 +69,11 @@ const headerProps = (headerType: string) => ({
 });
 
 export const MarkdownComponents: Components = {
-    table: ({node, ...props}) => <table{...props} style={{width: '100%'}}/>,
+    table: ({node, ...props}) => {
+        return <Box sx={{display: 'flex', flexDirection: 'column', my: 2}}>
+            <table{...props} style={{width: '100%'}}/>
+        </Box>;
+    },
     img: ({node, ...props}) => <img{...props} style={
         {
             maxWidth: '100%',
