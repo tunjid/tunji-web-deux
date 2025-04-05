@@ -138,7 +138,9 @@ export const MarkdownComponents: Components = {
         return <StyledParagraph {...props}/>;
     },
     li: ({node, ...props}) => {
-        return <StyledParagraph {...props}/>;
+        return <Box component="li" sx={{mt: 1}}>
+            <StyledParagraph {...props}/>
+        </Box>;
     },
     code({node, inline, className, children, ...props}) {
         const classname = className as string;
