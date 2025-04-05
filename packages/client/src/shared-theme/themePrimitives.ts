@@ -277,8 +277,8 @@ export const colorSchemes = {
         paper: 'hsl(220, 35%, 97%)',
       },
       text: {
-        primary: gray[800],
-        secondary: gray[600],
+        primary: gray[900],
+        secondary: gray[800],
         warning: orange[400],
       },
       action: {
@@ -328,7 +328,7 @@ export const colorSchemes = {
       },
       text: {
         primary: 'hsl(0, 0%, 100%)',
-        secondary: gray[400],
+        secondary: gray[300],
       },
       action: {
         hover: alpha(gray[600], 0.2),
@@ -377,13 +377,8 @@ export const typography = {
     fontSize: defaultTheme.typography.pxToRem(14),
     fontWeight: 500,
   },
-  body1: {
-    fontSize: defaultTheme.typography.pxToRem(14),
-  },
-  body2: {
-    fontSize: defaultTheme.typography.pxToRem(14),
-    fontWeight: 400,
-  },
+  body1: defaultTheme.typography.body1,
+  body2: defaultTheme.typography.body2,
   caption: {
     fontSize: defaultTheme.typography.pxToRem(12),
     fontWeight: 400,

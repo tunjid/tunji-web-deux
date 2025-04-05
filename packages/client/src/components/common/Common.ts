@@ -24,9 +24,11 @@ export interface ArchiveResourceProps {
     archiveFiles?: ArchiveFile[];
 }
 
-export const archiveSelector = (archiveViewType: ArchiveView, pathname: String) => createSelector<StoreState, UserLike | undefined, string, ArchiveState, ArchiveResourceProps>(
-    state => state.auth.signedInUser,
-    state => state.archives,
+export const archiveSelector = (archiveViewType: ArchiveView, pathname: String) => createSelector<StoreState, ArchiveResourceProps, [UserLike | undefined, ArchiveState]>(
+    [
+        state => state.auth.signedInUser,
+        state => state.archives,
+    ],
     (signedInUser, archiveState) => {
         const lookup = describeRoute(pathname);
         const kind = lookup?.kind || ArchiveKind.Articles;

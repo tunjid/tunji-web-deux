@@ -1,85 +1,44 @@
-import { createStyles, makeStyles } from '@material-ui/core/styles';
 import * as React from 'react';
-import ArchiveCard from '../cards/ArchiveCard';
-import { GridList, GridListTile, Hidden } from '@material-ui/core';
+import Grid from '@mui/material/Grid';
 import { ArchiveKind, ArchiveLike } from '@tunji-web/common';
-import { ArchiveCardInfo, CardStyle } from './ArchiveCardInfo';
 import { archiveDate, readTime } from '../common/Common';
-
-const useStyles = makeStyles(() => createStyles({
-        root: {
-            display: 'flex',
-            justifyContent: 'space-around',
-        },
-    }
-));
+import ArchiveCard from '@tunji-web/client/src/components/cards/ArchiveCard';
+import { ArchiveCardInfo } from '@tunji-web/client/src/components/cards/ArchiveCardInfo';
 
 interface Props {
     kind: ArchiveKind,
-    archives: ArchiveLike[];
+    archives: ArchiveLike[],
 }
 
-const ArchiveCards = ({kind, archives}: Props) => {
-    const classes = useStyles();
-
-    const spanCount = (index: number, screenSize: string) => {
-        if (screenSize === 'sm') return 6;
-        else if (screenSize === 'md') return index % 3 === 0 ? 6 : 3;
-        else return index % 4 === 0 ? 6 : 2;
+const ArchiveCards = ({archives}: Props) => {
+    const cardFromArchive: (archive: ArchiveLike, index: number) => ArchiveCardInfo = (archive, index) => {
+        const position = index + 1;
+        const modulo5 = position % 5;
+        const should = (modulo5 === 1 || modulo5 === 2) && index < 5;
+        return ({
+            id: archive.key,
+            link: archive.link,
+            kind: archive.kind,
+            title: archive.title,
+            description: archive.description,
+            author: archive.author,
+            showThumbnail: true,
+            breakPoints: {xs: 12, md: should ? 6 : 4},
+            thumbnail: archive.thumbnail || '',
+            date: archiveDate(archive.created),
+            categories: archive.categories,
+            readTime: readTime(archive.body),
+        });
     };
 
-    const style = (index: number, screenSize: string) => {
-        if (screenSize === 'sm') return CardStyle.vertical;
-        else if (screenSize === 'md') return index % 3 === 0 ? CardStyle.horizontal : CardStyle.vertical;
-        else return index % 4 === 0 ? CardStyle.horizontal : CardStyle.vertical;
-    };
-
-    const cardFromArchive: (archive: ArchiveLike, index: number, screenSize: string) => ArchiveCardInfo = (archive, index, screenSize) => ({
-        id: archive.key,
-        link: archive.link,
-        kind: archive.kind,
-        title: archive.title,
-        description: archive.description,
-        author: archive.author,
-        spanCount: spanCount(index, screenSize),
-        thumbnail: archive.thumbnail || '',
-        date: archiveDate(archive.created),
-        style: style(index, screenSize),
-        categories: archive.categories,
-        readTime: readTime(archive.body),
-    });
-
-    const result = (size: string) => {
-        const cards = archives.map((archive, index) => cardFromArchive(archive, index, size));
-        return (
-            <div className={classes.root}>
-                <GridList
-                    cellHeight={'auto'}
-                    spacing={16}
-                    cols={6}
-                >
-                    {cards.map((card) => (
-                        <GridListTile key={card.id} cols={card.spanCount || 2}>
-                            <ArchiveCard kind={kind} cardInfo={card}/>
-                        </GridListTile>
-                    ))}
-                </GridList>
-            </div>
-        );
-    };
+    const cards = archives.map(cardFromArchive);
 
     return (
-        <div>
-            <Hidden only={['md', 'lg', 'xl']} implementation="css">
-                {result('sm')}
-            </Hidden>
-            <Hidden only={['xs', 'sm', 'lg', 'xl']} implementation="css">
-                {result('md')}
-            </Hidden>
-            <Hidden only={['xs', 'sm', 'md']} implementation="css">
-                {result('lg')}
-            </Hidden>
-        </div>
+        <Grid container spacing={4} columns={12} sx={{my: 4}}>
+            {cards.map((cardInfo, index) => (
+                <ArchiveCard key={cardInfo.id} cardInfo={cardInfo}/>
+            ))}
+        </Grid>
     );
 };
 

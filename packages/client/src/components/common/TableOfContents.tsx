@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { createStyles, makeStyles } from '@material-ui/core/styles';
-import { horizontalPadding } from '@tunji-web/client/src/styles/Common';
 import { slugify } from '@tunji-web/common';
+import { styled } from '@mui/material/styles';
+import { Link as MaterialLink, List, ListItem } from '@mui/material';
+import Typography from '@mui/material/Typography';
 
 const linkBar = {
     content: '\'\'',
@@ -13,46 +14,43 @@ const linkBar = {
     height: '0px',
     zIndex: -1,
     transition: 'all .3s ease-in-out'
-}
+};
 
-const useStyles = makeStyles((theme) => createStyles({
-        tableOfContentsNav: {
-            'border-left': '1px solid #000',
-            ...horizontalPadding(theme.spacing(2)),
-        },
-        list: {
-            'padding-left': '12px',
-            'list-style-type': 'none',
-        },
-        listItem: {
-            [theme.breakpoints.up('md')]: {
-                padding: '3px 0',
-            },
-            padding: '6px 0',
-        },
-        tableOfContentsActiveLink: {
-            'color': 'inherit',
-            'text-decoration': 'none',
-            position: 'relative',
-            '&::before': {
-                ...linkBar,
-                height: '100%',
-            },
-        },
-        tableOfContentsLink: {
-            'color': 'inherit',
-            'text-decoration': 'none',
-            position: 'relative',
-            '&::before': {
-                ...linkBar
-            },
-            '&:hover::before': {
-                bottom: '0',
-                height: '100%'
-            },
-        },
-    }
-));
+const StyledList = styled(List)(({theme}) => ({
+    'padding-left': '12px',
+    'list-style-type': 'none',
+    'oveflow': 'auto',
+}));
+
+const StyledListItem = styled(ListItem)(({theme}) => ({
+    // [theme.breakpoints.up('md')]: {
+    //     padding: '3px 0',
+    // },
+    padding: '6px 0',
+}));
+
+const StyledActiveLink = styled(MaterialLink)(({theme}) => ({
+    'color': 'inherit',
+    'text-decoration': 'none',
+    position: 'relative',
+    '&::before': {
+        ...linkBar,
+        height: '100%',
+    },
+}));
+
+const StyledInactiveLink = styled(MaterialLink)(({theme}) => ({
+    'color': 'inherit',
+    'text-decoration': 'none',
+    position: 'relative',
+    '&::before': {
+        ...linkBar
+    },
+    '&:hover::before': {
+        bottom: '0',
+        height: '100%'
+    },
+}));
 
 interface Heading {
     id: string;
@@ -64,43 +62,58 @@ interface HeadingProps {
     headings: Heading[];
     activeId?: string;
 }
+const StyledLink: (props: HeadingProps) => JSX.Element = ({isActive, ...props}: any) => {
+    return isActive ? <StyledActiveLink {...props} /> : <StyledInactiveLink {...props} />;
+};
 
 /**
  * This renders an item in the table of contents list.
  * scrollIntoView is used to ensure that when a user clicks on an item, it will smoothly scroll.
  */
 const Headings: (props: HeadingProps) => JSX.Element = ({headings, activeId}) => {
-    const classes = useStyles();
     return (
-        <ul className={classes.list}>
+        <StyledList>
             {headings.map((heading) => (
                 <li
                     key={heading.id}
-                    className={classes.listItem}
                 >
-                    <a className={heading.id === activeId ? classes.tableOfContentsActiveLink : classes.tableOfContentsLink}
-                       href={`#${heading.id}`}
-                       onClick={(e) => {
-                           e.preventDefault();
-                           const yOffset = -80;
-                           const element = document.getElementById(`${heading.id}`);
-                           const y = (element?.getBoundingClientRect().top || 0) + window.scrollY + yOffset;
+                    <StyledLink isActive={heading.id === activeId}
+                        href={`#${heading.id}`}
+                        onClick={(e) => {
+                            e.preventDefault();
+                            const yOffset = -80;
+                            const element = document.getElementById(`${heading.id}`);
+                            const y = (element?.getBoundingClientRect().top || 0) + window.scrollY + yOffset;
 
-                           window.scrollTo({top: y, behavior: 'smooth'});
-                       }}
+                            window.scrollTo({top: y, behavior: 'smooth'});
+                        }}
                     >
-                        {heading.title}
-                    </a>
+                        <Typography variant={'caption'}>
+                            {heading.title}
+                        </Typography>
+                    </StyledLink>
                     {heading.items.length > 0 && <Headings headings={heading.items} activeId={activeId}/>}
                 </li>
             ))}
-        </ul>
+        </StyledList>
     );
 };
 
 function flattenHeading(heading: Heading): Heading[] {
-    return heading.items.length === 0 ? [heading] : heading.items.map(flattenHeading).flat();
-};
+    const flattened: Heading[] = [];
+
+    function traverse(items: Heading[]) {
+        for (const item of items) {
+            flattened.push(item);
+            if (item.items && item.items.length > 0) {
+                traverse(item.items);
+            }
+        }
+    }
+
+    traverse([heading]);
+    return flattened;
+}
 
 const useIntersectionObserver = (headings: Heading[], setActiveId: (a: string) => void) => {
     const headingElementsRef = useRef<Record<string, IntersectionObserverEntry>>({});
@@ -212,17 +225,13 @@ const extractHeadings = (markdown: string) => {
  * Renders the table of contents.
  */
 export const TableOfContents: (props: TOCProps) => JSX.Element = ({markdown}) => {
-    const classes = useStyles();
 
     const [activeId, setActiveId] = useState<string>();
     const headings = extractHeadings(markdown);
     useIntersectionObserver(headings, setActiveId);
 
     return (
-        <nav className={classes.tableOfContentsNav} aria-label="On this page">
-            {headings.length > 0 && (
-                <h2>On this page</h2>
-            )}
+        <nav>
             <Headings headings={headings} activeId={activeId}/>
         </nav>
     );
