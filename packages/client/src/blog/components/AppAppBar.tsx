@@ -6,8 +6,6 @@ import Toolbar from '@mui/material/Toolbar';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import Container from '@mui/material/Container';
-import Divider from '@mui/material/Divider';
-import MenuItem from '@mui/material/MenuItem';
 import Drawer from '@mui/material/Drawer';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
@@ -28,6 +26,10 @@ const StyledToolbar = styled(Toolbar)(({theme}) => ({
         : alpha(theme.palette.background.default, 0.4),
     boxShadow: (theme.vars || theme).shadows[1],
     padding: '8px 12px',
+}));
+
+const StyledMenuButton = styled(Button)(() => ({
+    border: '1px solid #00000000',
 }));
 
 interface AppBarLink {
@@ -63,6 +65,13 @@ export default function AppAppBar(
             <Container maxWidth="md">
                 <StyledToolbar variant="dense" disableGutters>
                     <Box sx={{flexGrow: 1, display: 'flex', alignItems: 'center', px: 0}}>
+                        <IconButton
+                            sx={{display: {xs: 'flex', md: 'none', lg: 'none', xl: 'none'}}}
+                            aria-label="Menu button"
+                            onClick={toggleDrawer(true)}
+                        >
+                            <MenuIcon/>
+                        </IconButton>
                         <Box sx={{display: {xs: 'none', md: 'flex'}}}>
                             {
                                 links.map((link) => (
@@ -87,9 +96,7 @@ export default function AppAppBar(
                     </Box>
                     <Box sx={{display: {xs: 'flex', md: 'none'}, gap: 1}}>
                         <ColorModeIconDropdown size="medium"/>
-                        <IconButton aria-label="Menu button" onClick={toggleDrawer(true)}>
-                            <MenuIcon/>
-                        </IconButton>
+                        {children}
                         <Drawer
                             anchor="top"
                             open={open}
@@ -100,7 +107,12 @@ export default function AppAppBar(
                                 },
                             }}
                         >
-                            <Box sx={{p: 2, backgroundColor: 'background.default'}}>
+                            <Box sx={{
+                                p: 2,
+                                backgroundColor: 'background.default',
+                                display: 'flex',
+                                flexDirection: 'column'
+                            }}>
                                 <Box
                                     sx={{
                                         display: 'flex',
@@ -113,12 +125,17 @@ export default function AppAppBar(
                                 </Box>
                                 {
                                     links.map((link) => (
-                                        <Link key={link.link} to={link.link}>
-                                            <MenuItem>{link.title}</MenuItem>
+                                        <Link key={link.link} to={link.link} style={{
+                                            textDecoration: 'none',
+                                            color: 'inherit',
+                                            textAlign: 'center',
+                                        }}>
+                                            <StyledMenuButton>
+                                                {link.title}
+                                            </StyledMenuButton>
                                         </Link>
                                     ))
                                 }
-                                <Divider sx={{my: 3}}/>
                             </Box>
                         </Drawer>
                     </Box>

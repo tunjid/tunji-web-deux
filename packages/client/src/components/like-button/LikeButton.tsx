@@ -24,9 +24,20 @@ const LikeButton = ({initialCount, onClose}: Props) => {
     return (
         <Badge badgeContent={count} color="primary">
             <Button
+                sx={{display: {xs: 'none', md: 'flex', lg: 'flex', xl: 'flex'}}}
                 variant="outlined"
                 disableRipple
                 size="small"
+                onClick={handleIncrementCount}
+                onMouseLeave={handleDismiss}
+                endIcon={<FavoriteIcon/>}
+            >
+                {initialCount}
+            </Button>
+            <Button
+                sx={{display: {xs: 'flex', md: 'none', lg: 'none', xl: 'none'}}}
+                variant="outlined"
+                disableRipple
                 onClick={handleIncrementCount}
                 onMouseLeave={handleDismiss}
                 endIcon={<FavoriteIcon/>}
