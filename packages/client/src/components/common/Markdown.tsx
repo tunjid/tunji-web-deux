@@ -75,8 +75,8 @@ const StyledInlineCode = styled('code')(({theme}) => ({
     fontWeight: '100',
     paddingLeft: 4,
     paddingRight: 4,
-    paddingTop: 2,
-    paddingBottom: 2,
+    paddingTop: 1,
+    paddingBottom: 1,
     borderColor: theme.palette.divider,
     borderRadius: theme.shape.borderRadius,
     border: `1px solid ${theme.palette.divider}`
