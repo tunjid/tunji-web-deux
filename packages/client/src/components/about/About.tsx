@@ -9,8 +9,10 @@ import AppAppBar from '@tunji-web/client/src/blog/components/AppAppBar';
 import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
-import { SvgIcon } from '@mui/material';
+import { SvgIcon, Table } from '@mui/material';
 import rehypeRaw from 'rehype-raw';
+import IconButton from '@mui/material/IconButton';
+import { styled } from '@mui/material/styles';
 
 const body = `
 
@@ -62,6 +64,10 @@ const BlueskyIcon = (props) => (
     </SvgIcon>
 );
 
+const StyledIconButton = styled(IconButton)(() => ({
+    border: '1px solid #00000000',
+}));
+
 const About = () => {
     return (
         <div>
@@ -91,25 +97,31 @@ const About = () => {
                     }}
                 >
                     <a
-                        href="mailto:tjdah100@gmail.com"
-                        target="_blank"
-                        rel="noreferrer"
-                    >
-                        <EmailIcon/>
-                    </a>
-                    <a
                         href="https://bsky.app/profile/tunji.dev"
                         target="_blank"
                         rel="noreferrer"
                     >
-                        <BlueskyIcon/>
+                        <StyledIconButton aria-label="github">
+                            <BlueskyIcon/>
+                        </StyledIconButton>
+                    </a>
+                    <a
+                        href="mailto:tjdah100@gmail.com"
+                        target="_blank"
+                        rel="noreferrer"
+                    >
+                        <StyledIconButton aria-label="github">
+                            <EmailIcon/>
+                        </StyledIconButton>
                     </a>
                     <a
                         href="https://github.com/tunjid"
                         target="_blank"
                         rel="noreferrer"
                     >
-                        <GitHubIcon/>
+                        <StyledIconButton aria-label="github">
+                            <GitHubIcon/>
+                        </StyledIconButton>
                     </a>
                 </Box>
                 <ReactMarkdown
