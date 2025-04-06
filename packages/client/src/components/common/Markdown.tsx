@@ -16,6 +16,7 @@ import { Alert as MuiAlert, Table, TableBody, TableCell, TableHead, TableRow } f
 import Card from '@mui/material/Card';
 import { styled, useColorScheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
+import MuiLink, { LinkProps as MuiLinkProps } from '@mui/material/Link';
 import { useTheme } from '@material-ui/core';
 
 
@@ -177,7 +178,12 @@ export const MarkdownComponents: Components = {
                     width={'100%'}
                     controls={true}
                 />
-                : <a{...props}/>;
+                : <MuiLink
+                    color={'textSecondary'}
+                    sx={{
+                        fontWeight: 'normal'
+                    }}
+                    {...props}/>;
     },
     p: ({node, ...props}) => {
         const text = props.children.length > 0
