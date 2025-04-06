@@ -89,7 +89,7 @@ const HomeHeader = () => {
                     }}
                 >
                     <Tabs value={tabs.indexOf(selectedTab)} onChange={onTabChanged} >
-                        {tabs.map((kind) => <Tab label={capitalizeFirst(kind)}/>)}
+                        {tabs.map((kind) => <Tab key={kind} label={capitalizeFirst(kind)}/>)}
                     </Tabs>
                 </Box>
                 <Box
