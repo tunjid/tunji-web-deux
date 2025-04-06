@@ -160,9 +160,9 @@ export const MarkdownComponents: Components = {
                     {...props}/>;
     },
     p: ({node, ...props}) => {
-        const text = props.children.length > 0
+        const text = Array.isArray(props.children)
             ? props.children[0].toString().toLowerCase()
-            : '';
+            : props.children.toString().toLowerCase();
         if (text.indexOf('note:') === 0) return <Alert severity="info" {...props}></Alert>;
         if (text.indexOf('error:') === 0) return <Alert severity="error" {...props}></Alert>;
         if (text.indexOf('warning:') === 0) return <Alert severity="warning" {...props}></Alert>;
