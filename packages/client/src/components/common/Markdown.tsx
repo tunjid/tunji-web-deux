@@ -14,7 +14,7 @@ import ReactMarkdown from 'react-markdown';
 import Typography from '@mui/material/Typography';
 import { Alert as MuiAlert, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
 import Card from '@mui/material/Card';
-import { useColorScheme } from '@mui/material/styles';
+import { styled, useColorScheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import { useTheme } from '@material-ui/core';
 
@@ -95,6 +95,17 @@ const Alert = (props: any) => {
         <MuiAlert  {...props}></MuiAlert>
     </Box>;
 };
+
+const StyledInlineCode = styled('code')(({theme}) => ({
+    fontWeight: '100',
+    paddingLeft: 4,
+    paddingRight: 4,
+    paddingTop: 2,
+    paddingBottom: 2,
+    borderColor: theme.palette.divider,
+    borderRadius: theme.shape.borderRadius,
+    border: `1px solid ${theme.palette.divider}`
+}));
 
 const headerProps = (headerType: string) => ({
     gutterBottom: true,
@@ -214,10 +225,8 @@ export const MarkdownComponents: Components = {
                     }
                 }
                 children={String(children).replace(/\n$/, '')} {...props} />
-            : <code
-                className={classname}
+            : <StyledInlineCode
                 children={children}
-                style={{'font-weight': '300'}}
                 {...props}
             />;
     },
