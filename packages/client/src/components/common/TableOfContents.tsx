@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { slugify } from '@tunji-web/common';
 import { styled } from '@mui/material/styles';
-import { Link as MaterialLink, List, ListItem } from '@mui/material';
+import { Link as MuiLink, List, ListItem } from '@mui/material';
 import Typography from '@mui/material/Typography';
 
 const linkBar = {
@@ -29,8 +29,8 @@ const StyledListItem = styled(ListItem)(({theme}) => ({
     padding: '6px 0',
 }));
 
-const StyledActiveLink = styled(MaterialLink)(({theme}) => ({
-    'color': 'inherit',
+const StyledActiveLink = styled(MuiLink)(({theme}) => ({
+    'color': theme.palette.primary.main,
     'text-decoration': 'none',
     position: 'relative',
     '&::before': {
@@ -39,7 +39,7 @@ const StyledActiveLink = styled(MaterialLink)(({theme}) => ({
     },
 }));
 
-const StyledInactiveLink = styled(MaterialLink)(({theme}) => ({
+const StyledInactiveLink = styled(MuiLink)(({theme}) => ({
     'color': 'inherit',
     'text-decoration': 'none',
     position: 'relative',
@@ -47,6 +47,7 @@ const StyledInactiveLink = styled(MaterialLink)(({theme}) => ({
         ...linkBar
     },
     '&:hover::before': {
+        ...linkBar,
         bottom: '0',
         height: '100%'
     },
