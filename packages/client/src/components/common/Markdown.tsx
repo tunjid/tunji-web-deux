@@ -12,39 +12,72 @@ import gfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 import ReactMarkdown from 'react-markdown';
 import Typography from '@mui/material/Typography';
-import { Alert as MuiAlert } from '@mui/material';
+import { Alert as MuiAlert, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
 import Card from '@mui/material/Card';
 import { useColorScheme } from '@mui/material/styles';
-import { css } from '@emotion/react';
 import Box from '@mui/material/Box';
+import { useTheme } from '@material-ui/core';
 
 
-export const MarkdownBody = {
-    '& table': {
-        'border-collapse': 'collapse',
-    },
-    '& thead': {
-        padding: '16px',
-        '&:not(:only-child)': {
-            'border': '1px solid #ddd',
-            'background': '#F0F3F4',
-        },
-    },
-    '& tr': {
-        '&:not(:only-child)': {
-            'border': '1px solid #ddd'
-        },
-    },
-    '& td': {
-        padding: '16px',
-        '& p, & li': {
-            fontFamily: '"Muli", sans-serif',
-            fontSize: '14px',
-            letterSpacing: '0px',
-            fontWeight: 'normal',
-            lineHeight: '140%',
-        }
-    },
+const StyledTable = (props: any) => {
+    return <Table
+        sx={{
+            width: '100%',
+            'border-collapse': 'collapse',
+        }}
+        {...props}
+    />;
+};
+
+const StyledTableHead = (props: any) => {
+    const theme = useTheme();
+    const dividerColor = theme.palette.divider;
+    return <TableHead
+        sx={{
+            padding: '16px',
+            '&:not(:only-child)': {
+                'border': `1px solid ${dividerColor}`,
+                'background': dividerColor,
+            },
+        }}
+        {...props}
+    />;
+};
+
+const StyledTableBody = (props: any) => {
+    const theme = useTheme();
+    const dividerColor = theme.palette.divider;
+    return <TableBody
+        sx={{
+            padding: '16px',
+            '&:not(:only-child)': {
+                'border': `1px solid ${dividerColor}`,
+            },
+        }}
+        {...props}
+    />;
+};
+
+const StyledTableRow = (props: any) => {
+    const theme = useTheme();
+    const dividerColor = theme.palette.divider;
+    return <TableRow
+        sx={{
+            '&:not(:only-child) td, &:not(:only-child) th': {
+                'border': `1px solid ${dividerColor}`,
+            },
+        }}
+        {...props}
+    />;
+};
+
+const StyledTableCell = (props: any) => {
+    return <TableCell
+        sx={{
+            padding: '16px',
+        }}
+        {...props}
+    />;
 };
 
 const SlugifiedTypography = (props: any) => {
@@ -71,9 +104,14 @@ const headerProps = (headerType: string) => ({
 export const MarkdownComponents: Components = {
     table: ({node, ...props}) => {
         return <Box sx={{display: 'flex', flexDirection: 'column', my: 2}}>
-            <table{...props} style={{width: '100%'}}/>
+            <StyledTable{...props} />
         </Box>;
     },
+    thead: StyledTableHead,
+    tbody: StyledTableBody,
+    tr: StyledTableRow,
+    th: StyledTableCell,
+    td: StyledTableCell,
     img: ({node, ...props}) => <img{...props} style={
         {
             maxWidth: '100%',
@@ -211,7 +249,6 @@ const BlogMarkdown: (props: MarkdownProps) => JSX.Element = ({body}) => {
 
     return (
         <ReactMarkdown
-            css={css`${MarkdownBody}`}
             remarkPlugins={[gfm]}
             rehypePlugins={[rehypeRaw]}
             children={body || ''}
