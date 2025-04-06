@@ -77,8 +77,9 @@ const StyledTableCell = (props: any) => {
         sx={{
             padding: '16px',
         }}
-        {...props}
-    />;
+    >
+        <StyledParagraph {...props}/>
+    </TableCell>;
 };
 
 const SlugifiedTypography = (props: any) => {
