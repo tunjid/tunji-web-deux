@@ -13,7 +13,7 @@ import CardContent from '@mui/material/CardContent';
 import ChipInput, { ChipType } from '@tunji-web/client/src/components/archive/ChipInput';
 import { Link } from 'react-router-dom';
 
-const SyledCard = styled(Card)(({theme}) => ({
+const StyledCard = styled(Card)(({theme}) => ({
     display: 'flex',
     flexDirection: 'column',
     padding: 0,
@@ -30,7 +30,7 @@ const SyledCard = styled(Card)(({theme}) => ({
     },
 }));
 
-const SyledCardContent = styled(CardContent)({
+const StyledCardContent = styled(CardContent)({
     display: 'flex',
     flexDirection: 'column',
     gap: 4,
@@ -86,6 +86,11 @@ const TitleTypography = styled(Typography)(({theme}) => ({
     },
 }));
 
+const StyledCategories = styled(ChipInput)({
+    display: 'flex',
+    flex: '1 1 auto',
+});
+
 function Author(
     {author, published}: { author: UserLike, published?: string }
 ) {
@@ -116,6 +121,7 @@ function Author(
         </Box>
     );
 }
+
 interface State {
     cardInfo: ArchiveCardInfo;
 }
@@ -133,87 +139,105 @@ export default function ArchiveCard({cardInfo}: State) {
         setFocused(false);
     };
 
-    const chips = <ChipInput
-        name={''}
-        chips={cardInfo.categories}
-        type={ChipType.Category}
-        kind={cardInfo.kind}
-    />
+    const categoriesAndReadTime = <Box
+        sx={{
+            display: 'flex',
+            flexDirection: 'row',
+            gap: 1,
+            justifyContent: 'space-between',
+            alignItems: 'center'
+        }}
+    >
+        <StyledCategories
+            name={''}
+            chips={cardInfo.categories}
+            type={ChipType.Category}
+            kind={cardInfo.kind}
+        />
+        <Typography
+            variant="caption"
+            sx={{
+                flex: '0 0 auto',
+            }}
+        >
+            {cardInfo.readTime}
+        </Typography>
+    </Box>;
 
     return (
         <Grid key={cardInfo.id} size={cardInfo.breakPoints}>
             <Link
                 to={`/${cardInfo.kind}/${cardInfo.link}`}
-                style={{ textDecoration: 'none' }}
+                style={{textDecoration: 'none'}}
             >
-            {
-                cardInfo.showThumbnail
-                    ? <SyledCard
-                        variant="outlined"
-                        onFocus={handleFocus}
-                        onBlur={handleBlur}
-                        tabIndex={0}
-                        className={isFocused ? 'Mui-focused' : ''}
-                    >
-                        <CardMedia
-                            component="img"
-                            alt="green iguana"
-                            image={cardInfo.thumbnail}
-                            sx={{
-                                aspectRatio: '16 / 9',
-                                borderBottom: '1px solid',
-                                borderColor: 'divider',
-                            }}
-                        />
-                        <SyledCardContent>
-                            {chips}
-                            <Typography gutterBottom variant="h6" component="div">
-                                {cardInfo.title}
-                            </Typography>
-                            <StyledTypography variant="body2" color="text.secondary" gutterBottom>
-                                {cardInfo.description}
-                            </StyledTypography>
-                        </SyledCardContent>
-                        <Author author={cardInfo.author} published={cardInfo.date}/>
-                    </SyledCard>
-                    : <SyledCard
-                        variant="outlined"
-                        onFocus={handleFocus}
-                        onBlur={handleBlur}
-                        tabIndex={0}
-                        className={isFocused ? 'Mui-focused' : ''}
-                    > <Box
-                        sx={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            justifyContent: 'space-between',
-                            gap: 1,
-                            height: '100%',
-                        }}
-                    >
-                        {chips}
-                        <TitleTypography
-                            gutterBottom
-                            variant="h6"
+                {
+                    cardInfo.showThumbnail
+                        ? <StyledCard
+                            variant="outlined"
                             onFocus={handleFocus}
                             onBlur={handleBlur}
                             tabIndex={0}
                             className={isFocused ? 'Mui-focused' : ''}
                         >
-                            {cardInfo.title}
-                            <NavigateNextRoundedIcon
-                                className="arrow"
-                                sx={{fontSize: '1rem'}}
+                            <CardMedia
+                                component="img"
+                                alt={cardInfo.title}
+                                image={cardInfo.thumbnail}
+                                sx={{
+                                    aspectRatio: '16 / 9',
+                                    borderBottom: '1px solid',
+                                    borderColor: 'divider',
+                                }}
                             />
-                        </TitleTypography>
-                        <StyledTypography variant="body2" color="text.secondary" gutterBottom>
-                            {cardInfo.description}
-                        </StyledTypography>
+                            <StyledCardContent>
+                                {categoriesAndReadTime}
+                                <Typography gutterBottom variant="h6" component="div">
+                                    {cardInfo.title}
+                                </Typography>
+                                <StyledTypography variant="body2" color="text.secondary" gutterBottom>
+                                    {cardInfo.description}
+                                </StyledTypography>
+                            </StyledCardContent>
+                            <Author author={cardInfo.author} published={cardInfo.date}/>
+                        </StyledCard>
+                        : <StyledCard
+                            variant="outlined"
+                            onFocus={handleFocus}
+                            onBlur={handleBlur}
+                            tabIndex={0}
+                            className={isFocused ? 'Mui-focused' : ''}
+                        > <Box
+                            sx={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                justifyContent: 'space-between',
+                                gap: 1,
+                                height: '100%',
+                            }}
+                        >
+                            {categoriesAndReadTime}
+                            <TitleTypography
+                                gutterBottom
+                                variant="h6"
+                                onFocus={handleFocus}
+                                onBlur={handleBlur}
+                                tabIndex={0}
+                                className={isFocused ? 'Mui-focused' : ''}
+                            >
+                                {cardInfo.title}
+                                <NavigateNextRoundedIcon
+                                    className="arrow"
+                                    sx={{fontSize: '1rem'}}
+                                />
+                            </TitleTypography>
+                            <StyledTypography variant="body2" color="text.secondary" gutterBottom>
+                                {cardInfo.description}
+                            </StyledTypography>
 
-                        <Author author={cardInfo.author} published={cardInfo.date}/>
-                    </Box>
-                    </SyledCard>
-            }
+                            <Author author={cardInfo.author} published={cardInfo.date}/>
+                        </Box>
+                        </StyledCard>
+                }
             </Link>
         </Grid>
     );

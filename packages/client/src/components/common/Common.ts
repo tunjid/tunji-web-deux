@@ -1,12 +1,11 @@
-import { ArchiveFile, ArchiveKind, ArchiveLike, UserLike } from '@tunji-web/common';
-import { createSelector } from "reselect";
-import _ from "lodash";
-import { StoreState } from "../../types";
-import { ArchiveState } from "../../reducers/Archive";
-import { ArchivesQuery, ArchiveView, yearAndMonthParam } from "../../actions/Archive";
-import { Theme } from "@material-ui/core";
-import { describeRoute } from '@tunji-web/common';
-import { MenuRes } from "../../types/MenuRes";
+import { ArchiveFile, ArchiveKind, ArchiveLike, describeRoute, UserLike } from '@tunji-web/common';
+import { createSelector } from 'reselect';
+import _ from 'lodash';
+import { StoreState } from '../../types';
+import { ArchiveState } from '../../reducers/Archive';
+import { ArchivesQuery, ArchiveView, yearAndMonthParam } from '../../actions/Archive';
+import { Theme } from '@material-ui/core';
+import { MenuRes } from '../../types/MenuRes';
 
 export const responsiveWidth = (theme: Theme) => ({
     [theme.breakpoints.up('md')]: {
@@ -54,8 +53,8 @@ export const archivesSelector = (querySelector: (StoreState: StoreState) => Arch
         const yearAndMonth = yearAndMonthParam(query);
 
         let archives = archiveState.kindToArchivesMap[kind];
-        archives = tags.length > 0 ? archives.filter(archive => _.intersection(tags, archive.tags).length > 0) : archives
-        archives = categories.length > 0 ? archives.filter(archive => _.intersection(categories, archive.categories).length > 0) : archives
+        archives = tags.length > 0 ? archives.filter(archive => _.intersection(tags, archive.tags).length > 0) : archives;
+        archives = categories.length > 0 ? archives.filter(archive => _.intersection(categories, archive.categories).length > 0) : archives;
         archives = yearAndMonth
             ? archives.filter(archive => archive.created.getFullYear() === yearAndMonth.year && archive.created.getMonth() === yearAndMonth.month)
             : archives;
@@ -66,9 +65,14 @@ export const archivesSelector = (querySelector: (StoreState: StoreState) => Arch
 );
 
 export const MenuResEquality = (left: MenuRes | undefined, right: MenuRes | undefined) =>
-    (left?.id === right?.id && left?.text === right?.text && left?.action?.type === right?.action?.type) || false
+    (left?.id === right?.id && left?.text === right?.text && left?.action?.type === right?.action?.type) || false;
 
-export const readTime = (text: String) => `${Math.ceil(text.trim().split(/\s+/).length / 250)} min read`
+export const readTime = (text: String) => {
+    const readTimeMins = Math.ceil(text.trim().split(/\s+/).length / 250);
+    return readTimeMins === 1
+        ? `${readTimeMins} min`
+        : `${readTimeMins} mins`;
+};
 
 export const archiveDate = (date: Date) => date.toDateString().split(' ').splice(1).join(' ');
 
