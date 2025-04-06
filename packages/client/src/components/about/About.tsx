@@ -1,8 +1,4 @@
 import * as React from 'react';
-import { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
-import { PersistentUiActions } from '../../actions/PersistentUi';
-import { theme } from '../../styles/PersistentUi';
 import ReactMarkdown from 'react-markdown';
 import gfm from 'remark-gfm';
 import { Helmet } from 'react-helmet';
@@ -67,20 +63,6 @@ const BlueskyIcon = (props) => (
 );
 
 const About = () => {
-    const dispatch = useDispatch();
-
-    useEffect(() => {
-        dispatch(PersistentUiActions.modifyAppBar({
-            appBarTitle: 'About',
-            appBarColor: theme.palette.primary.dark,
-            hasHomeIcon: true,
-            hasAppBarShadow: true,
-            hasAppBarSpacer: true,
-            menuItems: [],
-            fab: undefined
-        }));
-    }, [dispatch]);
-
     return (
         <div>
             <Helmet>
@@ -97,7 +79,7 @@ const About = () => {
             >
                 <Avatar
                     src={clientConfig.rootIndexImage}
-                    sx={{ width: 160, height: 160, margin: 'auto' }}
+                    sx={{width: 160, height: 160, margin: 'auto'}}
                 />
                 <Box
                     sx={{

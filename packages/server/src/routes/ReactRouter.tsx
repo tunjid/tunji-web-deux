@@ -7,8 +7,7 @@ import { ArchiveKind, ArchiveLike, describeRoute, OpenGraphScrapeQueryKey, Route
 
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
-import { ServerStyleSheets } from '@material-ui/core/styles';
-import { App, ArchiveActions, serverStore, StoreState, createEmotionCache, AppTheme } from '@tunji-web/client';
+import { App, AppTheme, ArchiveActions, createEmotionCache, serverStore, StoreState } from '@tunji-web/client';
 
 import { Article } from '../models/ArticleSchema';
 import { Project } from '../models/ProjectSchema';
@@ -27,7 +26,6 @@ import { StaticRouter } from 'react-router-dom';
 
 import { CacheProvider } from '@emotion/react';
 import createEmotionServer from '@emotion/server/create-instance';
-import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 
 interface OpenGraphParams {
@@ -65,7 +63,6 @@ export default function (app: Express): void {
             const {extractCriticalToChunks, constructStyleTagsFromChunks} =
                 createEmotionServer(cache);
 
-            const sheets = new ServerStyleSheets();
             const connectedStore = serverStore(req.path);
 
             const params = await openGraphParams(connectedStore.store, describeRoute(req.path));
@@ -99,10 +96,6 @@ export default function (app: Express): void {
             webPage = webPage.replace(/\$OG_IMAGE/g, params.image);
             webPage = webPage.replace(/\$OG_URL/g, params.url);
             webPage = webPage.replace(/\$OG_SITE_NAME/g, params.siteName);
-            webPage = webPage.replace(
-                '<style id="jss-server-side"></style>',
-                `<style id="jss-server-side">${sheets.toString()}</style>`
-            );
             webPage = webPage.replace(
                 '<div id="root"></div>',
                 `<div id="root">${app}</div>`

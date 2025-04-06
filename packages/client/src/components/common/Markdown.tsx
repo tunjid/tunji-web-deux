@@ -16,61 +16,34 @@ import { Alert as MuiAlert, Table, TableBody, TableCell, TableHead, TableRow } f
 import Card from '@mui/material/Card';
 import { styled, useColorScheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
-import MuiLink, { LinkProps as MuiLinkProps } from '@mui/material/Link';
-import { useTheme } from '@material-ui/core';
+import MuiLink from '@mui/material/Link';
 
 
-const StyledTable = (props: any) => {
-    return <Table
-        sx={{
-            width: '100%',
-            'border-collapse': 'collapse',
-        }}
-        {...props}
-    />;
-};
+const StyledTable = styled(Table)(() => ({
+    width: '100%',
+    'border-collapse': 'collapse',
+}));
 
-const StyledTableHead = (props: any) => {
-    const theme = useTheme();
-    const dividerColor = theme.palette.divider;
-    return <TableHead
-        sx={{
-            padding: '16px',
-            '&:not(:only-child)': {
-                'border': `1px solid ${dividerColor}`,
-                'background': dividerColor,
-            },
-        }}
-        {...props}
-    />;
-};
+const StyledTableHead = styled(TableHead)(({theme}) => ({
+    padding: '16px',
+    '&:not(:only-child)': {
+        'border': `1px solid ${theme.palette.divider}`,
+        'background': theme.palette.divider,
+    },
+}));
 
-const StyledTableBody = (props: any) => {
-    const theme = useTheme();
-    const dividerColor = theme.palette.divider;
-    return <TableBody
-        sx={{
-            padding: '16px',
-            '&:not(:only-child)': {
-                'border': `1px solid ${dividerColor}`,
-            },
-        }}
-        {...props}
-    />;
-};
+const StyledTableBody = styled(TableBody)(({theme}) => ({
+    padding: '16px',
+    '&:not(:only-child)': {
+        'border': `1px solid ${theme.palette.divider}`,
+    },
+}));
 
-const StyledTableRow = (props: any) => {
-    const theme = useTheme();
-    const dividerColor = theme.palette.divider;
-    return <TableRow
-        sx={{
-            '&:not(:only-child) td, &:not(:only-child) th': {
-                'border': `1px solid ${dividerColor}`,
-            },
-        }}
-        {...props}
-    />;
-};
+const StyledTableRow = styled(TableRow)(({theme}) => ({
+    '&:not(:only-child) td, &:not(:only-child) th': {
+        'border': `1px solid ${theme.palette.divider}`,
+    },
+}));
 
 const StyledTableCell = (props: any) => {
     return <TableCell
