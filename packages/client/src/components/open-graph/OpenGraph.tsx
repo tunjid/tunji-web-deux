@@ -7,9 +7,10 @@ import { StoreState } from '@tunji-web/client';
 import { OpenGraphActions } from '@tunji-web/client/src/actions/OpenGraph';
 import { createSelector } from 'reselect';
 import { useDeepEqualSelector } from '@tunji-web/client/src/hooks/UseDeepEqualSelector';
-import { Paper } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import CardMedia from '@mui/material/CardMedia';
+import Card from '@mui/material/Card';
+import Box from '@mui/material/Box';
 
 const truncate = (input: string) => input.length > 80 ? `${input.substring(0, 80)}...` : input;
 
@@ -34,30 +35,62 @@ const OpenGraphCard = ({url}: Props) => {
         dispatch(OpenGraphActions.openGraphScrape(url));
     }, [url, dispatch]);
 
+    const ogImage = openGraphData
+        ? Array.isArray(openGraphData?.ogImage)
+            ? openGraphData?.ogImage[0]
+            : openGraphData.ogImage
+        : null;
+
+    const imageAspectRatio = ogImage ? `${ogImage.width} / ${ogImage.height}` : '1';
 
     const node = openGraphData
         ? <a
             href={url}
             target="_blank"
             rel="noreferrer"
+            style={{
+                textDecoration: 'none'
+            }}
         >
-            <Paper variant="outlined">
-                <div>
-                    <Typography component="h5" variant="h5">
+            <Card variant="outlined"
+                  sx={{
+                      display: 'flex',
+                      flexDirection: 'row',
+                      alignItems: 'stretch',
+                      gap: 1,
+                      padding: 0,
+                      justifyContent: 'stretch'
+                  }}
+            >
+                <Box
+                    sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        flex: '2 2 0',
+                        gap: 1,
+                        padding: 1,
+                    }}
+                >
+                    <Typography variant="subtitle1">
                         {openGraphData?.ogTitle ? truncate(openGraphData?.ogTitle) : ''}
                     </Typography>
-                    <Typography variant="subtitle1" color="textSecondary">
+                    <Typography variant="subtitle2" color="textSecondary">
                         {openGraphData?.ogDescription ? truncate(openGraphData?.ogDescription) : ''}
                     </Typography>
                     <Typography variant="caption" color="textSecondary">
                         {openGraphData?.ogSiteName ? truncate(openGraphData?.ogSiteName) : ''}
                     </Typography>
-                </div>
+                </Box>
                 <CardMedia
-                    image={openGraphData?.ogImage?.url}
-                    title="Live from space album cover"
+                    sx={{
+                        display: 'flex',
+                        flex: '1 1 0',
+                        aspectRatio: imageAspectRatio,
+                    }}
+                    image={ogImage?.url}
+                    title={openGraphData?.ogDescription}
                 />
-            </Paper>
+            </Card>
         </a>
         : <Link to={url}/>;
 
