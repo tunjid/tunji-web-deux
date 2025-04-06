@@ -66,7 +66,7 @@ export default function AppAppBar(
                         <Box sx={{display: {xs: 'none', md: 'flex'}}}>
                             {
                                 links.map((link) => (
-                                    <Link to={link.link}>
+                                    <Link key={link.link} to={link.link}>
                                         <Button variant="text" color="info" size="small">
                                             {link.title}
                                         </Button>
@@ -113,7 +113,7 @@ export default function AppAppBar(
                                 </Box>
                                 {
                                     links.map((link) => (
-                                        <Link to={link.link}>
+                                        <Link key={link.link} to={link.link}>
                                             <MenuItem>{link.title}</MenuItem>
                                         </Link>
                                     ))
