@@ -170,7 +170,7 @@ const Header: (props: DetailProps) => JSX.Element = ({archive}) => {
                 display: 'flex',
                 flexDirection: 'row',
                 flexWrap: 'wrap',
-                gap: 1,
+                gap: 2,
                 alignItems: 'center',
             }}
         >
@@ -178,7 +178,7 @@ const Header: (props: DetailProps) => JSX.Element = ({archive}) => {
             <Typography component="p">
                 {archive?.author?.fullName}
             </Typography>
-            <Typography gutterBottom component="p" color="textSecondary">
+            <Typography component="p" color="textSecondary">
                 {archive ? `${archiveDate(archive?.created)} · ${readTime(archive?.body || '')}` : ''}
             </Typography>
         </Box>
