@@ -4,7 +4,7 @@ import { Components } from 'react-markdown/src/ast-to-react';
 import ReactPlayer from 'react-player';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import * as darkCodeTheme from 'react-syntax-highlighter/dist/cjs/styles/prism/darcula';
-import * as lightCodeTheme from 'react-syntax-highlighter/dist/cjs/styles/prism/ghcolors';
+import * as lightCodeTheme from 'react-syntax-highlighter/dist/cjs/styles/prism/one-light';
 import { OpenGraphScrapeQueryKey, slugify } from '@tunji-web/common';
 import OpenGraphCard from '../open-graph/OpenGraph';
 
