@@ -273,7 +273,7 @@ const ArchiveDetail = () => {
                     <Box sx={{
                         position: 'fixed',
                         maxWidth: 200,
-                        overflow: 'scroll',
+                        flexDirection: 'column',
                         display: {xs: 'none', sm: 'none', md: 'none', lg: 'block'}
                     }}>
                         <TableOfContents markdown={archive?.body || ''}/>
