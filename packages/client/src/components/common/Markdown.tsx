@@ -131,7 +131,7 @@ export const MarkdownComponents: Components = {
     },
     a: ({node, ...props}) => {
         const href = props['href'];
-        if (!href && typeof href !== 'string') return <a{...props}/>;
+        if (!href || typeof href !== 'string') return <a{...props}/>;
 
         const url = href as string;
 
