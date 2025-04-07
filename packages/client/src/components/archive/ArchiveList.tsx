@@ -11,8 +11,7 @@ import { Helmet } from 'react-helmet';
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { useDeepEqualSelector } from '../../hooks/UseDeepEqualSelector';
 import ChipInput, { ChipType } from './ChipInput';
-import { RouterActions } from '../../actions/Router';
-import { Box, CircularProgress, Divider, Link as MuiLink, styled, Typography, } from '@mui/material';
+import { Box, CircularProgress, Divider, List, styled, Typography, } from '@mui/material';
 import ArchiveCards from '../cards/ArchiveCards';
 import AppAppBar from '@tunji-web/client/src/blog/components/AppAppBar';
 import Container from '@mui/material/Container';
@@ -30,27 +29,19 @@ const ProgressBarContainer = styled(Box)(({theme}) => ({
     margin: theme.spacing(8, 0),
 }));
 
-const GutterColumn = styled(Box)(({theme}) => ({
-    display: 'flex',
-    flexDirection: 'column',
-    margin: theme.spacing(4, 0),
-    [theme.breakpoints.down('md')]: {
-        width: '80%',
-        marginLeft: 'auto',
-        marginRight: 'auto',
-    },
-}));
-
-const GutterLink = styled(MuiLink)(({theme}) => ({
+const GutterLink = styled(Link)(({theme}) => ({
     margin: theme.spacing(1, 0),
-    textDecoration: 'underline',
+    textDecoration: 'none',
+    color: 'inherit',
     '&:hover': {
         textDecoration: 'underline',
     },
 }));
 
-const GutterDivider = styled(Divider)(({theme}) => ({
-    margin: theme.spacing(2, 0),
+const StyledList = styled(List)(({theme}) => ({
+    'padding-left': '12px',
+    'list-style-type': 'none',
+    'overflow': 'auto',
 }));
 
 interface State {
@@ -170,23 +161,26 @@ const ArchiveList = () => {
     const progressNode = isLoading ? <CircularProgress/> : <div/>;
 
     const categoryNodes = availableCategories.map((category) => (
-        <GutterLink key={category} component={Link} to={`/${kind}/?category=${category}`}>
-            <Typography variant={'caption'}>
-                {category}
-            </Typography>
-        </GutterLink>
+        <Box key={category} component="li" sx={{mt: 1, listStyle: 'none'}}>
+            <GutterLink component={Link} to={`/${kind}/?category=${category}`}>
+                <Typography variant={'caption'}>
+                    {category}
+                </Typography>
+            </GutterLink>
+        </Box>
     ));
 
     const summaryNodes = summaries.map(({dateInfo, titles}) => (
-        <GutterLink
-            key={JSON.stringify(dateInfo)}
-            component={Link}
-            to={`/${kind}/?dateInfo=${dateInfo.year}-${dateInfo.month}`}
-        >
-            <Typography variant={'caption'}>
-                {`${ShortMonthNames[dateInfo.month]} ${dateInfo.year} (${titles.length})`}
-            </Typography>
-        </GutterLink>
+        <Box key={JSON.stringify(dateInfo)} component="li" sx={{mt: 1, listStyle: 'none'}}>
+            <GutterLink
+                component={Link}
+                to={`/${kind}/?dateInfo=${dateInfo.year}-${dateInfo.month}`}
+            >
+                <Typography variant={'caption'}>
+                    {`${ShortMonthNames[dateInfo.month]} ${dateInfo.year} (${titles.length})`}
+                </Typography>
+            </GutterLink>
+        </Box>
     ));
 
     const navigate = useNavigate();
@@ -254,16 +248,18 @@ const ArchiveList = () => {
                         flexDirection: 'column',
                         display: {xs: 'none', sm: 'none', md: 'none', lg: 'block'}
                     }}>
-                        <Typography gutterBottom variant="h5">
-                            Categories
-                        </Typography>
-                        {categoryNodes}
+                        <StyledList>
+                            <Typography gutterBottom variant="h5">
+                                Categories
+                            </Typography>
+                            {categoryNodes}
 
-                        <Divider/>
-                        <Typography gutterBottom variant="h5">
-                            Timeline
-                        </Typography>
-                        {summaryNodes}
+                            <Divider sx={{my: 4}}/>
+                            <Typography gutterBottom variant="h5">
+                                Timeline
+                            </Typography>
+                            {summaryNodes}
+                        </StyledList>
                     </Box>
                 </Box>
             </Box>

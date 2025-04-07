@@ -19,7 +19,7 @@ const linkBar = {
 const StyledList = styled(List)(({theme}) => ({
     'padding-left': '12px',
     'list-style-type': 'none',
-    'oveflow': 'auto',
+    'overflow': 'auto',
 }));
 
 const StyledListItem = styled(ListItem)(({theme}) => ({
