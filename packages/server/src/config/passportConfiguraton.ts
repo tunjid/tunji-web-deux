@@ -7,10 +7,17 @@ const passportConfiguration = () => {
         done(null, user.id);
     });
 
-    passport.deserializeUser<string>((userId, done) => {
-        User.findById(userId, (err: any, user: UserDocument) => {
-            done(err, {...user.toJSON(), id: user._id});
-        });
+    passport.deserializeUser<string>(async (userId, done) => {
+        try {
+            const user = await User.findById(userId);
+            if (user) {
+                done(null, { ...user.toJSON(), id: user._id });
+            } else {
+                done('User not found', false);
+            }
+        } catch (error) {
+            done(error, false);
+        }
     });
 
     localStrategy();
