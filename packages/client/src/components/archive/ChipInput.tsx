@@ -1,34 +1,9 @@
 import React, { useState } from 'react';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import InputBase from '@material-ui/core/InputBase';
-import { Chip } from "@material-ui/core";
-import { theme } from "../../styles/PersistentUi";
 import { ArchiveKind } from '@tunji-web/common';
-import { StylelessAnchor } from "../../styles/Common";
-import { Link } from "react-router-dom";
-
-const useStyles = makeStyles((theme: Theme) =>
-    createStyles({
-        root: {
-            display: 'flex',
-            flexWrap: 'wrap',
-            alignItems: 'center',
-            '& > *': {
-                margin: theme.spacing(0.5),
-            },
-        },
-        chipAnchor: {
-            ...StylelessAnchor,
-        },
-        input: {
-            marginLeft: theme.spacing(2),
-            flex: 1,
-        },
-        iconButton: {
-            padding: 10,
-        },
-    }),
-);
+import { Link } from 'react-router-dom';
+import Box from '@mui/material/Box';
+import Chip from '@mui/material/Chip';
+import { InputBase } from '@mui/material';
 
 export enum ChipType {
     Category = 'category',
@@ -36,8 +11,8 @@ export enum ChipType {
 }
 
 interface ChipEditor {
-    onChipDeleted: (chip: string) => void
-    onChipAdded: (chip: string) => void
+    onChipDeleted: (chip: string) => void;
+    onChipAdded: (chip: string) => void;
 }
 
 export interface Props {
@@ -49,11 +24,7 @@ export interface Props {
 }
 
 export default function ChipInput({name, chips, type, kind, editor}: Props) {
-    const classes = useStyles();
-
     const [textValue, setText] = useState('');
-
-    const chipColor = type === ChipType.Category ? '#4282F1' : theme.palette.secondary.dark;
     const {onChipDeleted, onChipAdded} = editor || {}
 
     const deleteChip = onChipDeleted
@@ -75,7 +46,6 @@ export default function ChipInput({name, chips, type, kind, editor}: Props) {
 
     const editField = editor
         ? <InputBase
-            className={classes.input}
             placeholder={`Add ${type}`}
             value={textValue}
             onChange={(e) => setText(e.target.value)}
@@ -85,24 +55,29 @@ export default function ChipInput({name, chips, type, kind, editor}: Props) {
         : undefined;
 
     return (
-        <div className={classes.root}>
+        <Box
+            sx={{
+                display: 'flex',
+                flexDirection: 'row',
+                flexWrap: 'wrap',
+                gap: 1,
+                alignItems: 'center',
+            }}
+        >
             {name}
             {(chips || []).map((text) =>
                 <Link
-                    className={classes.chipAnchor}
                     to={`/${kind}/?${type}=${text}`}
                     key={text}
                 >
                     <Chip
                         label={text}
-                        color="secondary"
                         onDelete={deleteChip?.(text)}
-                        style={{backgroundColor: chipColor}}
                         size="small"/>
                 </Link>
             )}
 
             {editField}
-        </div>
+        </Box>
     );
 }

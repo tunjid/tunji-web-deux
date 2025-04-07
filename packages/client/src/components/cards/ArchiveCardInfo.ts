@@ -1,9 +1,8 @@
 import { ArchiveKind, UserLike } from '@tunji-web/common';
+import { GridSize } from '@mui/material/Grid/Grid';
+import { Breakpoint } from '@mui/material/styles';
 
-export enum CardStyle {
-    horizontal = "horizontal",
-    vertical = "vertical",
-}
+export type GridBreakPoint = GridSize | Array<GridSize | null> | { [key in Breakpoint]?: GridSize | null };
 
 export interface ArchiveCardInfo {
     id: string;
@@ -12,10 +11,11 @@ export interface ArchiveCardInfo {
     description: string;
     thumbnail: string;
     date?: string;
-    spanCount: number;
     readTime: string;
+    showThumbnail: boolean;
     categories: string[];
+    breakPoints: GridBreakPoint,
     kind: ArchiveKind,
-    style: CardStyle;
     author: UserLike;
 }
+

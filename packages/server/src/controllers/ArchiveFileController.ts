@@ -26,17 +26,19 @@ const archiveFileController = <T extends ArchiveDocument>(Model: ArchiveModel<T>
         });
 
         const FileModel = Model.fileModel();
-        new FileModel({
-            url: newUrl,
-            mimetype: req.file.mimetype,
-            archiveId: req.archive.id,
-            uploader: req.user
-        }).save(error => {
-            if (error) return res.status(400).send({
+        try {
+            await new FileModel({
+                url: newUrl,
+                mimetype: req.file.mimetype,
+                archiveId: req.archive.id,
+                uploader: req.user
+            }).save();
+            next();
+        } catch (error) {
+            return res.status(400).send({
                 message: getErrorMessage(error)
             });
-            else next();
-        });
+        }
     },
     find: (req, res) => {
         const FileModel = Model.fileModel();
@@ -61,14 +63,13 @@ const archiveFileController = <T extends ArchiveDocument>(Model: ArchiveModel<T>
             .skip(offset)
             .limit(limit)
             .sort({'created': -1})
-            .exec(function (error, archives) {
-                if (error) {
-                    return res.status(400).send({
-                        message: getErrorMessage(error)
-                    });
-                } else {
-                    res.json(archives);
-                }
+            .then(archives => {
+                res.json(archives);
+            })
+            .catch(error => {
+                return res.status(400).send({
+                    message: getErrorMessage(error)
+                });
             });
     },
     sendArchiveFile: async (req, res) => {
@@ -78,20 +79,28 @@ const archiveFileController = <T extends ArchiveDocument>(Model: ArchiveModel<T>
             message: 'Archive file not found',
         });
     },
-    remove: (req, res, next) => {
+    remove: async (req, res, next) => {
         const FileModel = Model.fileModel();
-        FileModel.findByIdAndRemove(req.archiveFile.id, {}, (error, file) => {
+        try {
+            const file = await FileModel.findByIdAndRemove(req.archiveFile.id);
             req.fileOldUrl = file?.url;
-            if (error) return next(error);
-            else next();
-        });
-    },
-    removeByUrl: (req, res, next) => {
-        const FileModel = Model.fileModel();
-        if (req.filePublicUrl !== req.fileOldUrl) FileModel.findOneAndRemove({url: req.fileOldUrl}, {}, () => {
             next();
-        });
-        else next();
+        } catch (error) {
+            return next(error);
+        }
+    },
+    removeByUrl: async (req, res, next) => {
+        const FileModel = Model.fileModel();
+        if (req.filePublicUrl !== req.fileOldUrl) {
+            try {
+                await FileModel.findOneAndRemove({url: req.fileOldUrl});
+                next();
+            } catch (error) {
+                next(error);
+            }
+        } else {
+            next();
+        }
     },
     fileByPath: (req, res, next) => {
         const split = req.path.split('files/');
@@ -102,19 +111,21 @@ const archiveFileController = <T extends ArchiveDocument>(Model: ArchiveModel<T>
         const FileModel = Model.fileModel();
         const lookup = FileModel.findById(id);
 
-        lookup.exec(function (error, archiveFile) {
-            if (error) return next(error);
+        lookup
+            .then(archiveFile => {
+                if (!archiveFile) return serverMessage(res, {
+                    errorCode: ErrorCode.ModelNotFound,
+                    statusCode: 400,
+                    model: Model.getKind(),
+                    message: 'Failed to find archive media with id ' + id,
+                });
 
-            if (!archiveFile) return serverMessage(res, {
-                errorCode: ErrorCode.ModelNotFound,
-                statusCode: 400,
-                model: Model.getKind(),
-                message: 'Failed to find archive media with id ' + id,
+                req.archiveFile = archiveFile;
+                next();
+            })
+            .catch(error => {
+                return next(error);
             });
-
-            req.archiveFile = archiveFile;
-            next();
-        });
     },
 });
 

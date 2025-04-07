@@ -1,48 +1,18 @@
-import { createStyles, makeStyles } from '@material-ui/core/styles';
 import * as React from 'react';
-import { useEffect } from 'react';
-import { useDispatch } from "react-redux";
-import { PersistentUiActions } from "../../actions/PersistentUi";
-import { theme } from "../../styles/PersistentUi";
-import ReactMarkdown from 'react-markdown'
-import { responsiveWidth } from "../common/Common";
-import gfm from "remark-gfm";
-import { Avatar } from "@material-ui/core";
-import { horizontalMargin, StylelessAnchor, verticalMargin } from "../../styles/Common";
-import { Helmet } from "react-helmet";
-import EmailIcon from '@material-ui/icons/Email';
-import TwitterIcon from '@material-ui/icons/Twitter';
-import GitHubIcon from '@material-ui/icons/GitHub';
-import { MarkdownBody, MarkdownComponents } from "../common/Markdown";
-import clientConfig from '../../config'
-
-const useStyles = makeStyles((theme) => createStyles({
-        root: {
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-        },
-        body: {
-            ...responsiveWidth(theme),
-            ...MarkdownBody,
-        },
-        avatar: {
-            ...verticalMargin(theme.spacing(8)),
-            width: '200px',
-            height: '200px',
-        },
-        socials: {
-            ...responsiveWidth(theme),
-            '& > *': {
-                ...horizontalMargin(theme.spacing(1)),
-            },
-            display: 'flex'
-        },
-        socialIcons: {
-            ...StylelessAnchor
-        }
-    }
-));
+import ReactMarkdown from 'react-markdown';
+import gfm from 'remark-gfm';
+import { Helmet } from 'react-helmet';
+import EmailIcon from '@mui/icons-material/Email';
+import GitHubIcon from '@mui/icons-material/GitHub';
+import clientConfig from '../../config';
+import AppAppBar from '@tunji-web/client/src/blog/components/AppAppBar';
+import Container from '@mui/material/Container';
+import Box from '@mui/material/Box';
+import Avatar from '@mui/material/Avatar';
+import { SvgIcon, Table } from '@mui/material';
+import rehypeRaw from 'rehype-raw';
+import IconButton from '@mui/material/IconButton';
+import { styled } from '@mui/material/styles';
 
 const body = `
 
@@ -83,65 +53,85 @@ This website is my latest attempt at learning the web frontend flavor du jour af
 * Micheal Pardon
 * Matt Chowning
 * Ben Yelsey
-`
+`;
+
+const BlueskyIcon = (props) => (
+    <SvgIcon {...props} viewBox="0 0 568 501">
+        <path
+            d="M123.121 33.6637C188.241 82.5526 258.281 181.681 284 234.873C309.719 181.681 379.759 82.5526 444.879 33.6637C491.866 -1.61183 568 -28.9064 568 57.9464C568 75.2916 558.055 203.659 552.222 224.501C531.947 296.954 458.067 315.434 392.347 304.249C507.222 323.8 536.444 388.56 473.333 453.32C353.473 576.312 301.061 422.461 287.631 383.039C285.169 375.812 284.017 372.431 284 375.306C283.983 372.431 282.831 375.812 280.369 383.039C266.939 422.461 214.527 576.312 94.6667 453.32C31.5556 388.56 60.7778 323.8 175.653 304.249C109.933 315.434 36.0535 296.954 15.7778 224.501C9.94525 203.659 0 75.2916 0 57.9464C0 -28.9064 76.1345 -1.61183 123.121 33.6637Z"
+            fill="currentColor" // Use currentColor to inherit the color from the parent
+        />
+    </SvgIcon>
+);
+
+const StyledIconButton = styled(IconButton)(() => ({
+    border: '1px solid #00000000',
+}));
 
 const About = () => {
-    const classes = useStyles();
-    const dispatch = useDispatch();
-
-    useEffect(() => {
-        dispatch(PersistentUiActions.modifyAppBar({
-            appBarTitle: 'About',
-            appBarColor: theme.palette.primary.dark,
-            hasHomeIcon: true,
-            hasAppBarShadow: true,
-            hasAppBarSpacer: true,
-            menuItems: [],
-            fab: undefined
-        }));
-    }, [dispatch]);
-
     return (
-        <div className={classes.root}>
+        <div>
             <Helmet>
                 <title>About | Adetunji Dahunsi</title>
                 <meta name="description" content="About Tunji"/>
             </Helmet>
-            <Avatar
-                className={classes.avatar}
-                src={clientConfig.rootIndexImage}
+            <AppAppBar
+                links={[{title: 'Home', link: '/'}, {title: 'About', link: '/about'}]}
             />
-            <div className={classes.socials}>
-                <a className={classes.socialIcons}
-                   href='mailto:tjdah100@gmail.com'
-                   target="_blank"
-                   rel="noreferrer"
+            <Container
+                maxWidth="md"
+                component="main"
+                sx={{display: 'flex', flexDirection: 'column', my: 16,}}
+            >
+                <Avatar
+                    src={clientConfig.rootIndexImage}
+                    sx={{width: 160, height: 160, margin: 'auto'}}
+                />
+                <Box
+                    sx={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        gap: 4,
+                        overflow: 'auto',
+                        marginTop: 8,
+                    }}
                 >
-                    <EmailIcon/>
-                </a>
-                <a className={classes.socialIcons}
-                   href='https://twitter.com/Tunji_D'
-                   target="_blank"
-                   rel="noreferrer"
-                >
-                    <TwitterIcon/>
-                </a>
-                <a className={classes.socialIcons}
-                   href='https://github.com/tunjid'
-                   target="_blank"
-                   rel="noreferrer"
-                >
-                    <GitHubIcon/>
-                </a>
-            </div>
-            <ReactMarkdown
-                className={classes.body}
-                remarkPlugins={[gfm]}
-                children={body}
-                components={MarkdownComponents}
-            />
+                    <a
+                        href="https://bsky.app/profile/tunji.dev"
+                        target="_blank"
+                        rel="noreferrer"
+                    >
+                        <StyledIconButton aria-label="github">
+                            <BlueskyIcon/>
+                        </StyledIconButton>
+                    </a>
+                    <a
+                        href="mailto:tjdah100@gmail.com"
+                        target="_blank"
+                        rel="noreferrer"
+                    >
+                        <StyledIconButton aria-label="github">
+                            <EmailIcon/>
+                        </StyledIconButton>
+                    </a>
+                    <a
+                        href="https://github.com/tunjid"
+                        target="_blank"
+                        rel="noreferrer"
+                    >
+                        <StyledIconButton aria-label="github">
+                            <GitHubIcon/>
+                        </StyledIconButton>
+                    </a>
+                </Box>
+                <ReactMarkdown
+                    remarkPlugins={[gfm]}
+                    rehypePlugins={[rehypeRaw]}
+                    children={body}
+                />
+            </Container>
         </div>
     );
-}
+};
 
 export default About;

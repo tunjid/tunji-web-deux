@@ -8,9 +8,9 @@
     "packages/server"
   ],
   "devDependencies": {
-    "esbuild": "^0.14.13",
-    "ts-node": "^10.4.0",
-    "typescript": "^4.2.3"
+    "esbuild": "^0.25.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.2"
   },
   "scripts": {
     "client": "yarn workspace @tunji-web/client",

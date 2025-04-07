@@ -14,17 +14,19 @@ const changeListController = (): ChangeListController => ({
 
         const after = req.query['after'];
         const query = (after && typeof after === 'string')
-            ? {changeId: {$gt: new mongo.ObjectId(after)}}
+            ? { changeId: { $gt: new mongo.ObjectId(after) } }
             : {};
 
-        changeListModel.find(
-            query,
-            null,
-            {sort: {changeId: 1}},
-            (error, changeList) => {
-                if (error) return next(error);
-                res.json(changeList);
-            });
+        try {
+            const changeList = await changeListModel.find(
+                query,
+                null,
+                {sort: {changeId: 1}}
+            );
+            res.json(changeList);
+        } catch (error) {
+            next(error);
+        }
     },
 
     modelMatch: (req, res, next, modelName) => {

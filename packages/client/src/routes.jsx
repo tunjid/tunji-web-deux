@@ -1,34 +1,25 @@
-import * as React from 'react'
-import {Route, Switch} from 'react-router-dom'
-import ScrollToTop from './components/ScrollTop'
-import Home from "./components/home/Home";
-import SignIn from "./components/auth/SignIn";
-import ArchiveDetail from "./components/archive/ArchiveDetail";
-import {ArchiveCreate, ArchiveEdit} from "./components/archive/ArchiveEdit";
-import {ArchiveKind} from "@tunji-web/common";
-import ArchiveList from "./components/archive/ArchiveList";
-import About from "./components/about/About";
+import * as React from 'react';
+import {Route, Routes} from 'react-router-dom';
+import ScrollToTop from './components/ScrollTop';
+import Home from './components/home/Home';
+import ArchiveDetail from './components/archive/ArchiveDetail';
+import {ArchiveKind} from '@tunji-web/common';
+import ArchiveList from './components/archive/ArchiveList';
+import About from './components/about/About';
 
 const routes = () => (
     <ScrollToTop>
-        <Switch>
-            <Route exact path='/' component={Home}/>
-            <Route exact path='/about' component={About}/>
-            <Route exact path='/sign-in' component={SignIn}/>
-            <Route exact path={`/${ArchiveKind.Articles}/create`} component={ArchiveCreate}/>
-            <Route exact path={`/${ArchiveKind.Projects}/create`} component={ArchiveCreate}/>
-            <Route exact path={`/${ArchiveKind.Talks}/create`} component={ArchiveCreate}/>
-            <Route exact path={`/${ArchiveKind.Articles}/:archiveId/edit`} component={ArchiveEdit}/>
-            <Route exact path={`/${ArchiveKind.Projects}/:archiveId/edit`} component={ArchiveEdit}/>
-            <Route exact path={`/${ArchiveKind.Talks}/:archiveId/edit`} component={ArchiveEdit}/>
-            <Route exact path={`/${ArchiveKind.Articles}`} component={ArchiveList}/>
-            <Route exact path={`/${ArchiveKind.Projects}`} component={ArchiveList}/>
-            <Route exact path={`/${ArchiveKind.Talks}`} component={ArchiveList}/>
-            <Route path={`/${ArchiveKind.Articles}/:archiveId`} component={ArchiveDetail}/>
-            <Route path={`/${ArchiveKind.Projects}/:archiveId`} component={ArchiveDetail}/>
-            <Route path={`/${ArchiveKind.Talks}/:archiveId`} component={ArchiveDetail}/>
-        </Switch>
+        <Routes>
+            <Route exact path="/" element={<Home/>}/>
+            <Route exact path="/about" element={<About/>}/>
+            <Route exact path={`/${ArchiveKind.Articles}`} element={<ArchiveList/>}/>
+            <Route exact path={`/${ArchiveKind.Projects}`} element={<ArchiveList/>}/>
+            <Route exact path={`/${ArchiveKind.Talks}`} element={<ArchiveList/>}/>
+            <Route path={`/${ArchiveKind.Articles}/:archiveId`} element={<ArchiveDetail/>}/>
+            <Route path={`/${ArchiveKind.Projects}/:archiveId`} element={<ArchiveDetail/>}/>
+            <Route path={`/${ArchiveKind.Talks}/:archiveId`} element={<ArchiveDetail/>}/>
+        </Routes>
     </ScrollToTop>
-)
+);
 
 export default routes;

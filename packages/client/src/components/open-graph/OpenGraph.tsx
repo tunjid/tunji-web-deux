@@ -1,104 +1,100 @@
-import { createStyles, makeStyles } from '@material-ui/core/styles';
-import CardMedia from '@material-ui/core/CardMedia';
-import Typography from '@material-ui/core/Typography';
 import * as React from 'react';
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Paper } from '@material-ui/core';
-import { horizontalMargin, StylelessAnchor } from '../../styles/Common';
 import { OpenGraphData, OpenGraphState } from '@tunji-web/client/src/reducers/OpenGraph';
 import { useDispatch } from 'react-redux';
 import { StoreState } from '@tunji-web/client';
 import { OpenGraphActions } from '@tunji-web/client/src/actions/OpenGraph';
 import { createSelector } from 'reselect';
 import { useDeepEqualSelector } from '@tunji-web/client/src/hooks/UseDeepEqualSelector';
-
-const useStyles = makeStyles((theme) =>
-    createStyles({
-        root: {
-            display: 'flex',
-        },
-        anchor: {
-            ...StylelessAnchor,
-            '& > *': {
-                ...horizontalMargin(theme.spacing(1)),
-            },
-            display: 'flex'
-        },
-        cardRoot: {
-            display: 'flex',
-            margin: '0 auto',
-            width: '100%',
-            justifyContent: 'space-between'
-        },
-        details: {
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-around',
-            width: '100%',
-
-            ...horizontalMargin(theme.spacing(2)),
-        },
-        cover: {
-            minWidth: 151,
-            minHeight: 151,
-        },
-    }),
-);
+import Typography from '@mui/material/Typography';
+import CardMedia from '@mui/material/CardMedia';
+import Card from '@mui/material/Card';
+import Box from '@mui/material/Box';
 
 const truncate = (input: string) => input.length > 80 ? `${input.substring(0, 80)}...` : input;
 
 interface State {
-    openGraphData?: OpenGraphData
+    openGraphData?: OpenGraphData;
 }
 
-const selector = (url: string) => createSelector<StoreState, OpenGraphState, State>(
+const selector = (url: string) => createSelector<StoreState, State, OpenGraphState>(
     state => state.openGraph,
     (openGraphState) => ({openGraphData: openGraphState.graphData[url]})
 );
 
 interface Props {
-    url: string
+    url: string;
 }
 
 const OpenGraphCard = ({url}: Props) => {
     const dispatch = useDispatch();
-    const classes = useStyles();
     const {openGraphData} = useDeepEqualSelector(selector(url));
 
     useEffect(() => {
         dispatch(OpenGraphActions.openGraphScrape(url));
     }, [url, dispatch]);
 
+    const ogImage = openGraphData
+        ? Array.isArray(openGraphData?.ogImage)
+            ? openGraphData?.ogImage[0]
+            : openGraphData.ogImage
+        : null;
+
+    const imageAspectRatio = ogImage ? `${ogImage.width} / ${ogImage.height}` : '1';
 
     const node = openGraphData
-        ? <a className={classes.anchor}
-             href={url}
-             target="_blank"
-             rel="noreferrer"
+        ? <a
+            href={url}
+            target="_blank"
+            rel="noreferrer"
+            style={{
+                textDecoration: 'none'
+            }}
         >
-            <Paper className={classes.cardRoot} variant="outlined">
-                <div className={classes.details}>
-                    <Typography component="h5" variant="h5">
+            <Card variant="outlined"
+                  sx={{
+                      display: 'flex',
+                      flexDirection: 'row',
+                      alignItems: 'stretch',
+                      gap: 1,
+                      padding: 0,
+                      justifyContent: 'stretch'
+                  }}
+            >
+                <Box
+                    sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        flex: '2 2 0',
+                        gap: 1,
+                        padding: 1,
+                    }}
+                >
+                    <Typography variant="subtitle1">
                         {openGraphData?.ogTitle ? truncate(openGraphData?.ogTitle) : ''}
                     </Typography>
-                    <Typography variant="subtitle1" color="textSecondary">
+                    <Typography variant="subtitle2" color="textSecondary">
                         {openGraphData?.ogDescription ? truncate(openGraphData?.ogDescription) : ''}
                     </Typography>
                     <Typography variant="caption" color="textSecondary">
                         {openGraphData?.ogSiteName ? truncate(openGraphData?.ogSiteName) : ''}
                     </Typography>
-                </div>
+                </Box>
                 <CardMedia
-                    className={classes.cover}
-                    image={openGraphData?.ogImage?.url}
-                    title="Live from space album cover"
+                    sx={{
+                        display: 'flex',
+                        flex: '1 1 0',
+                        aspectRatio: imageAspectRatio,
+                    }}
+                    image={ogImage?.url}
+                    title={openGraphData?.ogDescription}
                 />
-            </Paper>
+            </Card>
         </a>
         : <Link to={url}/>;
 
-    return <div className={classes.root}>{node}</div>;
+    return <div>{node}</div>;
 };
 
 export default OpenGraphCard;

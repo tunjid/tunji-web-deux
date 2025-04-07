@@ -50,7 +50,10 @@ const socketServer: (
             if (!collectionChange) return;
 
             const deDupe = new SocketDeDupe({key: collectionChange.dedupeId});
-            deDupe.save(error => {
+            deDupe
+                .save()
+                .then(() => {})
+                .catch(error => {
                 console.log('Received change event: ', changeEvent, 'notified: ', error == null);
                 if (error) return;
 

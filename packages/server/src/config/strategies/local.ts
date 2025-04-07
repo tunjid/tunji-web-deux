@@ -1,26 +1,24 @@
 import passport from 'passport';
 import { Strategy, VerifyFunction } from 'passport-local';
-import { User, UserDocument } from '../../models/UserSchema';
+import { User } from '../../models/UserSchema';
 
 export default function (): void {
+    const verifyFunction: VerifyFunction = async (username, password, done) => {
+        try {
+            const user = await User.findOne({ username });
 
-    const verifyFunction: VerifyFunction = (username: string, password: string, done) => {
-        User.findOne(
-            {username: username},
-            (error: any, user: UserDocument | null) => {
+            if (!user) {
+                return done(null, false, { message: 'Unknown user' });
+            }
 
-                if (error) return done(error);
+            if (!user.authenticate(password)) {
+                return done(null, false, { message: 'Invalid password' });
+            }
 
-                if (!user) return done(null, false, {
-                    message: 'Unknown user'
-                });
-
-                if (!user.authenticate(password)) return done(null, false, {
-                    message: 'Invalid password'
-                });
-
-                return done(null, user);
-            });
+            return done(null, user);
+        } catch (error) {
+            return done(error);
+        }
     };
 
     passport.use(new Strategy(verifyFunction));
