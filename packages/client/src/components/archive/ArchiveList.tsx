@@ -42,6 +42,7 @@ const StyledList = styled(List)(({theme}) => ({
     'padding-left': '12px',
     'list-style-type': 'none',
     'overflow': 'auto',
+    height: '100vh',
 }));
 
 interface State {

@@ -119,7 +119,6 @@ const Home = () => {
                         >
                             <Button
                                 variant="outlined"
-                                aria-label="add"
                             >
                                 {`All ${selectedTab}`}
                             </Button>

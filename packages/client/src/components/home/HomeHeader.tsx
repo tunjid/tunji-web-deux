@@ -15,6 +15,8 @@ import Typography from '@mui/material/Typography';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import { capitalizeFirst } from '@tunji-web/client/src/components/common/Common';
+import Button from '@mui/material/Button';
+import { Link } from 'react-router-dom';
 
 
 interface State {
@@ -50,6 +52,13 @@ const HomeHeader = () => {
         dispatch(HomeActions.selectTab(tabs[newValue]));
     };
 
+    const seeAllArchives =
+        <Link to={`/${selectedTab}`}>
+            <Button variant="outlined">
+                {`All ${selectedTab}`}
+            </Button>
+        </Link>;
+
     return (
         <Box sx={{display: 'flex', flexDirection: 'column', gap: 4}}>
             <div>
@@ -67,7 +76,7 @@ const HomeHeader = () => {
                     overflow: 'auto',
                 }}
             >
-                <Search/>
+                {seeAllArchives}
             </Box>
             <Box
                 sx={{
@@ -88,7 +97,7 @@ const HomeHeader = () => {
                         overflow: 'auto',
                     }}
                 >
-                    <Tabs value={tabs.indexOf(selectedTab)} onChange={onTabChanged} >
+                    <Tabs value={tabs.indexOf(selectedTab)} onChange={onTabChanged}>
                         {tabs.map((kind) => <Tab key={kind} label={capitalizeFirst(kind)}/>)}
                     </Tabs>
                 </Box>
@@ -101,7 +110,7 @@ const HomeHeader = () => {
                         overflow: 'auto',
                     }}
                 >
-                    <Search/>
+                    {seeAllArchives}
                 </Box>
             </Box>
         </Box>
