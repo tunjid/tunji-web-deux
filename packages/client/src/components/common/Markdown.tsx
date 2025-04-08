@@ -57,7 +57,14 @@ const SlugifiedTypography = (props: any) => {
 };
 
 const StyledParagraph = (props: any) => {
-    return <Typography variant="body1" color={'textSecondary'} gutterBottom {...props}>
+    return <Typography
+        variant="body1"
+        color={'textSecondary'}
+        gutterBottom
+        sx={{
+            lineHeight: 1.8,
+        }}
+        {...props}>
         {props.children}
     </Typography>;
 };
