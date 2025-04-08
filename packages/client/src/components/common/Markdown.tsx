@@ -37,17 +37,13 @@ const StyledTableBody = styled(TableBody)(({theme}) => ({
 }));
 
 const StyledTableRow = styled(TableRow)(({theme}) => ({
-    '&:not(:only-child) td, &:not(:only-child) th': {
+    '&:not(:only-child) td': {
         'border': `1px solid ${theme.palette.divider}`,
     },
 }));
 
 const StyledTableCell = (props: any) => {
-    return <TableCell
-        sx={{
-            padding: '16px',
-        }}
-    >
+    return <TableCell>
         <StyledParagraph {...props}/>
     </TableCell>;
 };
@@ -71,7 +67,12 @@ const StyledParagraph = (props: any) => {
 
 const Alert = (props: any) => {
     return <Box sx={{display: 'flex', flexDirection: 'column', my: 2}}>
-        <MuiAlert  {...props}></MuiAlert>
+        <MuiAlert
+            sx={{
+                lineHeight: 1.8,
+            }}
+            {...props}>
+        </MuiAlert>
     </Box>;
 };
 
