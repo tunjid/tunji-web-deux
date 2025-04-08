@@ -26,7 +26,7 @@ const StyledTable = styled(Table)(() => ({
 
 const StyledTableHead = styled(TableHead)(({theme}) => ({
     padding: '16px',
-    '&:not(:only-child)': {
+    '&:not(:has(img))': {
         'border': `1px solid ${theme.palette.divider}`,
         'background': theme.palette.divider,
     },
@@ -34,9 +34,6 @@ const StyledTableHead = styled(TableHead)(({theme}) => ({
 
 const StyledTableBody = styled(TableBody)(({theme}) => ({
     padding: '16px',
-    '&:not(:only-child)': {
-        'border': `1px solid ${theme.palette.divider}`,
-    },
 }));
 
 const StyledTableRow = styled(TableRow)(({theme}) => ({
