@@ -40,10 +40,12 @@ const recordChangeLists: () => Promise<void> = async () => {
                 {
                     upsert: true,
                 },
-                (error) => {
+            )
+                .then(() => {
+                })
+                .catch((error) => {
                     if (error) console.log(error);
-                }
-            );
+                });
         }));
 };
 
