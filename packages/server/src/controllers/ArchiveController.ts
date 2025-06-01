@@ -179,10 +179,10 @@ const archiveController = <T extends ArchiveDocument>(Model: ArchiveModel<T>): A
                 });
             }
 
-            if (likeIncrement > 50) {
+            if (likeIncrement > 10) {
                 return serverMessage(res, {
                     statusCode: 400,
-                    message: 'You can give a maximum of 50 likes at a time',
+                    message: 'Maximum like count exceeded',
                 });
             }
 
