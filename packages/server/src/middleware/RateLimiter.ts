@@ -1,12 +1,13 @@
 import { RateLimiterMongo, RateLimiterStoreAbstract } from 'rate-limiter-flexible';
 import { Connection } from 'mongoose';
 import { NextFunction, Request, Response } from 'express';
+import { serverMessage } from '@tunji-web/server/src/controllers/Common';
 
 const maxConsecutiveFailsByUsername = 3;
 
 export interface RateLimiter {
     generalLimiter: (req: Request, res: Response, next: NextFunction) => void;
-    signInLimiterStore: RateLimiterStoreAbstract
+    signInLimiterStore: RateLimiterStoreAbstract;
     maxConsecutiveFailsByUsername: number;
 }
 
@@ -14,8 +15,8 @@ const createRateLimiter: (connection: Connection) => RateLimiter = (connection) 
     const defaultLimiter = new RateLimiterMongo({
         storeClient: connection,
         keyPrefix: 'default-rate-limiter',
-        points: 10, // 10 requests
-        duration: 1, // per 1 second by IP
+        points: 3, // 3 requests
+        duration: 60 * 5, // per 5 minutes by IP
     });
 
     const limiterConsecutiveFailsByUsername = new RateLimiterMongo({
@@ -30,7 +31,11 @@ const createRateLimiter: (connection: Connection) => RateLimiter = (connection) 
         generalLimiter: (req: Request, res: Response, next: NextFunction) =>
             defaultLimiter.consume(req.ip)
                 .then(() => next())
-                .catch(() => res.status(429).send('Too Many Requests')),
+                .catch(() => serverMessage(res, {
+                        statusCode: 429,
+                        message: 'Too many requests, please try again later.'
+                    }
+                )),
         signInLimiterStore: limiterConsecutiveFailsByUsername,
         maxConsecutiveFailsByUsername,
     });
