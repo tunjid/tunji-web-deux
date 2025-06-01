@@ -84,6 +84,7 @@ export default function <T extends ArchiveDocument>(app: Express, model: Archive
 
     app.route(`/api/${routeName}/:${paramName}/incrementLikes`)
         .post(
+            userController.rateLimit,
             archives.incrementLikes,
             archives.sendArchive
         );

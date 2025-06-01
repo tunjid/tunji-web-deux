@@ -16,6 +16,7 @@ export interface UserController {
     signUp: (res: Request, req: Response, next: NextFunction) => void;
     signOut: (res: Request, req: Response, next: NextFunction) => void;
     requiresLogin: (res: Request, req: Response, next: NextFunction) => void;
+    rateLimit: (res: Request, req: Response, next: NextFunction) => void;
 }
 
 const createUserController: (limiter: RateLimiter) => UserController = (limiter) => ({
@@ -45,7 +46,7 @@ const createUserController: (limiter: RateLimiter) => UserController = (limiter)
         next('Unimplemented');
     },
     byId: (req, res, next, id) => {
-        User.findOne({ _id: id })
+        User.findOne({_id: id})
             .then(user => {
                 req.pathUser = user;
                 next();
@@ -74,7 +75,7 @@ const createUserController: (limiter: RateLimiter) => UserController = (limiter)
             user.save()
                 .then(savedUser => {
                     // If the user was created successfully use the Passport 'login' method to login
-                    req.login({ ...savedUser, id: savedUser._id.toString() }, err => {
+                    req.login({...savedUser, id: savedUser._id.toString()}, err => {
                         // If a login error occurs move to the next middleware
                         if (err) return serverMessage(res, {
                             statusCode: 500,
@@ -146,7 +147,7 @@ const createUserController: (limiter: RateLimiter) => UserController = (limiter)
     signOut: (req, res) => {
         // Use the Passport 'logout' method to logout
         req.logout();
-        return serverMessage(res, { statusCode: 200, message: 'Signed out' });
+        return serverMessage(res, {statusCode: 200, message: 'Signed out'});
     },
     session: (req, res) => {
         if (req.user) return res.json(req.user);
@@ -156,6 +157,9 @@ const createUserController: (limiter: RateLimiter) => UserController = (limiter)
                 message: 'Not signed in'
             }
         );
+    },
+    rateLimit: (req, res, next) => {
+        return limiter.generalLimiter(req, res, next);
     },
 });
 
