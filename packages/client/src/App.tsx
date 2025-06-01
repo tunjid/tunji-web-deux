@@ -4,6 +4,8 @@ import Routes from './routes';
 import { StoreState } from './types';
 import { createSelector, OutputSelector } from 'reselect';
 import { UserLike } from '@tunji-web/common';
+import { SnackbarProvider } from 'notistack';
+import SnackbarManager from '@tunji-web/client/src/containers/SnackbarManager';
 
 
 interface Props {
@@ -25,7 +27,10 @@ const selector: OutputSelector<StoreState, State, (a: boolean, b?: UserLike) => 
 
 const App = ({}: Props) => {
     return (
-        <Routes/>
+        <SnackbarProvider>
+            <Routes/>
+            <SnackbarManager/>
+        </SnackbarProvider>
     );
 };
 
