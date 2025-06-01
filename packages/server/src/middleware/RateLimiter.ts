@@ -16,7 +16,7 @@ const createRateLimiter: (connection: Connection) => RateLimiter = (connection) 
         storeClient: connection,
         keyPrefix: 'default-rate-limiter',
         points: 3, // 3 requests
-        duration: 60 * 5, // per 5 minutes by IP
+        duration: 60 * 60 * 24 * 3, // 3 like actions allowed every 3 days by IP
     });
 
     const limiterConsecutiveFailsByUsername = new RateLimiterMongo({
