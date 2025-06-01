@@ -179,7 +179,16 @@ const archiveController = <T extends ArchiveDocument>(Model: ArchiveModel<T>): A
                 });
             }
 
+            const existingLikes = archive.likes;
             archive.likes = archive.likes + likeIncrement;
+
+            if (archive.likes < existingLikes) {
+                return serverMessage(res, {
+                    statusCode: 400,
+                    message: 'Likes cannot be decremented',
+                });
+            }
+
             const saved = await archive.save();
             req.archive = saved;
             next();
