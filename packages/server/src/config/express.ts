@@ -17,6 +17,7 @@ import archiveRouter from '../routes/ArchiveRouter';
 import archiveFileRouter from '../routes/ArchiveFileRouter';
 import changeListRouter from '../routes/ChangeListRouter';
 import reactRouter from '../routes/ReactRouter';
+import { rssRouter } from '../routes/RssRouter';
 import errorMiddleware from '../middleware/ErrorMiddleware';
 import createRateLimiter from '../middleware/RateLimiter';
 import HttpException from '../utilities/HttpException';
@@ -86,6 +87,7 @@ const app: (connection: Connection) => Express = (connection) => {
     expressServer.use(cookieParser());
 
 // Route mapping
+    rssRouter(expressServer);
     changeListRouter(expressServer);
     userRouter(expressServer, userController);
     archiveRouter(expressServer, Article, userController);
