@@ -36,6 +36,7 @@ interface OpenGraphParams {
     siteName: string;
     extraScripts?: string[];
     extraStylesheets?: string[];
+    standardDocumentUri?: string;
 }
 
 const archiveModels = [Article, Project, Talk];
@@ -112,6 +113,10 @@ export default function (app: Express): void {
                 extraScriptTags(params)
             );
             webPage = webPage.replace(
+                '<link>standardDocumentUri</link>',
+                params.standardDocumentUri ? `<link rel="site.standard.document" href="${params.standardDocumentUri}"/>`: ''
+            );
+            webPage = webPage.replace(
                 '<link>extraStylesheets</link>',
                 extraStylesheetTags(params)
             );
@@ -178,6 +183,12 @@ async function openGraphParams(
                 item: documents.map(it => it.toJSON())
             }));
 
+            const docLink = document?.link;
+            const docCreated = document?.created;
+            const docRecordKey = !!docLink && !!docCreated
+                ? await tidFromDateAndUrl(docCreated, docLink)
+                : undefined;
+
             return {
                 title: document?.title || `${root} by Tunji`,
                 description: document?.description || `An archive of my ${root}`,
@@ -192,6 +203,9 @@ async function openGraphParams(
                     .filter(file => file.mimetype === 'text/css')
                     .map(file => file.url)
                     .map(publicUrlToApiUrl),
+                standardDocumentUri: docRecordKey
+                    ? `at://did:plc:6q4y7p2wft3tncsffspts3m5/site.standard.document/${docRecordKey}`
+                    : undefined,
             };
         }
         default: {
@@ -238,3 +252,44 @@ const extraStylesheetTags = (params: OpenGraphParams) =>
             ? params.extraStylesheets.map(sheet => `<link href="${sheet}" rel="stylesheet" type="text/css"/>`)
             : []
     ).join('\n');
+
+export async function tidFromDateAndUrl(
+    publishedAt: Date,
+    itemUrl: string
+): Promise<string> {
+    const dateMs = publishedAt.getTime();
+    const microseconds = BigInt(dateMs) * BigInt(1000);
+
+    const encoder = new TextEncoder();
+    const hashBuffer = await crypto.subtle.digest(
+        'SHA-256',
+        encoder.encode(itemUrl)
+    );
+    const hashView = new DataView(hashBuffer);
+
+    // Replace 0x3ffn with BigInt(0x3ff)
+    const clockId = BigInt(hashView.getUint16(0)) & BigInt(0x3ff);
+
+    // Replace 10n with BigInt(10)
+    const tid = (microseconds << BigInt(10)) | clockId;
+
+    return encodeBase32Sort(tid, 13);
+}
+
+const BASE32_SORT = '234567abcdefghijklmnopqrstuvwxyz';
+
+// ─── TID Generation ─────────────────────────────────────────────────────────
+
+function encodeBase32Sort(value: bigint, length: number): string {
+    const chars: string[] = [];
+    let v = value;
+
+    const mask = BigInt(31);
+    const shift = BigInt(5);
+
+    for (let i = 0; i < length; i++) {
+        chars.unshift(BASE32_SORT[Number(v & mask)]);
+        v >>= shift;
+    }
+    return chars.join('');
+}
