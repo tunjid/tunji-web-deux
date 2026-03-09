@@ -25,9 +25,9 @@ export const rssRouter = (app: Express): void => {
             });
 
             const [articles, projects, talks] = await Promise.all([
-                Article.find().sort({created: -1}).limit(20).exec(),
-                Project.find().sort({created: -1}).limit(20).exec(),
-                Talk.find().sort({created: -1}).limit(20).exec(),
+                Article.find().sort({created: -1}).limit(100).exec(),
+                Project.find().sort({created: -1}).limit(100).exec(),
+                Talk.find().sort({created: -1}).limit(100).exec(),
             ]);
 
             const archives: ArchiveDocument[] = [...articles, ...projects, ...talks].sort(
@@ -47,5 +47,10 @@ export const rssRouter = (app: Express): void => {
 
             res.set('Content-Type', 'application/rss+xml');
             res.send(feed.xml());
+        });
+
+    app.route('/.well-known/site.standard.publication')
+        .get(async (req, res) => {
+            res.send('at://did:plc:6q4y7p2wft3tncsffspts3m5/site.standard.publication/3ddckoeex22s5');
         });
 };
