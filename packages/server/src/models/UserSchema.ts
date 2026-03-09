@@ -88,7 +88,7 @@ UserSchema.virtual('id')
 
 UserSchema.pre<UserDocument>('save', function (this: UserDocument, next) {
     if (this.password) {
-        this.salt = new Buffer(randomBytes(16).toString('base64'), 'base64');
+        this.salt = Buffer.from(randomBytes(16).toString('base64'), 'base64');
         this.password = this.hashPassword(this.password);
     }
 
