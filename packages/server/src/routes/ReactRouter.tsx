@@ -186,7 +186,7 @@ async function openGraphParams(
             const docLink = document?.link;
             const docCreated = document?.created;
             const docRecordKey = !!docLink && !!docCreated
-                ? await tidFromDateAndUrl(docCreated, docLink)
+                ? await tidFromDateAndPath(docCreated, `${document.kind}/docLink`)
                 : undefined;
 
             return {
@@ -253,7 +253,7 @@ const extraStylesheetTags = (params: OpenGraphParams) =>
             : []
     ).join('\n');
 
-export async function tidFromDateAndUrl(
+export async function tidFromDateAndPath(
     publishedAt: Date,
     itemUrl: string
 ): Promise<string> {
