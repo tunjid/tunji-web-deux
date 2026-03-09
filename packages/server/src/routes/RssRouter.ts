@@ -14,7 +14,7 @@ export const rssRouter = (app: Express): void => {
                 description: 'A collection of my thoughts and experiences.',
                 feed_url: `${config.apiEndpoint}/rss`,
                 site_url: config.apiEndpoint,
-                image_url: `${config.apiEndpoint}/favicon.ico`,
+                image_url: 'https://storage.googleapis.com/tunji-web-public/article-media/avatar.jpg',
                 managingEditor: 'tunji@tunji.dev (Adetunji Dahunsi)',
                 webMaster: 'tunji@tunji.dev (Adetunji Dahunsi)',
                 copyright: '2025 Adetunji Dahunsi',
@@ -42,6 +42,10 @@ export const rssRouter = (app: Express): void => {
                     categories: archive.categories,
                     author: 'Adetunji Dahunsi',
                     date: archive.created,
+                    enclosure: {
+                        url: archive.thumbnail,
+                        type: 'image/*'
+                    }
                 });
             });
 
