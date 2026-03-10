@@ -1,0 +1,13 @@
+node_modules
+.git
+.idea
+.DS_Store
+*.key
+*.crt
+*Config*.json
+config-actual.json
+cert-renewal
+packages/server/dist
+packages/server/node_modules
+packages/common/node_modules
+packages/client/public/script.*

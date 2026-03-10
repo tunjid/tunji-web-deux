@@ -1,5 +1,6 @@
 import ssl from './config/ssl';
-import { createServer } from 'https';
+import { createServer as createHttpsServer } from 'https';
+import { createServer as createHttpServer } from 'http';
 import socketServer from '@tunji-web/server/src/sockets/socket';
 import mongooseConnection from '@tunji-web/server/src/config/Mongoose';
 import express from '@tunji-web/server/src/config/express';
@@ -13,20 +14,23 @@ mongooseConnection().then(async (connection) => {
     await recordChangeLists();
     expressServer.set('port', 8080);
 
-    const httpsServer = createServer(ssl.options, expressServer);
+    const useTls = process.env.USE_TLS !== 'false';
+    const server = useTls
+        ? createHttpsServer(ssl.options, expressServer)
+        : createHttpServer(expressServer);
 
     // Should be a microservice
     SocketIOAdapter.createCollection()
         .then(collection => {
             socketServer(
-                httpsServer,
+                server,
                 collection,
             );
         });
 
-    httpsServer.listen(expressServer.get('port'));
-    httpsServer.on('listening', () => console.log('Server listening on ' + expressServer.get('port') + ' in ' + expressServer.get('env') + ' mode.'));
-    httpsServer.on('error', (error) => {
+    server.listen(expressServer.get('port'));
+    server.on('listening', () => console.log('Server listening on ' + expressServer.get('port') + ' in ' + expressServer.get('env') + ' mode.'));
+    server.on('error', (error) => {
         if (error.syscall !== 'listen') {
             throw error;
         }
