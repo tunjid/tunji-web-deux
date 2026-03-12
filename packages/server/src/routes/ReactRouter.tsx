@@ -1,7 +1,6 @@
 import { Express, Request, Response } from 'express';
 import path from 'path';
 import fs from 'fs';
-import promise from 'bluebird';
 import scraper from 'open-graph-scraper';
 import { ArchiveKind, ArchiveLike, describeRoute, OpenGraphScrapeQueryKey, RouteDescription } from '@tunji-web/common';
 
@@ -57,7 +56,7 @@ export default function (app: Express): void {
         });
 
     app.all(
-        '*',
+        '/{*path}',
         async (req: Request, res: Response) => {
             let webPage = indexHtml;
             const cache = createEmotionCache();
@@ -212,7 +211,7 @@ async function openGraphParams(
             const archives: {
                 item: ArchiveLike[];
                 kind: ArchiveKind
-            }[] = await promise.all(archiveModels.map(async model => {
+            }[] = await Promise.all(archiveModels.map(async model => {
                 const archives = await model.find()
                     .limit(13)
                     .sort({'created': -1})

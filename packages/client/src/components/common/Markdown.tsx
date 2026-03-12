@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ReactNode } from 'react';
-import { Components } from 'react-markdown/src/ast-to-react';
+import type { Components } from 'react-markdown';
 import ReactPlayer from 'react-player';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import * as darkCodeTheme from 'react-syntax-highlighter/dist/cjs/styles/prism/darcula';
@@ -180,7 +180,7 @@ export const MarkdownComponents: Components = {
             <StyledParagraph {...props}/>
         </Box>;
     },
-    code({node, inline, className, children, ...props}) {
+    code({node, className, children, ...props}) {
         const classname = className as string;
         const match = /language-(\w+)/.exec(classname || '');
         const {mode, systemMode} = useColorScheme();
@@ -189,7 +189,7 @@ export const MarkdownComponents: Components = {
             light: lightCodeTheme.default,
             dark: darkCodeTheme.default,
         }[resolvedMode];
-        return !inline && match
+        return match
             ? <SyntaxHighlighter
                 showLineNumbers={false}
                 language={match[1]}

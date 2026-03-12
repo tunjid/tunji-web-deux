@@ -135,7 +135,7 @@ const archiveController = <T extends ArchiveDocument>(Model: ArchiveModel<T>): A
             .catch(error => next(error));
     },
     remove: (req, res, next) => {
-        Model.findByIdAndRemove(req.archive.id)
+        Model.findByIdAndDelete(req.archive.id)
             .then(() => next())
             .catch(error => next(error));
     },

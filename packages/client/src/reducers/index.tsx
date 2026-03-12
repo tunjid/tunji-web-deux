@@ -1,9 +1,9 @@
-import { applyMiddleware, combineReducers, createStore, PreloadedState, Reducer, Store } from 'redux';
+import { applyMiddleware, combineReducers, Reducer, Store, legacy_createStore as createStore } from 'redux';
 import { StoreState } from '../types';
 import { persistentUiReducer } from './PersistentUi';
 import archiveReducer, { archiveStateSanitizer } from './Archive';
 import { thunk } from 'redux-thunk';
-import { composeWithDevTools } from 'redux-devtools-extension';
+import { composeWithDevTools } from '@redux-devtools/extension';
 import { homeReducer } from './Home';
 import { authReducer } from './Auth';
 import { snackbarReducer } from './Snackbar';
@@ -14,7 +14,7 @@ interface ConnectedStore {
     store: Store<StoreState>;
 }
 
-const reducers: () => Reducer<StoreState> = () => combineReducers<StoreState>({
+const reducers: () => Reducer<StoreState> = () => combineReducers({
     persistentUI: persistentUiReducer,
     home: homeReducer,
     auth: authReducer,
@@ -22,7 +22,7 @@ const reducers: () => Reducer<StoreState> = () => combineReducers<StoreState>({
     archives: archiveReducer,
     openGraph: openGraphReducer,
     snackbars: snackbarReducer,
-});
+} as any);
 
 export const clientStore: ConnectedStore = (function bar() {
     const hasDom = typeof window !== 'undefined';
@@ -35,9 +35,9 @@ export const clientStore: ConnectedStore = (function bar() {
     const preloadedState = rawState ? {...rawState, archives: archiveStateSanitizer(rawState.archives)} : undefined;
 
     return {
-        store: createStore<StoreState, any, any, any>(
+        store: createStore(
             reducers(),
-            preloadedState as unknown as PreloadedState<StoreState>,
+            preloadedState as any,
             composeWithDevTools(applyMiddleware(
                 thunk
             ))
@@ -47,7 +47,7 @@ export const clientStore: ConnectedStore = (function bar() {
 
 export const serverStore: (path: string) => ConnectedStore = (path) => {
     return {
-        store: createStore<StoreState, any, any, any>(
+        store: createStore(
             reducers(),
             composeWithDevTools(applyMiddleware(
                 thunk

@@ -1,15 +1,21 @@
-import { CallHistoryMethodAction, push, replace, goBack } from 'connected-react-router'
+import { NavigateFunction } from 'react-router-dom';
+
+let navigateFunction: NavigateFunction | null = null;
+
+export const setNavigate = (fn: NavigateFunction) => {
+    navigateFunction = fn;
+};
 
 interface IRouterActions {
-    push: (route: string) => CallHistoryMethodAction;
-    replace: (route: string) => CallHistoryMethodAction;
-    pop: () => CallHistoryMethodAction;
+    push: (route: string) => () => void;
+    replace: (route: string) => () => void;
+    pop: () => () => void;
 }
 
-export type RouterAction = CallHistoryMethodAction;
+export type RouterAction = { type: '__NAVIGATION__' };
 
 export const RouterActions: IRouterActions = {
-    push,
-    replace,
-    pop: goBack
-}
+    push: (route: string) => () => { navigateFunction?.(route); },
+    replace: (route: string) => () => { navigateFunction?.(route, { replace: true }); },
+    pop: () => () => { window.history.back(); },
+};

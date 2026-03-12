@@ -28,7 +28,7 @@ export default function <T extends ArchiveDocument>(app: Express, model: Archive
             archiveFiles.sendArchiveFile
         );
 
-    app.route('/files/*')
+    app.route('/files/{*path}')
         .get(
             archiveFiles.fileByPath,
             FileReader
