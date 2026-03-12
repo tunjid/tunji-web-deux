@@ -4,7 +4,7 @@ node_modules
 .DS_Store
 *.key
 *.crt
-*Config*.json
+serverConfig*.json
 config-actual.json
 cert-renewal
 packages/server/dist

@@ -28,18 +28,20 @@ jobs:
       - name: Configure Docker for Artifact Registry
         run: gcloud auth configure-docker ${{ secrets.GCP_REGION }}-docker.pkg.dev
 
+      - name: Write client config
+        run: echo '${{ secrets.CLIENT_CONFIG }}' > clientConfig.json
+
       - name: Build and push
         run: |
-          docker build -t $IMAGE .
-          docker push $IMAGE
+          docker buildx build --platform linux/amd64 --provenance=false -t $IMAGE --push .
 
       - name: Deploy to Cloud Run
         uses: google-github-actions/deploy-cloudrun@v2
         with:
-          service: tunji-web
+          service: tunji-web-v2
           region: ${{ secrets.GCP_REGION }}
           image: ${{ env.IMAGE }}
           flags: |
             --port=8080
-            --set-env-vars=USE_TLS=false
-            --update-secrets=/app/serverConfig.json=tunji-web-server-config:latest
+            --set-env-vars=USE_TLS=false,CONFIG_PATH=/config/serverConfig.json
+            --update-secrets=/config/serverConfig.json=tunji-web-server-config:latest

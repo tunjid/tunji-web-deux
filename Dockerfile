@@ -11,7 +11,7 @@ RUN yarn install --frozen-lockfile
 
 COPY packages/ packages/
 COPY scripts/ scripts/
-COPY tsconfig.json ./
+COPY tsconfig.json clientConfig.json ./
 
 ENV NODE_ENV=production
 RUN yarn build
