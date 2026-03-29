@@ -185,7 +185,7 @@ async function openGraphParams(
             const docLink = document?.link;
             const docCreated = document?.created;
             const docRecordKey = !!docLink && !!docCreated
-                ? await tidFromDateAndPath(docCreated, `${document.kind}/docLink`)
+                ? await tidFromDateAndPath(docCreated, new URL(docLink).pathname)
                 : undefined;
 
             return {
