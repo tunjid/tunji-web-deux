@@ -82,7 +82,7 @@ const archiveFileController = <T extends ArchiveDocument>(Model: ArchiveModel<T>
     remove: async (req, res, next) => {
         const FileModel = Model.fileModel();
         try {
-            const file = await FileModel.findByIdAndRemove(req.archiveFile.id);
+            const file = await FileModel.findByIdAndDelete(req.archiveFile.id);
             req.fileOldUrl = file?.url;
             next();
         } catch (error) {
@@ -93,7 +93,7 @@ const archiveFileController = <T extends ArchiveDocument>(Model: ArchiveModel<T>
         const FileModel = Model.fileModel();
         if (req.filePublicUrl !== req.fileOldUrl) {
             try {
-                await FileModel.findOneAndRemove({url: req.fileOldUrl});
+                await FileModel.findOneAndDelete({url: req.fileOldUrl});
                 next();
             } catch (error) {
                 next(error);

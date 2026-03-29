@@ -1,0 +1,47 @@
+name: Deploy to Cloud Run
+
+on:
+  push:
+    branches: [master]
+
+env:
+  IMAGE: ${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/tunji-web/blog:${{ github.sha }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.WIF_PROVIDER }}
+          service_account: ${{ secrets.WIF_SERVICE_ACCOUNT }}
+
+      - uses: google-github-actions/setup-gcloud@v2
+
+      - name: Configure Docker for Artifact Registry
+        run: gcloud auth configure-docker ${{ secrets.GCP_REGION }}-docker.pkg.dev
+
+      - name: Write client config
+        run: echo '${{ secrets.CLIENT_CONFIG }}' > clientConfig.json
+
+      - name: Build and push
+        run: |
+          docker buildx build --platform linux/amd64 --provenance=false -t $IMAGE --push .
+
+      - name: Deploy to Cloud Run
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: tunji-web-v2
+          region: ${{ secrets.GCP_REGION }}
+          image: ${{ env.IMAGE }}
+          flags: |
+            --port=8080
+            --set-env-vars=USE_TLS=false,CONFIG_PATH=/config/serverConfig.json
+            --update-secrets=/config/serverConfig.json=tunji-web-server-config:latest

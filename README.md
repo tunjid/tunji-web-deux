@@ -112,3 +112,58 @@ The server is https only on port 8080. Visit it through:
 
 `https://localhost:8080`
 
+## Manual Build and Deploy (Cloud Run)
+
+### Prerequisites
+
+- Docker with buildx support (e.g., Colima on macOS)
+- `gcloud` CLI authenticated
+- Docker configured for Artifact Registry: `gcloud auth configure-docker us-central1-docker.pkg.dev`
+
+### Build and push
+
+```bash
+docker buildx build --platform linux/amd64 --provenance=false \
+  -t us-central1-docker.pkg.dev/$PROJECT_ID/$ARTIFACT_REPO/blog:latest \
+  --push .
+```
+
+### Deploy
+
+```bash
+gcloud run deploy $SERVICE_NAME \
+  --image=us-central1-docker.pkg.dev/$PROJECT_ID/$ARTIFACT_REPO/blog:latest \
+  --region=us-central1 \
+  --project=$PROJECT_ID \
+  --port=8080 \
+  --set-env-vars=USE_TLS=false,CONFIG_PATH=/config/serverConfig.json \
+  --update-secrets=/config/serverConfig.json=$SECRET_NAME:latest \
+  --allow-unauthenticated
+```
+
+### Update server config secret
+
+```bash
+gcloud secrets versions add $SECRET_NAME \
+  --data-file=serverConfig.json \
+  --project=$PROJECT_ID
+```
+
+After updating the secret, redeploy or force the running service to pick up the new version:
+
+```bash
+gcloud run services update $SERVICE_NAME \
+  --region=us-central1 \
+  --update-secrets=/config/serverConfig.json=$SECRET_NAME:latest
+```
+
+## CI/CD
+
+Pushes to `master` trigger the GitHub Actions workflow (`.github/workflows/deploy.yml`) which builds, pushes, and deploys automatically. Requires these GitHub Actions secrets:
+
+- `GCP_PROJECT_ID`
+- `GCP_REGION`
+- `WIF_PROVIDER`
+- `WIF_SERVICE_ACCOUNT`
+- `CLIENT_CONFIG` — Full contents of `clientConfig.json` (needed at build time for the client bundle)
+

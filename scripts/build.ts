@@ -1,6 +1,6 @@
 import { build } from 'esbuild';
-import clientConfig from '../clientConfig.json';
-import serverConfig from '../serverConfig.json';
+
+const env = process.env.NODE_ENV || 'production';
 
 /**
  * Generic options passed during build.
@@ -41,7 +41,7 @@ export async function buildServer(options: BuildOptions) {
     },
     external: ['express'],
     platform: 'node',
-    target: 'node14.15.5',
+    target: 'node22',
     bundle: true,
     minify: env === 'production',
     sourcemap: env === 'development',
@@ -53,12 +53,8 @@ export async function buildServer(options: BuildOptions) {
  */
 async function buildAll() {
   await Promise.all([
-    buildClient({
-      env: clientConfig.env,
-    }),
-    buildServer({
-      env: serverConfig.env,
-    }),
+    buildClient({ env }),
+    buildServer({ env }),
   ]);
 }
 

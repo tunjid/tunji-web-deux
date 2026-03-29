@@ -29,7 +29,7 @@ const createRateLimiter: (connection: Connection) => RateLimiter = (connection) 
 
     return ({
         generalLimiter: (req: Request, res: Response, next: NextFunction) =>
-            defaultLimiter.consume(req.ip)
+            defaultLimiter.consume(req.ip || req.socket.remoteAddress || 'unknown')
                 .then(() => next())
                 .catch(() => serverMessage(res, {
                         statusCode: 429,

@@ -1,33 +1,23 @@
 import * as React from 'react';
 import './App.css';
 import Routes from './routes';
-import { StoreState } from './types';
-import { createSelector, OutputSelector } from 'reselect';
-import { UserLike } from '@tunji-web/common';
 import { SnackbarProvider } from 'notistack';
 import SnackbarManager from '@tunji-web/client/src/containers/SnackbarManager';
+import { useNavigate } from 'react-router-dom';
+import { setNavigate } from './actions/Router';
 
-
-interface Props {
+function NavigationSetup() {
+    const navigate = useNavigate();
+    React.useEffect(() => {
+        setNavigate(navigate);
+    }, [navigate]);
+    return null;
 }
 
-interface State {
-    signedInUser?: UserLike;
-    hasAppBarSpacer: boolean;
-}
-
-const selector: OutputSelector<StoreState, State, (a: boolean, b?: UserLike) => State> = createSelector(
-    state => state.persistentUI.hasAppBarSpacer,
-    state => state.auth.signedInUser,
-    (hasAppBarSpacer, signedInUser) => ({
-        signedInUser,
-        hasAppBarSpacer,
-    })
-);
-
-const App = ({}: Props) => {
+const App = () => {
     return (
         <SnackbarProvider>
+            <NavigationSetup/>
             <Routes/>
             <SnackbarManager/>
         </SnackbarProvider>

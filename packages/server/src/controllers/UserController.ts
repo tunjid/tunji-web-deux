@@ -144,10 +144,12 @@ const createUserController: (limiter: RateLimiter) => UserController = (limiter)
             });
         })(req, res, next);
     },
-    signOut: (req, res) => {
+    signOut: (req, res, next) => {
         // Use the Passport 'logout' method to logout
-        req.logout();
-        return serverMessage(res, {statusCode: 200, message: 'Signed out'});
+        req.logout((err) => {
+            if (err) return next(err);
+            return serverMessage(res, {statusCode: 200, message: 'Signed out'});
+        });
     },
     session: (req, res) => {
         if (req.user) return res.json(req.user);
