@@ -185,7 +185,7 @@ async function openGraphParams(
             const docLink = document?.link;
             const docCreated = document?.created;
             const docRecordKey = !!docLink && !!docCreated
-                ? await tidFromDateAndPath(docCreated, new URL(docLink).pathname)
+                ? await tidFromDateAndPath(docCreated, `/${kind}/${docLink}`)
                 : undefined;
 
             return {
@@ -256,7 +256,9 @@ export async function tidFromDateAndPath(
     publishedAt: Date,
     itemUrl: string
 ): Promise<string> {
-    const dateMs = publishedAt.getTime();
+    // Truncate milliseconds to match RSS feed date precision (RFC 2822 has second-level granularity).
+    // The importer reads dates from the RSS feed, so its TIDs use second-precision timestamps.
+    const dateMs = Math.floor(publishedAt.getTime() / 1000) * 1000;
     const microseconds = BigInt(dateMs) * BigInt(1000);
 
     const encoder = new TextEncoder();
