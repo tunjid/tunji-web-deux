@@ -58,6 +58,7 @@
     "react-dom": "19.1.0",
     "react-redux": "9.2.0",
     "react-router-dom": "^7.4.1",
+    "atmosphere-rss": "^0.1.0",
     "rss": "^1.2.2",
     "rxjs": "7.8.2",
     "serve-favicon": "2.5.0",
