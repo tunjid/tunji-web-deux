@@ -17,6 +17,7 @@ import { Provider } from 'react-redux';
 import { ArchiveDocument } from '@tunji-web/server/src/models/Archive';
 import { Store } from 'redux';
 
+import { documentRecordKey } from 'atmosphere-rss';
 import config from '../config/config';
 import { ArchiveFileDocument } from '@tunji-web/server/src/models/ArchiveFileSchema';
 import { publicUrlToApiUrl } from '@tunji-web/server/src/controllers/UploadController';
@@ -185,7 +186,10 @@ async function openGraphParams(
             const docLink = document?.link;
             const docCreated = document?.created;
             const docRecordKey = !!docLink && !!docCreated
-                ? await tidFromDateAndPath(docCreated, `/${kind}/${docLink}`)
+                ? await documentRecordKey(
+                    docCreated,
+                    new URL(`${config.apiEndpoint}/${kind}/${docLink}`)
+                )
                 : undefined;
 
             return {
@@ -251,46 +255,3 @@ const extraStylesheetTags = (params: OpenGraphParams) =>
             ? params.extraStylesheets.map(sheet => `<link href="${sheet}" rel="stylesheet" type="text/css"/>`)
             : []
     ).join('\n');
-
-export async function tidFromDateAndPath(
-    publishedAt: Date,
-    itemUrl: string
-): Promise<string> {
-    // Truncate milliseconds to match RSS feed date precision (RFC 2822 has second-level granularity).
-    // The importer reads dates from the RSS feed, so its TIDs use second-precision timestamps.
-    const dateMs = Math.floor(publishedAt.getTime() / 1000) * 1000;
-    const microseconds = BigInt(dateMs) * BigInt(1000);
-
-    const encoder = new TextEncoder();
-    const hashBuffer = await crypto.subtle.digest(
-        'SHA-256',
-        encoder.encode(itemUrl)
-    );
-    const hashView = new DataView(hashBuffer);
-
-    // Replace 0x3ffn with BigInt(0x3ff)
-    const clockId = BigInt(hashView.getUint16(0)) & BigInt(0x3ff);
-
-    // Replace 10n with BigInt(10)
-    const tid = (microseconds << BigInt(10)) | clockId;
-
-    return encodeBase32Sort(tid, 13);
-}
-
-const BASE32_SORT = '234567abcdefghijklmnopqrstuvwxyz';
-
-// ─── TID Generation ─────────────────────────────────────────────────────────
-
-function encodeBase32Sort(value: bigint, length: number): string {
-    const chars: string[] = [];
-    let v = value;
-
-    const mask = BigInt(31);
-    const shift = BigInt(5);
-
-    for (let i = 0; i < length; i++) {
-        chars.unshift(BASE32_SORT[Number(v & mask)]);
-        v >>= shift;
-    }
-    return chars.join('');
-}
