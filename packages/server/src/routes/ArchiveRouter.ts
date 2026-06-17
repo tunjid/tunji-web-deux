@@ -89,5 +89,8 @@ export default function <T extends ArchiveDocument>(app: Express, model: Archive
             archives.sendArchive
         );
 
+    app.route(`/api/${routeName}/:${paramName}/comments`)
+        .get(archives.sendArchiveComments);
+
     app.param(paramName, archives.byId);
 }

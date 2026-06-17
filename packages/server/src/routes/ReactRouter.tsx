@@ -19,6 +19,7 @@ import { Store } from 'redux';
 
 import { documentRecordKey } from 'atmosphere-rss';
 import config from '../config/config';
+import { REPO_DID, STANDARD_DOCUMENT_COLLECTION } from '../utilities/Bsky';
 import { ArchiveFileDocument } from '@tunji-web/server/src/models/ArchiveFileSchema';
 import { publicUrlToApiUrl } from '@tunji-web/server/src/controllers/UploadController';
 
@@ -207,7 +208,7 @@ async function openGraphParams(
                     .map(file => file.url)
                     .map(publicUrlToApiUrl),
                 standardDocumentUri: docRecordKey
-                    ? `at://did:plc:6q4y7p2wft3tncsffspts3m5/site.standard.document/${docRecordKey}`
+                    ? `at://${REPO_DID}/${STANDARD_DOCUMENT_COLLECTION}/${docRecordKey}`
                     : undefined,
             };
         }

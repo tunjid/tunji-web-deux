@@ -4,6 +4,7 @@ import { ErrorCode, getErrorMessage, serverMessage } from './Common';
 import { ArchiveSummary } from '@tunji-web/common';
 import { mongo } from 'mongoose';
 import { publicUrlToApiUrl } from '@tunji-web/server/src/controllers/UploadController';
+import { atUriToBskyUrl, fetchPostThread, resolveDocumentPostUri } from '../utilities/Bsky';
 
 interface ArchiveController {
     create: (req: Request, res: Response, next: NextFunction) => void;
@@ -12,6 +13,7 @@ interface ArchiveController {
     remove: (req: Request, res: Response, next: NextFunction) => void;
     byId: (req: Request, res: Response, next: NextFunction, id: string) => void;
     sendArchive: (req: Request, res: Response, next: NextFunction) => void;
+    sendArchiveComments: (req: Request, res: Response, next: NextFunction) => void;
     find: (req: Request, res: Response, next: NextFunction) => void;
 
     filesForId: (req: Request, res: Response, next: NextFunction) => void;
@@ -116,6 +118,23 @@ const archiveController = <T extends ArchiveDocument>(Model: ArchiveModel<T>): A
             statusCode: 500,
             message: 'Archive not found',
         });
+    },
+    sendArchiveComments: async (req, res, next) => {
+        try {
+            const archive = req.archive; // loaded by byId; has created (Date) and kind/link virtuals
+            const postUri = await resolveDocumentPostUri(archive.created, archive.kind, archive.link);
+            if (!postUri) return res.json({postUri: null, postUrl: null, thread: null, hiddenReplies: []});
+
+            const data = await fetchPostThread(postUri, 6);
+            res.json({
+                postUri,
+                postUrl: atUriToBskyUrl(postUri),
+                thread: data?.thread ?? null,
+                hiddenReplies: data?.threadgate?.record?.hiddenReplies ?? [],
+            });
+        } catch (error) {
+            next(error);
+        }
     },
     put: (req, res, next) => {
         Model.findByIdAndUpdate(req.archive.id, req.body)
