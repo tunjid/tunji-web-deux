@@ -21,6 +21,7 @@ import CardMedia from '@mui/material/CardMedia';
 import { TableOfContents } from '@tunji-web/client/src/components/common/TableOfContents';
 import AppAppBar from '@tunji-web/client/src/blog/components/AppAppBar';
 import LikeButton from '@tunji-web/client/src/components/like-button/LikeButton';
+import DocumentComments from './DocumentComments';
 
 const fileToStyleSheet: (file: ArchiveFile) => HTMLLinkElement = file => {
     const sheet = document.createElement('link');
@@ -189,6 +190,7 @@ const Header: (props: DetailProps) => React.JSX.Element = ({archive}) => {
             chips={archive?.categories}
         />
         {heroContent(archive)}
+        <DocumentComments archive={archive}/>
     </Box>;
 };
 
