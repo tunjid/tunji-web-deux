@@ -63,7 +63,7 @@ interface HeadingProps {
     headings: Heading[];
     activeId?: string;
 }
-const StyledLink: (props: HeadingProps) => JSX.Element = ({isActive, ...props}: any) => {
+const StyledLink: (props: HeadingProps) => React.JSX.Element = ({isActive, ...props}: any) => {
     return isActive ? <StyledActiveLink {...props} /> : <StyledInactiveLink {...props} />;
 };
 
@@ -71,7 +71,7 @@ const StyledLink: (props: HeadingProps) => JSX.Element = ({isActive, ...props}: 
  * This renders an item in the table of contents list.
  * scrollIntoView is used to ensure that when a user clicks on an item, it will smoothly scroll.
  */
-const Headings: (props: HeadingProps) => JSX.Element = ({headings, activeId}) => {
+const Headings: (props: HeadingProps) => React.JSX.Element = ({headings, activeId}) => {
     return (
         <StyledList>
             {headings.map((heading) => (
@@ -225,7 +225,7 @@ const extractHeadings = (markdown: string) => {
 /**
  * Renders the table of contents.
  */
-export const TableOfContents: (props: TOCProps) => JSX.Element = ({markdown}) => {
+export const TableOfContents: (props: TOCProps) => React.JSX.Element = ({markdown}) => {
 
     const [activeId, setActiveId] = useState<string>();
     const headings = extractHeadings(markdown);

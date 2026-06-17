@@ -108,7 +108,7 @@ interface State {
     tocOpen: boolean;
 }
 
-const Header: (props: DetailProps) => JSX.Element = ({archive}) => {
+const Header: (props: DetailProps) => React.JSX.Element = ({archive}) => {
 
     const [showUrl, setShowUrl] = useState(true);
     const onPlayerReady = () => setShowUrl(false);
