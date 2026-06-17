@@ -1,0 +1,7 @@
+{
+  "env": "production",
+  "googleAnalyticsId": "UA-0000-1",
+  "apiEndpoint": "https://tunjid.com",
+  "rootIndexImage": "https://storage.googleapis.com/tunji-web-public/article-media/avatar.jpg",
+  "archiveListDefaultImage": "https://storage.cloud.google.com/tunji-web/assets/tunji-web-deux.png"
+}
