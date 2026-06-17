@@ -108,10 +108,15 @@ const Author = ({author}: { author: BskyAuthor }) => (
 );
 
 const PostFooter = ({uri, createdAt}: { uri: string; createdAt: string }) => (
-    <Typography variant="caption" color="text.secondary" sx={{display: 'block', mt: 0.5}}>
+    <Typography variant="caption" color="text.secondary"
+                sx={{display: 'flex', alignItems: 'center', gap: 1, mt: 0.5}}>
         <Link href={postUrl(uri)} title="View on Bluesky" target="_blank" rel="noopener noreferrer" color="inherit"
               sx={{textDecoration: 'none'}}>
             {formatDate(createdAt)}
+        </Link>
+        <Box component="span" aria-hidden="true">&middot;</Box>
+        <Link href={postUrl(uri)} title="Reply to this comment on Bluesky" target="_blank" rel="noopener noreferrer">
+            Reply &#8599;
         </Link>
     </Typography>
 );
@@ -229,10 +234,13 @@ export default function ArchiveComments({archive}: ArchiveCommentsProps) {
             {engageUrl && (
                 <Typography variant="body2" sx={{mt: 3}}>
                     <Link href={engageUrl} target="_blank" rel="noopener noreferrer">
-                        Add your thoughts on Bluesky
+                        Reply on Bluesky &#8599;
                     </Link>
                 </Typography>
             )}
+            <Typography variant="caption" color="text.secondary" sx={{display: 'block', mt: 1}}>
+                Replies are posted on Bluesky and appear here shortly after.
+            </Typography>
         </Box>
     );
 }
