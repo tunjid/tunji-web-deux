@@ -28,6 +28,7 @@ import { StaticRouter } from 'react-router-dom';
 import { CacheProvider } from '@emotion/react';
 import createEmotionServer from '@emotion/server/create-instance';
 import CssBaseline from '@mui/material/CssBaseline';
+import InitColorSchemeScript from '@mui/material/InitColorSchemeScript';
 
 interface OpenGraphParams {
     title: string;
@@ -82,6 +83,17 @@ export default function (app: Express): void {
                 </Provider>
             );
 
+            // Blocking inline script that sets `data-mui-color-scheme` on <html> before the
+            // browser paints the root content, so the SSR markup is painted in the correct color
+            // scheme and there is no flash. Defaults match the theme/useColorScheme config; the
+            // nonce is required because of the strict per-request CSP (see config/express.ts).
+            const initColorSchemeScript = ReactDOMServer.renderToStaticMarkup(
+                <InitColorSchemeScript
+                    attribute="data-mui-color-scheme"
+                    nonce={req.serverReduxStateNonce}
+                />
+            );
+
             // Grab the CSS from emotion
             const emotionChunks = extractCriticalToChunks(app);
             const emotionCss = constructStyleTagsFromChunks(emotionChunks);
@@ -100,7 +112,7 @@ export default function (app: Express): void {
             webPage = webPage.replace(/\$OG_SITE_NAME/g, params.siteName);
             webPage = webPage.replace(
                 '<div id="root"></div>',
-                `<div id="root">${app}</div>`
+                `${initColorSchemeScript}<div id="root">${app}</div>`
             );
             webPage = webPage.replace(
                 ' <script>window.__PRELOADED_STATE__ = undefined</script>',
