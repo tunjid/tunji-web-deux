@@ -12,6 +12,9 @@
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
   },
+  "resolutions": {
+    "js-yaml": "^4.2.0"
+  },
   "scripts": {
     "client": "yarn workspace @tunji-web/client",
     "common": "yarn workspace @tunji-web/common",

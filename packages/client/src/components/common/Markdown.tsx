@@ -239,7 +239,7 @@ interface MarkdownProps {
     body?: string;
 }
 
-const BlogMarkdown: (props: MarkdownProps) => JSX.Element = ({body}) => {
+const BlogMarkdown: (props: MarkdownProps) => React.JSX.Element = ({body}) => {
 
     return (
         <ReactMarkdown

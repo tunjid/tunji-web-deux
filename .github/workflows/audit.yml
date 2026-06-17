@@ -1,0 +1,59 @@
+name: Dependency security audit
+
+on:
+  pull_request:
+  push:
+    branches: [develop, master]
+  schedule:
+    # Weekly (Mon 12:30 UTC): catches newly-disclosed compromises in deps that
+    # are already locked, even when nothing in the repo has changed.
+    - cron: '30 12 * * 1'
+
+permissions:
+  contents: read
+
+jobs:
+  # Hard gate: the lockfile must exactly match the manifests, and the bundle must
+  # build with ALL dependency lifecycle scripts disabled (--ignore-scripts) — the
+  # same way the production Dockerfile installs. This proves no package can run an
+  # install script (the Shai-Hulud worm vector) and that the build still succeeds.
+  verify-install:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: corepack enable
+      - name: Install with frozen lockfile and no scripts
+        run: yarn install --frozen-lockfile --ignore-scripts
+      - name: Build (verifies the no-scripts install is sufficient)
+        run: yarn build
+
+  # Malware + known-vulnerability scan of the full transitive tree. OSV includes
+  # malicious-package (MAL) advisories, which is exactly the Shai-Hulud / qix threat.
+  # The PR-differential variant only fails on vulnerabilities introduced by the PR,
+  # so it does not go permanently red on pre-existing transitive CVEs (e.g. react-scripts).
+  osv-scan-pr:
+    if: github.event_name == 'pull_request'
+    permissions:
+      actions: read
+      security-events: write
+      contents: read
+    uses: google/osv-scanner-action/.github/workflows/osv-scanner-reusable-pr.yml@v2.3.8
+    with:
+      scan-args: |-
+        --lockfile=./yarn.lock
+
+  # Full scan on push to default/release branches and on the weekly schedule.
+  # Results are reported to the repository's Security > Code scanning tab.
+  osv-scan:
+    if: github.event_name != 'pull_request'
+    permissions:
+      actions: read
+      security-events: write
+      contents: read
+    uses: google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@v2.3.8
+    with:
+      scan-args: |-
+        --lockfile=./yarn.lock
