@@ -13,7 +13,8 @@
     "typescript": "^5.9.3"
   },
   "resolutions": {
-    "js-yaml": "^4.2.0"
+    "js-yaml": "^4.2.0",
+    "prismjs": "1.30.0"
   },
   "scripts": {
     "client": "yarn workspace @tunji-web/client",
