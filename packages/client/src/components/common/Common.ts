@@ -26,11 +26,23 @@ export const archiveSelector = (archiveViewType: ArchiveView, pathname: String) 
         const kind = lookup?.kind || ArchiveKind.Articles;
         const archiveId = lookup?.archiveId;
 
+        // Slug from the URL (e.g. `/articles/<slug-objectId>` -> `<slug-objectId>`). The detail slot is
+        // keyed by kind only, so on a client navigation it may still hold a stale archive (or EmptyArchive)
+        // until `readArchive` resolves. Fall back to the already-loaded feed archive so the detail renders
+        // (and view transitions morph) with the correct content on the very first render.
+        const linkSegment = pathname.split('/').filter(Boolean)[1];
+        const detail = archiveState.kindToDetailMap[kind];
+        const archive = archiveViewType === 'detail'
+            ? (detail?.link === linkSegment
+                ? detail
+                : archiveState.kindToArchivesMap[kind]?.find(a => a.link === linkSegment) ?? detail)
+            : archiveState.kindToEditMap[kind];
+
         return {
             isSignedIn: signedInUser !== undefined,
             kind,
             archiveId,
-            archive: archiveViewType === 'detail' ? archiveState.kindToDetailMap[kind] : archiveState.kindToEditMap[kind],
+            archive,
             archiveFiles: archiveId ? archiveState.archiveIdToFilesMap[archiveId] : [],
         };
     }

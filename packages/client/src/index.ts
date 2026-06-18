@@ -1,4 +1,4 @@
-export { default as App } from './App';
+export { routes } from './routes';
 export { serverStore } from './reducers';
 export type { StoreState } from './types';
 export { ArchiveActions } from './actions/Archive';
