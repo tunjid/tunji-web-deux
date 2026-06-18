@@ -116,6 +116,7 @@ const Home = () => {
                     }}>
                         <Link
                             to={`/${selectedTab}`}
+                            viewTransition
                         >
                             <Button
                                 variant="outlined"

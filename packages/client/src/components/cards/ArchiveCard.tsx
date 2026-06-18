@@ -12,6 +12,7 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import ChipInput, { ChipType } from '@tunji-web/client/src/components/archive/ChipInput';
 import { Link, useViewTransitionState } from 'react-router-dom';
+import { useGridTransition } from '@tunji-web/client/src/hooks/UseGridTransition';
 
 const StyledCard = styled(Card)(({theme}) => ({
     display: 'flex',
@@ -134,13 +135,19 @@ export default function ArchiveCard({cardInfo}: State) {
     const to = `/${cardInfo.kind}/${cardInfo.link}`;
     const archiveId = describeRoute(to).archiveId;
 
-    // React Router's data router wraps each viewTransition navigation in document.startViewTransition
-    // (and replays it on browser Back/Forward). useViewTransitionState(to) is true only while a transition
-    // to/from this card's route is in flight — so we name this card's elements then (keeping names unique
-    // on the list) and the morph runs in BOTH directions. The detail screen carries the matching names.
-    const isTransitioning = useViewTransitionState(to);
+    // Two mutually-exclusive morph modes, chosen by which screens the view transition runs between
+    // (React Router replays the transition on browser Back/Forward too, so both fire in reverse):
+    //  - card <-> detail: the clicked card's image/title/author morph into the detail hero. Gated on this
+    //    card's OWN detail route, so only the clicked card is named (the rest stay in the page cross-fade).
+    //  - grid <-> grid (Home <-> list): the WHOLE card morphs to/from its slot in the other grid. The
+    //    browser morphs cards whose `archive-card-<id>` is present on both screens and enters/exits the rest.
+    // They never overlap: a grid<->grid nav has no detail endpoint, and a card<->detail nav has only one
+    // grid endpoint (so useGridTransition() is false). See UseGridTransition.ts.
+    const detailActive = useViewTransitionState(to);
+    const isGridMorph = useGridTransition();
     const vtName = (slot: string): string | undefined =>
-        isTransitioning && archiveId ? `archive-${slot}-${archiveId}` : undefined;
+        detailActive && archiveId ? `archive-${slot}-${archiveId}` : undefined;
+    const cardName = isGridMorph && archiveId ? `archive-card-${archiveId}` : undefined;
 
     const handleFocus = () => {
         setFocused(true);
@@ -186,6 +193,7 @@ export default function ArchiveCard({cardInfo}: State) {
                     cardInfo.showThumbnail
                         ? <StyledCard
                             variant="outlined"
+                            sx={{viewTransitionName: cardName}}
                             onFocus={handleFocus}
                             onBlur={handleBlur}
                             tabIndex={0}
@@ -208,7 +216,8 @@ export default function ArchiveCard({cardInfo}: State) {
                                             sx={{viewTransitionName: vtName('title')}}>
                                     {cardInfo.title}
                                 </Typography>
-                                <StyledTypography variant="body2" color="text.secondary" gutterBottom>
+                                <StyledTypography variant="body2" color="text.secondary" gutterBottom
+                                                  sx={{viewTransitionName: vtName('description')}}>
                                     {cardInfo.description}
                                 </StyledTypography>
                             </StyledCardContent>
@@ -216,6 +225,7 @@ export default function ArchiveCard({cardInfo}: State) {
                         </StyledCard>
                         : <StyledCard
                             variant="outlined"
+                            sx={{viewTransitionName: cardName}}
                             onFocus={handleFocus}
                             onBlur={handleBlur}
                             tabIndex={0}
@@ -245,7 +255,8 @@ export default function ArchiveCard({cardInfo}: State) {
                                     sx={{fontSize: '1rem'}}
                                 />
                             </TitleTypography>
-                            <StyledTypography variant="body2" color="text.secondary" gutterBottom>
+                            <StyledTypography variant="body2" color="text.secondary" gutterBottom
+                                              sx={{viewTransitionName: vtName('description')}}>
                                 {cardInfo.description}
                             </StyledTypography>
 

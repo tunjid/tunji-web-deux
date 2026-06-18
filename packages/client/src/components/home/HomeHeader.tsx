@@ -53,7 +53,7 @@ const HomeHeader = () => {
     };
 
     const seeAllArchives =
-        <Link to={`/${selectedTab}`}>
+        <Link to={`/${selectedTab}`} viewTransition>
             <Button variant="outlined">
                 {`All ${selectedTab}`}
             </Button>

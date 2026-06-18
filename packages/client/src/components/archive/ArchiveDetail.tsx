@@ -167,7 +167,8 @@ const Header: (props: DetailProps) => React.JSX.Element = ({archive, archiveId})
         <Typography gutterBottom variant="h3" sx={{viewTransitionName: `archive-title-${archiveId}`}}>
             {archive?.title || ''}
         </Typography>
-        <Typography color="textSecondary" gutterBottom variant="h5">
+        <Typography color="textSecondary" gutterBottom variant="h5"
+                    sx={{viewTransitionName: `archive-description-${archiveId}`}}>
             {archive?.description || ''}
         </Typography>
         <Box
