@@ -41,8 +41,6 @@ const GutterLink = styled(Link)(({theme}) => ({
 const StyledList = styled(List)(({theme}) => ({
     'padding-left': '12px',
     'list-style-type': 'none',
-    'overflow': 'auto',
-    height: '100vh',
 }));
 
 interface State {
@@ -242,11 +240,13 @@ const ArchiveList = () => {
                     <ArchiveCards kind={kind} archives={archives}/>
                     <ProgressBarContainer ref={loaderRef}>{progressNode}</ProgressBarContainer>
                 </Container>
-                <Box sx={{flex: 1, my: 16}}>
+                <Box sx={{flex: 1}}>
                     <Box sx={{
                         position: 'fixed',
+                        top: (theme) => theme.spacing(16),
+                        bottom: (theme) => theme.spacing(2),
                         maxWidth: 200,
-                        flexDirection: 'column',
+                        overflowY: 'auto',
                         display: {xs: 'none', sm: 'none', md: 'none', lg: 'block'}
                     }}>
                         <StyledList>
