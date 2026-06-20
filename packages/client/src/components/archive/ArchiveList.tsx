@@ -6,7 +6,7 @@ import { ArchiveKind, ArchiveLike, ArchiveSummary, describeRoute } from '@tunji-
 import { ArchiveState } from '../../reducers/Archive';
 import { ArchiveActions, ArchivesQuery } from '../../actions/Archive';
 import _ from 'lodash';
-import { archivesSelector, capitalizeFirst, ShortMonthNames } from '../common/Common';
+import { archivesSelector, capitalizeFirst } from '../common/Common';
 import { Helmet } from 'react-helmet';
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { useDeepEqualSelector } from '../../hooks/UseDeepEqualSelector';
@@ -175,10 +175,10 @@ const ArchiveList = () => {
         <Box key={JSON.stringify(dateInfo)} component="li" sx={{mt: 1, listStyle: 'none'}}>
             <GutterLink
                 component={Link}
-                to={`/${kind}/?dateInfo=${dateInfo.year}-${dateInfo.month}`}
+                to={`/${kind}/?dateInfo=${dateInfo.year}`}
             >
                 <Typography variant={'caption'}>
-                    {`${ShortMonthNames[dateInfo.month]} ${dateInfo.year} (${titles.length})`}
+                    {`${dateInfo.year} (${titles.length})`}
                 </Typography>
             </GutterLink>
         </Box>

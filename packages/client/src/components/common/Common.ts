@@ -3,7 +3,7 @@ import { createSelector } from 'reselect';
 import _ from 'lodash';
 import { StoreState } from '../../types';
 import { ArchiveState } from '../../reducers/Archive';
-import { ArchivesQuery, ArchiveView, yearAndMonthParam } from '../../actions/Archive';
+import { ArchivesQuery, ArchiveView, yearParam } from '../../actions/Archive';
 import { MenuRes } from '../../types/MenuRes';
 
 
@@ -55,13 +55,13 @@ export const archivesSelector = (querySelector: (StoreState: StoreState) => Arch
         const {kind, params} = query;
         const tags = params.getAll('tag').map((item => item.toLowerCase()));
         const categories = params.getAll('category').map((item => item.toLowerCase()));
-        const yearAndMonth = yearAndMonthParam(query);
+        const year = yearParam(query);
 
         let archives = archiveState.kindToArchivesMap[kind];
         archives = tags.length > 0 ? archives.filter(archive => _.intersection(tags, archive.tags).length > 0) : archives;
         archives = categories.length > 0 ? archives.filter(archive => _.intersection(categories, archive.categories).length > 0) : archives;
-        archives = yearAndMonth
-            ? archives.filter(archive => archive.created.getFullYear() === yearAndMonth.year && archive.created.getMonth() === yearAndMonth.month)
+        archives = year
+            ? archives.filter(archive => archive.created.getFullYear() === year.year)
             : archives;
         archives = max ? archives.slice(0, max) : archives;
 
@@ -82,6 +82,4 @@ export const readTime = (text: String) => {
 export const archiveDate = (date: Date) => date.toDateString().split(' ').splice(1).join(' ');
 
 export const capitalizeFirst = (string: string) => string.charAt(0).toUpperCase() + string.slice(1, string.length);
-
-export const ShortMonthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 

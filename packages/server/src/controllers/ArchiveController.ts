@@ -65,12 +65,11 @@ const archiveController = <T extends ArchiveDocument>(Model: ArchiveModel<T>): A
             ];
         }
 
-        if (req.query.month && req.query.year) {
-            const month = Number(req.query.month) || 0;
+        if (req.query.year) {
             const year = Number(req.query.year) || 0;
 
-            const startDate = new Date(year, month, 1);
-            const endDate = new Date(year, month, 31);
+            const startDate = new Date(year, 0, 1);
+            const endDate = new Date(year + 1, 0, 1);
 
             query.created = {
                 $gte: startDate,
@@ -245,7 +244,7 @@ const archiveController = <T extends ArchiveDocument>(Model: ArchiveModel<T>): A
         Model.aggregate(
             [{
                 $group: {
-                    _id: {month: {$month: '$created'}, year: {$year: '$created'}},
+                    _id: {year: {$year: '$created'}},
                     count: {$sum: 1},
                     titles: {$push: '$title'}
                 }
