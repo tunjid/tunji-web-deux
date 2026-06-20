@@ -6,7 +6,7 @@ import { ArchiveKind, ArchiveLike, describeRoute, OpenGraphScrapeQueryKey, Route
 
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
-import { App, AppTheme, ArchiveActions, createEmotionCache, serverStore, StoreState } from '@tunji-web/client';
+import { AppTheme, ArchiveActions, createEmotionCache, routes, serverStore, StoreState } from '@tunji-web/client';
 
 import { Article } from '../models/ArticleSchema';
 import { Project } from '../models/ProjectSchema';
@@ -23,7 +23,7 @@ import { REPO_DID, STANDARD_DOCUMENT_COLLECTION } from '../utilities/Bsky';
 import { ArchiveFileDocument } from '@tunji-web/server/src/models/ArchiveFileSchema';
 import { publicUrlToApiUrl } from '@tunji-web/server/src/controllers/UploadController';
 
-import { StaticRouter } from 'react-router-dom';
+import { createStaticHandler, createStaticRouter, StaticRouterProvider } from 'react-router-dom';
 
 import { CacheProvider } from '@emotion/react';
 import createEmotionServer from '@emotion/server/create-instance';
@@ -70,16 +70,33 @@ export default function (app: Express): void {
 
             const params = await openGraphParams(connectedStore.store, describeRoute(req.path));
 
+            // Data-router SSR: resolve the matched routes for this request, then render the static router.
+            // No route loaders exist, so query() only produces routing context (location, matches, status);
+            // Redux remains the data source (already populated by openGraphParams above).
+            const {query, dataRoutes} = createStaticHandler(routes);
+            const context = await query(createFetchRequest(req));
+
+            // A loader/action could return a Response (e.g. a redirect); honor it. None exist today.
+            if (context instanceof globalThis.Response) {
+                const location = context.headers.get('Location');
+                if (location) return res.redirect(context.status, location);
+                return res.status(context.status).send(await context.text());
+            }
+
+            const staticRouter = createStaticRouter(dataRoutes, context);
+
             const app = ReactDOMServer.renderToString(
                 <Provider store={connectedStore.store}>
-                    <StaticRouter location={req.url}>
-                        <CacheProvider value={cache}>
-                            <AppTheme>
-                                <CssBaseline/>
-                                <App/>
-                            </AppTheme>
-                        </CacheProvider>,
-                    </StaticRouter>
+                    <CacheProvider value={cache}>
+                        <AppTheme>
+                            <CssBaseline/>
+                            <StaticRouterProvider
+                                router={staticRouter}
+                                context={context}
+                                nonce={req.serverReduxStateNonce}
+                            />
+                        </AppTheme>
+                    </CacheProvider>
                 </Provider>
             );
 
@@ -137,6 +154,29 @@ export default function (app: Express): void {
             res.send(webPage);
         }
     );
+}
+
+// Express request -> WHATWG Request, as required by React Router's createStaticHandler().query().
+// Node 22 provides global Request/Headers/AbortController. SSR page requests are GET, so no body.
+function createFetchRequest(req: Request): globalThis.Request {
+    const origin = `${req.protocol}://${req.get('host')}`;
+    const url = new URL(req.originalUrl || req.url, origin);
+
+    const controller = new AbortController();
+    req.on('close', () => controller.abort());
+
+    const headers = new Headers();
+    for (const [key, value] of Object.entries(req.headers)) {
+        if (value === undefined) continue;
+        if (Array.isArray(value)) value.forEach((entry) => headers.append(key, entry));
+        else headers.set(key, value);
+    }
+
+    return new globalThis.Request(url.href, {
+        method: req.method,
+        headers,
+        signal: controller.signal,
+    });
 }
 
 async function openGraphParams(

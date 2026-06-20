@@ -1,5 +1,5 @@
 import { ArchiveCardInfo } from './ArchiveCardInfo';
-import { UserLike } from '@tunji-web/common';
+import { describeRoute, UserLike } from '@tunji-web/common';
 import React from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -11,7 +11,8 @@ import CardMedia from '@mui/material/CardMedia';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import ChipInput, { ChipType } from '@tunji-web/client/src/components/archive/ChipInput';
-import { Link } from 'react-router-dom';
+import { Link, useViewTransitionState } from 'react-router-dom';
+import { useGridTransition } from '@tunji-web/client/src/hooks/UseGridTransition';
 
 const StyledCard = styled(Card)(({theme}) => ({
     display: 'flex',
@@ -92,7 +93,7 @@ const StyledCategories = styled(ChipInput)({
 });
 
 function Author(
-    {author, published}: { author: UserLike, published?: string }
+    {author, published, avatarVtName}: { author: UserLike, published?: string, avatarVtName?: string }
 ) {
     return (
         <Box
@@ -111,7 +112,7 @@ function Author(
                 <Avatar
                     alt={author.fullName}
                     src={author.imageUrl}
-                    sx={{width: 24, height: 24}}
+                    sx={{width: 24, height: 24, viewTransitionName: avatarVtName}}
                 />
                 <Typography variant="caption">
                     {author.fullName}
@@ -130,6 +131,23 @@ export default function ArchiveCard({cardInfo}: State) {
     const [isFocused, setFocused] = React.useState<boolean>(
         false,
     );
+
+    const to = `/${cardInfo.kind}/${cardInfo.link}`;
+    const archiveId = describeRoute(to).archiveId;
+
+    // Two mutually-exclusive morph modes, chosen by which screens the view transition runs between
+    // (React Router replays the transition on browser Back/Forward too, so both fire in reverse):
+    //  - card <-> detail: the clicked card's image/title/author morph into the detail hero. Gated on this
+    //    card's OWN detail route, so only the clicked card is named (the rest stay in the page cross-fade).
+    //  - grid <-> grid (Home <-> list): the WHOLE card morphs to/from its slot in the other grid. The
+    //    browser morphs cards whose `archive-card-<id>` is present on both screens and enters/exits the rest.
+    // They never overlap: a grid<->grid nav has no detail endpoint, and a card<->detail nav has only one
+    // grid endpoint (so useGridTransition() is false). See UseGridTransition.ts.
+    const detailActive = useViewTransitionState(to);
+    const isGridMorph = useGridTransition();
+    const vtName = (slot: string): string | undefined =>
+        detailActive && archiveId ? `archive-${slot}-${archiveId}` : undefined;
+    const cardName = isGridMorph && archiveId ? `archive-card-${archiveId}` : undefined;
 
     const handleFocus = () => {
         setFocused(true);
@@ -167,13 +185,15 @@ export default function ArchiveCard({cardInfo}: State) {
     return (
         <Grid key={cardInfo.id} size={cardInfo.breakPoints}>
             <Link
-                to={`/${cardInfo.kind}/${cardInfo.link}`}
+                to={to}
+                viewTransition
                 style={{textDecoration: 'none'}}
             >
                 {
                     cardInfo.showThumbnail
                         ? <StyledCard
                             variant="outlined"
+                            sx={{viewTransitionName: cardName}}
                             onFocus={handleFocus}
                             onBlur={handleBlur}
                             tabIndex={0}
@@ -187,21 +207,25 @@ export default function ArchiveCard({cardInfo}: State) {
                                     aspectRatio: '16 / 9',
                                     borderBottom: '1px solid',
                                     borderColor: 'divider',
+                                    viewTransitionName: vtName('image'),
                                 }}
                             />
                             <StyledCardContent>
                                 {categoriesAndReadTime}
-                                <Typography gutterBottom variant="h6" component="div">
+                                <Typography gutterBottom variant="h6" component="div"
+                                            sx={{viewTransitionName: vtName('title')}}>
                                     {cardInfo.title}
                                 </Typography>
-                                <StyledTypography variant="body2" color="text.secondary" gutterBottom>
+                                <StyledTypography variant="body2" color="text.secondary" gutterBottom
+                                                  sx={{viewTransitionName: vtName('description')}}>
                                     {cardInfo.description}
                                 </StyledTypography>
                             </StyledCardContent>
-                            <Author author={cardInfo.author} published={cardInfo.date}/>
+                            <Author author={cardInfo.author} published={cardInfo.date} avatarVtName={vtName('author')}/>
                         </StyledCard>
                         : <StyledCard
                             variant="outlined"
+                            sx={{viewTransitionName: cardName}}
                             onFocus={handleFocus}
                             onBlur={handleBlur}
                             tabIndex={0}
@@ -219,6 +243,7 @@ export default function ArchiveCard({cardInfo}: State) {
                             <TitleTypography
                                 gutterBottom
                                 variant="h6"
+                                sx={{viewTransitionName: vtName('title')}}
                                 onFocus={handleFocus}
                                 onBlur={handleBlur}
                                 tabIndex={0}
@@ -230,11 +255,12 @@ export default function ArchiveCard({cardInfo}: State) {
                                     sx={{fontSize: '1rem'}}
                                 />
                             </TitleTypography>
-                            <StyledTypography variant="body2" color="text.secondary" gutterBottom>
+                            <StyledTypography variant="body2" color="text.secondary" gutterBottom
+                                              sx={{viewTransitionName: vtName('description')}}>
                                 {cardInfo.description}
                             </StyledTypography>
 
-                            <Author author={cardInfo.author} published={cardInfo.date}/>
+                            <Author author={cardInfo.author} published={cardInfo.date} avatarVtName={vtName('author')}/>
                         </Box>
                         </StyledCard>
                 }

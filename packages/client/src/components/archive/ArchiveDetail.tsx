@@ -103,13 +103,14 @@ function domStyleSheetsIn(archiveFiles: ArchiveFile[]): HTMLLinkElement[] {
 
 interface DetailProps {
     archive?: PopulatedArchive;
+    archiveId?: string;
 }
 
 interface State {
     tocOpen: boolean;
 }
 
-const Header: (props: DetailProps) => React.JSX.Element = ({archive}) => {
+const Header: (props: DetailProps) => React.JSX.Element = ({archive, archiveId}) => {
 
     const [showUrl, setShowUrl] = useState(true);
     const onPlayerReady = () => setShowUrl(false);
@@ -134,12 +135,15 @@ const Header: (props: DetailProps) => React.JSX.Element = ({archive}) => {
                 />
             </div>
             : <CardMedia
+                component="img"
                 sx={{
                     width: '100%',
                     aspectRatio: '16 / 9',
+                    objectFit: 'cover',
+                    viewTransitionName: archive?.thumbnail ? `archive-image-${archiveId}` : 'none',
                 }}
                 image={archive?.thumbnail}
-                title={archive?.title}
+                alt={archive?.title}
             />;
         return <Card
             sx={{
@@ -160,10 +164,11 @@ const Header: (props: DetailProps) => React.JSX.Element = ({archive}) => {
             alignItems: 'start',
         }}
     >
-        <Typography gutterBottom variant="h3">
+        <Typography gutterBottom variant="h3" sx={{viewTransitionName: `archive-title-${archiveId}`}}>
             {archive?.title || ''}
         </Typography>
-        <Typography color="textSecondary" gutterBottom variant="h5">
+        <Typography color="textSecondary" gutterBottom variant="h5"
+                    sx={{viewTransitionName: `archive-description-${archiveId}`}}>
             {archive?.description || ''}
         </Typography>
         <Box
@@ -175,7 +180,7 @@ const Header: (props: DetailProps) => React.JSX.Element = ({archive}) => {
                 alignItems: 'center',
             }}
         >
-            <Avatar src={archive?.author?.imageUrl}/>
+            <Avatar src={archive?.author?.imageUrl} sx={{viewTransitionName: `archive-author-${archiveId}`}}/>
             <Typography component="p">
                 {archive?.author?.fullName}
             </Typography>
@@ -259,7 +264,7 @@ const ArchiveDetail = () => {
                         <title>{archive?.title}</title>
                         <meta name="description" content={archive?.description}/>
                     </Helmet>
-                    <Header archive={archive}/>
+                    <Header archive={archive} archiveId={archiveId}/>
                     <Box sx={{display: 'flex', flexDirection: 'column', gap: 1}}>
                         <BlogMarkdown body={archive?.body}/>
                     </Box>

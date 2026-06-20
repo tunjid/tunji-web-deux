@@ -36,3 +36,18 @@
     transform: rotate(360deg);
   }
 }
+
+/* Shared-element transitions (archive card <-> archive detail). Tune the morph pacing. */
+::view-transition-group(*) {
+  animation-duration: 300ms;
+  animation-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* Respect users who opt out of motion: skip the morph (and the default root cross-fade). */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}

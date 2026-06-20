@@ -75,7 +75,7 @@ export default function AppAppBar(
                         <Box sx={{display: {xs: 'none', md: 'flex'}}}>
                             {
                                 links.map((link) => (
-                                    <Link key={link.link} to={link.link}>
+                                    <Link key={link.link} to={link.link} viewTransition>
                                         <Button variant="text" color="info" size="small">
                                             {link.title}
                                         </Button>
@@ -125,7 +125,7 @@ export default function AppAppBar(
                                 </Box>
                                 {
                                     links.map((link) => (
-                                        <Link key={link.link} to={link.link} style={{
+                                        <Link key={link.link} to={link.link} viewTransition style={{
                                             textDecoration: 'none',
                                             color: 'inherit',
                                             textAlign: 'center',
