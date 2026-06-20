@@ -127,7 +127,6 @@ const archiveReducer = (state = {
                 [kind]: _.sortBy(
                     action.payload.item,
                     (summary) => -summary.dateInfo.year,
-                    (summary) => -summary.dateInfo.month,
                 )
             };
             return {

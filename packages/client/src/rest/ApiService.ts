@@ -9,7 +9,7 @@ import {
     ArchiveFile
 } from '@tunji-web/common';
 import { SignInArgs } from '../actions/Auth';
-import { ArchivesQuery, IncrementArchiveLikesRequest, yearAndMonthParam } from '../actions/Archive';
+import { ArchivesQuery, IncrementArchiveLikesRequest, yearParam } from '../actions/Archive';
 import { OpenGraphData } from '../reducers/OpenGraph';
 import { PopulatedArchive } from '@tunji-web/client/src/models/PopulatedArchive';
 import { ArchiveCommentsResponse } from '@tunji-web/client/src/models/BskyThread';
@@ -23,10 +23,9 @@ const transport = axios.create({
 const session = () => transport.get<UserLike>(`${API_ENDPOINT}/api/session`);
 const signIn = (args: SignInArgs) => transport.post<UserLike>(`${API_ENDPOINT}/api/sign-in`, args);
 const fetchArchives = (query: ArchivesQuery) => {
-    const yearAndMonth = yearAndMonthParam(query);
-    if (yearAndMonth) {
-        query.params.append('month', yearAndMonth.month.toString());
-        query.params.append('year', yearAndMonth.year.toString());
+    const year = yearParam(query);
+    if (year) {
+        query.params.append('year', year.year.toString());
     }
 
     return transport.get<PopulatedArchive[]>(`${API_ENDPOINT}/api/${query.kind}?${query.params.toString()}`);

@@ -26,7 +26,6 @@ export interface ArchiveLike {
 }
 
 export interface DateInfo {
-    month: number;
     year: number;
 }
 

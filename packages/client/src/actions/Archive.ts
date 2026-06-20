@@ -109,12 +109,11 @@ export interface ArchivesQuery {
     params: URLSearchParams;
 }
 
-export const yearAndMonthParam = ({params}: ArchivesQuery) => {
+export const yearParam = ({params}: ArchivesQuery) => {
     const dateInfo = params.get('dateInfo');
-    const splitDate = dateInfo ? dateInfo.split('-') : [];
-    const {year, month} = {year: parseInt(splitDate[0]), month: parseInt(splitDate[1])};
+    const year = dateInfo ? parseInt(dateInfo) : NaN;
 
-    return isNaN(year) && isNaN(month) ? undefined : {year, month};
+    return isNaN(year) ? undefined : {year};
 };
 
 interface IArchiveActions {
@@ -215,10 +214,7 @@ export const ArchiveActions: IArchiveActions = {
             ApiService.archiveSummaries(kind),
             dispatch,
             (fetched) => dispatch(ArchiveActions.updateArchiveSummaries({
-                kind, item: fetched.map(item => {
-                    // Mongo aggregation pipeline does not 0 index months.
-                    return {...item, dateInfo: {...item.dateInfo, month: item.dateInfo.month - 1}};
-                })
+                kind, item: fetched
             }))
         );
     },
