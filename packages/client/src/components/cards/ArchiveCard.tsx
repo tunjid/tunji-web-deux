@@ -139,10 +139,11 @@ export default function ArchiveCard({cardInfo}: State) {
     // (React Router replays the transition on browser Back/Forward too, so both fire in reverse):
     //  - card <-> detail: the clicked card's image/title/author morph into the detail hero. Gated on this
     //    card's OWN detail route, so only the clicked card is named (the rest stay in the page cross-fade).
-    //  - grid <-> grid (Home <-> list): the WHOLE card morphs to/from its slot in the other grid. The
-    //    browser morphs cards whose `archive-card-<id>` is present on both screens and enters/exits the rest.
-    // They never overlap: a grid<->grid nav has no detail endpoint, and a card<->detail nav has only one
-    // grid endpoint (so useGridTransition() is false). See UseGridTransition.ts.
+    //  - grid <-> grid (Home <-> list, and list <-> list when filters change): the WHOLE card morphs
+    //    to/from its slot in the other grid. The browser morphs cards whose `archive-card-<id>` is present
+    //    on both screens, and enters/exits the rest (so filtered-in/out cards animate in/out).
+    // They never overlap: a grid<->grid nav has two grid endpoints, while a card<->detail nav has a detail
+    // endpoint (so useGridTransition() is false). See UseGridTransition.ts.
     const detailActive = useViewTransitionState(to);
     const isGridMorph = useGridTransition();
     const vtName = (slot: string): string | undefined =>
@@ -171,6 +172,7 @@ export default function ArchiveCard({cardInfo}: State) {
             chips={cardInfo.categories}
             type={ChipType.Category}
             kind={cardInfo.kind}
+            linkless
         />
         <Typography
             variant="caption"
