@@ -137,8 +137,9 @@ export default function ArchiveCard({cardInfo}: State) {
 
     // Two mutually-exclusive morph modes, chosen by which screens the view transition runs between
     // (React Router replays the transition on browser Back/Forward too, so both fire in reverse):
-    //  - card <-> detail: the clicked card's image/title/author morph into the detail hero. Gated on this
-    //    card's OWN detail route, so only the clicked card is named (the rest stay in the page cross-fade).
+    //  - card <-> detail: only the clicked card's hero IMAGE morphs into the detail hero image; the
+    //    title, description and author cross-fade with the page. Gated on this card's OWN detail route,
+    //    so only the clicked card's image is named.
     //  - grid <-> grid (Home <-> list, and list <-> list when filters change): the WHOLE card morphs
     //    to/from its slot in the other grid. The browser morphs cards whose `archive-card-<id>` is present
     //    on both screens, and enters/exits the rest (so filtered-in/out cards animate in/out).
@@ -146,8 +147,7 @@ export default function ArchiveCard({cardInfo}: State) {
     // endpoint (so useGridTransition() is false). See UseGridTransition.ts.
     const detailActive = useViewTransitionState(to);
     const isGridMorph = useGridTransition();
-    const vtName = (slot: string): string | undefined =>
-        detailActive && archiveId ? `archive-${slot}-${archiveId}` : undefined;
+    const imageVtName = detailActive && archiveId ? `archive-image-${archiveId}` : undefined;
     const cardName = isGridMorph && archiveId ? `archive-card-${archiveId}` : undefined;
 
     const handleFocus = () => {
@@ -209,21 +209,21 @@ export default function ArchiveCard({cardInfo}: State) {
                                     aspectRatio: '16 / 9',
                                     borderBottom: '1px solid',
                                     borderColor: 'divider',
-                                    viewTransitionName: vtName('image'),
+                                    viewTransitionName: imageVtName,
                                 }}
                             />
                             <StyledCardContent>
-                                {categoriesAndReadTime}
-                                <Typography gutterBottom variant="h6" component="div"
-                                            sx={{viewTransitionName: vtName('title')}}>
+                                <Typography gutterBottom variant="h6" component="div">
                                     {cardInfo.title}
                                 </Typography>
-                                <StyledTypography variant="body2" color="text.secondary" gutterBottom
-                                                  sx={{viewTransitionName: vtName('description')}}>
+                                <StyledTypography variant="body2" color="text.secondary" gutterBottom>
                                     {cardInfo.description}
                                 </StyledTypography>
                             </StyledCardContent>
-                            <Author author={cardInfo.author} published={cardInfo.date} avatarVtName={vtName('author')}/>
+                            <Author author={cardInfo.author} published={cardInfo.date}/>
+                            <Box sx={{px: 2, pb: 2}}>
+                                {categoriesAndReadTime}
+                            </Box>
                         </StyledCard>
                         : <StyledCard
                             variant="outlined"
@@ -241,11 +241,9 @@ export default function ArchiveCard({cardInfo}: State) {
                                 height: '100%',
                             }}
                         >
-                            {categoriesAndReadTime}
                             <TitleTypography
                                 gutterBottom
                                 variant="h6"
-                                sx={{viewTransitionName: vtName('title')}}
                                 onFocus={handleFocus}
                                 onBlur={handleBlur}
                                 tabIndex={0}
@@ -257,12 +255,12 @@ export default function ArchiveCard({cardInfo}: State) {
                                     sx={{fontSize: '1rem'}}
                                 />
                             </TitleTypography>
-                            <StyledTypography variant="body2" color="text.secondary" gutterBottom
-                                              sx={{viewTransitionName: vtName('description')}}>
+                            <StyledTypography variant="body2" color="text.secondary" gutterBottom>
                                 {cardInfo.description}
                             </StyledTypography>
 
-                            <Author author={cardInfo.author} published={cardInfo.date} avatarVtName={vtName('author')}/>
+                            <Author author={cardInfo.author} published={cardInfo.date}/>
+                            {categoriesAndReadTime}
                         </Box>
                         </StyledCard>
                 }

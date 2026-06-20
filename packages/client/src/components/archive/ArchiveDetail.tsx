@@ -164,11 +164,10 @@ const Header: (props: DetailProps) => React.JSX.Element = ({archive, archiveId})
             alignItems: 'start',
         }}
     >
-        <Typography gutterBottom variant="h3" sx={{viewTransitionName: `archive-title-${archiveId}`}}>
+        <Typography gutterBottom variant="h3">
             {archive?.title || ''}
         </Typography>
-        <Typography color="textSecondary" gutterBottom variant="h5"
-                    sx={{viewTransitionName: `archive-description-${archiveId}`}}>
+        <Typography color="textSecondary" gutterBottom variant="h5">
             {archive?.description || ''}
         </Typography>
         <Box
@@ -180,7 +179,7 @@ const Header: (props: DetailProps) => React.JSX.Element = ({archive, archiveId})
                 alignItems: 'center',
             }}
         >
-            <Avatar src={archive?.author?.imageUrl} sx={{viewTransitionName: `archive-author-${archiveId}`}}/>
+            <Avatar src={archive?.author?.imageUrl}/>
             <Typography component="p">
                 {archive?.author?.fullName}
             </Typography>
