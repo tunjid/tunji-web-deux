@@ -161,7 +161,7 @@ const ArchiveList = () => {
 
     const categoryNodes = availableCategories.map((category) => (
         <Box key={category} component="li" sx={{mt: 1, listStyle: 'none'}}>
-            <GutterLink component={Link} to={`/${kind}/?category=${category}`}>
+            <GutterLink component={Link} to={`/${kind}/?category=${category}`} viewTransition>
                 <Typography variant={'caption'}>
                     {category}
                 </Typography>
@@ -174,6 +174,7 @@ const ArchiveList = () => {
             <GutterLink
                 component={Link}
                 to={`/${kind}/?dateInfo=${dateInfo.year}`}
+                viewTransition
             >
                 <Typography variant={'caption'}>
                     {`${dateInfo.year} (${titles.length})`}
@@ -192,7 +193,7 @@ const ArchiveList = () => {
             filtered.forEach((item) => params.append(type, item));
         }
 
-        navigate(`/${kind}?${params.toString()}`);
+        navigate(`/${kind}?${params.toString()}`, {viewTransition: true});
     };
 
     return (
