@@ -22,6 +22,7 @@ import { TableOfContents } from '@tunji-web/client/src/components/common/TableOf
 import AppAppBar from '@tunji-web/client/src/blog/components/AppAppBar';
 import LikeButton from '@tunji-web/client/src/components/like-button/LikeButton';
 import ArchiveComments from './ArchiveComments';
+import RelatedArchives from './RelatedArchives';
 
 const fileToStyleSheet: (file: ArchiveFile) => HTMLLinkElement = file => {
     const sheet = document.createElement('link');
@@ -273,6 +274,7 @@ const ArchiveDetail = () => {
                         kind={archive?.kind}
                         chips={archive?.tags}
                     />
+                    <RelatedArchives archive={archive}/>
                     <ArchiveComments archive={archive}/>
                 </Container>
                 <Box sx={{flex: 1, my: 16}}>
