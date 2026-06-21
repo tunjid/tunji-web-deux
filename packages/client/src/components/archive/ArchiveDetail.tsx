@@ -18,6 +18,7 @@ import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import CardMedia from '@mui/material/CardMedia';
+import PlayArrowRoundedIcon from '@mui/icons-material/PlayArrowRounded';
 import { TableOfContents } from '@tunji-web/client/src/components/common/TableOfContents';
 import AppAppBar from '@tunji-web/client/src/blog/components/AppAppBar';
 import LikeButton from '@tunji-web/client/src/components/like-button/LikeButton';
@@ -113,18 +114,50 @@ interface State {
 
 const Header: (props: DetailProps) => React.JSX.Element = ({archive, archiveId}) => {
 
+    // `showUrl` is only an SSR / no-JS fallback link (ReactPlayer is client-only). Hide it once mounted
+    // so it never sits over the click-to-play thumbnail. `playing` lets the light-preview click start
+    // playback in one tap.
     const [showUrl, setShowUrl] = useState(true);
-    const onPlayerReady = () => setShowUrl(false);
+    const [playing, setPlaying] = useState(false);
+    useEffect(() => setShowUrl(false), []);
 
     const ssrVideoUrl = () => {
         return showUrl ? <a href={archive?.videoUrl}>Video link</a> : <div/>;
     };
+
+    // Circular, semi-opaque backdrop so the play affordance reads against any thumbnail.
+    const playIcon = (
+        <Box
+            sx={{
+                width: 72,
+                height: 72,
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: 'rgba(0, 0, 0, 0.55)',
+                color: '#fff',
+                transition: 'background-color 0.2s ease, transform 0.2s ease',
+                '&:hover': {
+                    backgroundColor: 'rgba(0, 0, 0, 0.72)',
+                    transform: 'scale(1.05)',
+                },
+            }}
+        >
+            <PlayArrowRoundedIcon sx={{fontSize: 44}}/>
+        </Box>
+    );
 
     const heroContent = (archive?: PopulatedArchive) => {
         const element = archive?.videoUrl
             ? <div style={{
                 width: '100%',
                 aspectRatio: '16 / 9',
+                // The video embed itself can't be a morph target (cross-origin iframes aren't captured
+                // in view-transition snapshots), so name this persistent wrapper instead. With `light`
+                // the hero shows the thumbnail until clicked, so the snapshot is the same image the card
+                // morphs from. Same gate as the image branch; the two branches never render together.
+                viewTransitionName: archive?.thumbnail ? `archive-image-${archiveId}` : 'none',
             }}>
                 {ssrVideoUrl()}
                 <ReactPlayer
@@ -132,7 +165,10 @@ const Header: (props: DetailProps) => React.JSX.Element = ({archive, archiveId})
                     width={'100%'}
                     height={'100%'}
                     controls={true}
-                    onReady={onPlayerReady}
+                    light={archive?.thumbnail || true}
+                    playIcon={playIcon}
+                    playing={playing}
+                    onClickPreview={() => setPlaying(true)}
                 />
             </div>
             : <CardMedia
@@ -264,7 +300,7 @@ const ArchiveDetail = () => {
                         <title>{archive?.title}</title>
                         <meta name="description" content={archive?.description}/>
                     </Helmet>
-                    <Header archive={archive} archiveId={archiveId}/>
+                    <Header key={archiveId} archive={archive} archiveId={archiveId}/>
                     <Box sx={{display: 'flex', flexDirection: 'column', gap: 1}}>
                         <BlogMarkdown body={archive?.body}/>
                     </Box>
