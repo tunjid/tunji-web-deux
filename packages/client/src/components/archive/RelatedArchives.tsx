@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { Box, Grid, Typography } from '@mui/material';
+import { Box, CircularProgress, Grid, IconButton, Typography } from '@mui/material';
+import RefreshRoundedIcon from '@mui/icons-material/RefreshRounded';
 import _ from 'lodash';
 import { ArchiveKind } from '@tunji-web/common';
 import { PopulatedArchive } from '@tunji-web/client/src/models/PopulatedArchive';
@@ -61,31 +62,46 @@ const cardInfoFrom = (archive: PopulatedArchive): ArchiveCardInfo => ({
     readTime: readTime(archive.body),
 });
 
+// Per-archive cache of the chosen picks, scoped to the session (it lives only in memory, so a fresh
+// page load re-randomizes). Returning to a post — e.g. browser Back after tapping a related card — then
+// shows the SAME cards it showed before. That stability is what lets the REVERSE view transition
+// animate: the card linking to the post you came from must still be present on the page you return to,
+// so the detail hero has a morph target to shrink back into.
+const picksCache = new Map<string, PopulatedArchive[]>();
+
 export default function RelatedArchives({archive}: RelatedArchivesProps) {
     const dispatch = useDispatch();
-    const [related, setRelated] = useState<PopulatedArchive[]>([]);
 
     const currentKey = archive?.key;
+    const cachedPicks = currentKey ? picksCache.get(currentKey) : undefined;
 
-    // Drop the previous post's picks synchronously when navigating to a different archive (e.g.
-    // detail -> detail by clicking a related card). The same ArchiveDetail/RelatedArchives instance is
-    // reused across that navigation, so without this the prior picks linger until the async re-fetch
-    // resolves. A lingering card that links to the NEW post would briefly claim the same
-    // `archive-image-<id>` as the destination hero — a duplicate view-transition-name, which aborts the
-    // whole morph. Resetting in render keeps the new snapshot collision-free so the hero image morphs.
+    const [related, setRelated] = useState<PopulatedArchive[]>(cachedPicks ?? []);
+    const [refreshing, setRefreshing] = useState(false);
+    // Bumped by the refresh button to force a re-fetch for the current archive (see the fetch effect).
+    const [refreshNonce, setRefreshNonce] = useState(0);
+
+    // When navigating to a different archive (e.g. detail -> detail by clicking a related card) the same
+    // ArchiveDetail/RelatedArchives instance is reused, so swap to the new post's picks *in render* —
+    // never let the previous post's lingering cards reach the next view-transition snapshot. Showing the
+    // new post's own cached picks (or nothing, pending fetch) keeps that snapshot free of a card that
+    // would duplicate the destination hero's `archive-image-<id>` and abort the forward morph; rendering
+    // the cached picks (rather than clearing) on a return visit preserves the reverse morph's target.
     const [trackedKey, setTrackedKey] = useState(currentKey);
     if (currentKey !== trackedKey) {
         setTrackedKey(currentKey);
-        setRelated([]);
+        setRelated(cachedPicks ?? []);
+        setRefreshing(false);
     }
 
+    // Fetch once per archive and cache the result. Cached visits — crucially browser Back/Forward —
+    // reuse the stored picks untouched: re-rolling the shuffle on return would replace the very card the
+    // reverse view transition needs to morph back into, breaking the animation. The only way to re-roll
+    // is the explicit refresh button below, which drops this archive's cache entry and bumps the nonce.
     useEffect(() => {
-        if (!archive || !currentKey) {
-            setRelated([]);
-            return;
-        }
+        if (!archive || !currentKey || picksCache.has(currentKey)) return;
 
         let isMounted = true;
+        setRefreshing(true);
 
         const dedupe = (archives: PopulatedArchive[]): PopulatedArchive[] =>
             _.uniqBy(archives.filter((a) => a.key !== currentKey), (a) => a.key);
@@ -93,7 +109,7 @@ export default function RelatedArchives({archive}: RelatedArchivesProps) {
         const resolve = async (): Promise<PopulatedArchive[]> => {
             const pool = dedupe(await fetchPool(archive.categories));
 
-            // Bias toward the most-related, then shuffle so the chosen few vary between visits.
+            // Bias toward the most-related, then shuffle so the chosen few vary between fresh loads.
             const ranked = _.orderBy(pool, (candidate) => relatedness(archive, candidate), ['desc'])
                 .slice(0, TOP_CANDIDATES);
             let picks = _.shuffle(ranked).slice(0, RESULT_COUNT);
@@ -111,29 +127,54 @@ export default function RelatedArchives({archive}: RelatedArchivesProps) {
 
         resolve()
             .then((picks) => {
-                if (!isMounted) return;
-                setRelated(picks);
+                // Cache + seed even if we've since navigated away: it's correct data for this archive
+                // key, ready for a later return. Only the visible state is gated on still being mounted.
+                picksCache.set(currentKey, picks);
                 // Seed the store so the destination detail page can render the correct hero on first
                 // paint (archiveSelector falls back to kindToArchivesMap), making the image morph clean.
                 _.toPairs(_.groupBy(picks, (a) => a.kind)).forEach(([kind, item]) =>
                     dispatch(ArchiveActions.addArchives({kind: kind as ArchiveKind, item}))
                 );
+                if (isMounted) setRelated(picks);
             })
             .catch((err) => {
                 console.error('Failed to load related posts:', err);
                 if (isMounted) setRelated([]);
+            })
+            .finally(() => {
+                if (isMounted) setRefreshing(false);
             });
 
         return () => {
             isMounted = false;
         };
-    }, [archive, currentKey, dispatch]);
+    }, [archive, currentKey, dispatch, refreshNonce]);
+
+    // Explicit, user-initiated re-roll — safe because it happens between navigations, not during one.
+    const handleRefresh = () => {
+        if (refreshing || !currentKey) return;
+        picksCache.delete(currentKey);
+        setRefreshNonce((nonce) => nonce + 1);
+    };
 
     if (related.length === 0) return null;
 
     return (
         <Box sx={{mt: 6, pt: 4, borderTop: 1, borderColor: 'divider', width: '100%'}}>
-            <Typography variant="h6" gutterBottom>Keep reading</Typography>
+            <Box sx={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                <Typography variant="h6">Keep reading</Typography>
+                <IconButton
+                    onClick={handleRefresh}
+                    disabled={refreshing}
+                    size="small"
+                    aria-label="Show other suggestions"
+                    title="Show other suggestions"
+                >
+                    {refreshing
+                        ? <CircularProgress size={18} color="inherit"/>
+                        : <RefreshRoundedIcon fontSize="small"/>}
+                </IconButton>
+            </Box>
             <Grid container spacing={4} columns={12} sx={{my: 4}}>
                 {related.map((item) => (
                     <ArchiveCard key={item.key} cardInfo={cardInfoFrom(item)}/>
