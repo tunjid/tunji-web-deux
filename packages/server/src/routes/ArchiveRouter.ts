@@ -55,6 +55,8 @@ export default function <T extends ArchiveDocument>(app: Express, model: Archive
             ),
         )
         .delete(
+            userController.requiresLogin,
+            archives.hasAuthorization,
             archives.remove,
             archives.sendArchive
         );
