@@ -16,11 +16,21 @@ interface ArchiveCommentsProps {
 const THREAD_VIEW_POST = 'app.bsky.feed.defs#threadViewPost';
 const MAX_DEPTH = 6;
 
-const profileUrl = (did: string) => `https://bsky.app/profile/${did}`;
+const profileUrl = (did: string) => `https://bsky.app/profile/${encodeURIComponent(did)}`;
 
 const postUrl = (atUri: string): string => {
     const [did, , rkey] = atUri.replace('at://', '').split('/');
-    return `https://bsky.app/profile/${did}/post/${rkey}`;
+    return `https://bsky.app/profile/${encodeURIComponent(did)}/post/${encodeURIComponent(rkey)}`;
+};
+
+const safeLinkHref = (uri: string | undefined): string | undefined => {
+    if (!uri) return undefined;
+    try {
+        const {protocol} = new URL(uri);
+        return protocol === 'https:' || protocol === 'http:' ? uri : undefined;
+    } catch {
+        return undefined;
+    }
 };
 
 const formatDate = (iso: string) =>
@@ -71,7 +81,7 @@ const renderText = (text: string | undefined, facets: BskyFacet[] | undefined): 
         const feature = facet.features[0];
 
         let href: string | undefined;
-        if (feature.$type === 'app.bsky.richtext.facet#link') href = feature.uri;
+        if (feature.$type === 'app.bsky.richtext.facet#link') href = safeLinkHref(feature.uri);
         else if (feature.$type === 'app.bsky.richtext.facet#mention') href = feature.did ? profileUrl(feature.did) : undefined;
         else if (feature.$type === 'app.bsky.richtext.facet#tag') href = feature.tag ? `https://bsky.app/hashtag/${encodeURIComponent(feature.tag)}` : undefined;
 

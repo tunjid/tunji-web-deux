@@ -116,6 +116,7 @@ UserSchema.set('toJSON', {
         delete ret.salt;
         delete ret.accessLevel;
         delete ret.provider;
+        delete (ret as any).twoFactPass;
         return ret;
     }
 });

@@ -31,6 +31,8 @@ const app: (connection: Connection) => Express = (connection) => {
     // Initialize Express app
     const expressServer: Express = ExpressApp();
 
+    expressServer.set('trust proxy', 1);
+
     const rateLimiter = createRateLimiter(connection);
     const userController = createUserController(rateLimiter);
 
@@ -42,6 +44,16 @@ const app: (connection: Connection) => Express = (connection) => {
         preflightContinue: true,
         origin: (origin, callback) => callback(null, config.corsAllowedOrigins),
     }));
+
+    expressServer.use((req: Request, res: Response, next: NextFunction) => {
+        if (req.method === 'GET' || req.method === 'HEAD' || req.method === 'OPTIONS') return next();
+
+        const origin = req.headers.origin;
+        if (!origin) return next();
+        if (origin === `${req.protocol}://${req.get('host')}` || config.corsAllowedOrigins.includes(origin)) return next();
+
+        return res.status(403).send({message: 'Cross-site request rejected'});
+    });
 
     if (config.env === 'production') expressServer.use(compress());
     else expressServer.use(morgan('dev'));

@@ -12,7 +12,6 @@ import { Article } from '../models/ArticleSchema';
 import { Project } from '../models/ProjectSchema';
 import { Talk } from '../models/TalkSchema';
 
-import { getErrorMessage } from '../controllers/Common';
 import { Provider } from 'react-redux';
 import { ArchiveDocument } from '@tunji-web/server/src/models/Archive';
 import { Store } from 'redux';
@@ -20,6 +19,7 @@ import { Store } from 'redux';
 import { documentRecordKey } from 'atmosphere-rss';
 import config from '../config/config';
 import { REPO_DID, STANDARD_DOCUMENT_COLLECTION } from '../utilities/Bsky';
+import { fetchPublicHtml } from '../utilities/SafeFetch';
 import { ArchiveFileDocument } from '@tunji-web/server/src/models/ArchiveFileSchema';
 import { publicUrlToApiUrl } from '@tunji-web/server/src/controllers/UploadController';
 
@@ -47,15 +47,20 @@ export default function (app: Express): void {
     const indexHtml = fs.readFileSync(path.join(__dirname, '../../', 'client', 'public', 'index.html'), 'utf8');
     app.route(`/${OpenGraphScrapeQueryKey}`)
         .get(async (req: Request, res: Response) => {
-            const url = req.query.url as unknown as string | undefined;
-            if (!url) return res.status(400).send({
-                message: getErrorMessage('There is no url to scrape')
+            const url = req.query.url;
+            if (typeof url !== 'string' || !url) return res.status(400).send({
+                message: 'There is no url to scrape'
             });
-            const {error, result} = await scraper({url});
 
-            return error ? res.status(400).send({
-                message: getErrorMessage(`Error scraping for open graph results: ${JSON.stringify(error)}`)
-            }) : res.json(result);
+            try {
+                const html = await fetchPublicHtml(url);
+                const {result} = await scraper({html});
+                return res.json({...result, requestUrl: url});
+            } catch (error) {
+                return res.status(400).send({
+                    message: 'Error scraping for open graph results'
+                });
+            }
         });
 
     app.all(
@@ -205,7 +210,7 @@ async function openGraphParams(
 
             const document: ArchiveDocument | null | undefined = modelAndId
                 ? await modelAndId.model.findById(modelAndId.id)
-                    .populate('author')
+                    .populate('author', 'firstName lastName fullName imageUrl')
                     .exec()
                 : undefined;
 

@@ -8,5 +8,10 @@ export default Session({
     resave: false,
     saveUninitialized: false,
     secret: config.sessionSecret,
+    cookie: {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'strict',
+    },
     store:  MongoStore.create({mongoUrl: config.mongoUrl})
 });

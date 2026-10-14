@@ -100,43 +100,66 @@ const createUserController: (limiter: RateLimiter) => UserController = (limiter)
         });
     },
     signIn: async (req, res, next) => {
-        const username = req.body.username;
-        const rlResUsername = await limiter.signInLimiterStore.get(username);
+        const {username: rawUsername, password} = req.body ?? {};
+        if (typeof rawUsername !== 'string' || typeof password !== 'string') return serverMessage(res, {
+            statusCode: 400,
+            message: 'Username and password are required',
+        });
 
-        if (rlResUsername !== null && rlResUsername.consumedPoints > limiter.maxConsecutiveFailsByUsername) {
-            const retrySecs = Math.round(rlResUsername.msBeforeNext / 1000) || 1;
-            res.set('Retry-After', String(retrySecs));
+        const username = rawUsername.trim();
+        req.body.username = username;
+        const ip = req.ip || req.socket.remoteAddress || 'unknown';
+
+        const tooManyRequests = (msBeforeNext: number) => {
+            res.set('Retry-After', String(Math.round(msBeforeNext / 1000) || 1));
             return serverMessage(res, {
                 errorCode: ErrorCode.RateLimited,
                 statusCode: 429,
                 message: 'Too Many Requests',
             });
+        };
+
+        let rlResUsername;
+        try {
+            const [byUsername, byIp] = await Promise.all([
+                limiter.signInLimiterStore.get(username),
+                limiter.signInIpLimiterStore.get(ip),
+            ]);
+            rlResUsername = byUsername;
+
+            if (byUsername !== null && byUsername.consumedPoints > limiter.maxConsecutiveFailsByUsername) {
+                return tooManyRequests(byUsername.msBeforeNext);
+            }
+            if (byIp !== null && byIp.consumedPoints > limiter.maxFailsByIp) {
+                return tooManyRequests(byIp.msBeforeNext);
+            }
+        } catch (error) {
+            return next(error);
         }
 
-        passport.authenticate('local', async function (err, user, status) {
+        passport.authenticate('local', async function (err, user) {
             if (err) {
                 return next(err);
             }
             if (!user) {
                 try {
-                    await limiter.signInLimiterStore.consume(username);
+                    await Promise.all([
+                        limiter.signInLimiterStore.consume(username),
+                        limiter.signInIpLimiterStore.consume(ip),
+                    ]);
+                    // Same response for unknown users and wrong passwords, so usernames can't be probed.
                     return serverMessage(res, {
-                        statusCode: status ? 400 : 404,
-                        message: status ? status.message : 'User does not exist'
+                        statusCode: 401,
+                        message: 'Invalid username or password',
                     });
                 } catch (rlRejected) {
-                    if (rlRejected instanceof Error) throw rlRejected;
-
-                    res.set('Retry-After', String(Math.round(rlRejected.msBeforeNext / 1000)) || '1');
-                    return serverMessage(res, {
-                        statusCode: 429,
-                        message: 'Too Many Requests',
-                    });
+                    if (rlRejected instanceof Error) return next(rlRejected);
+                    return tooManyRequests(rlRejected.msBeforeNext);
                 }
             }
 
             req.logIn(user, async function (err) {
-                if (err) return res.json(err);
+                if (err) return next(err);
                 if (rlResUsername !== null && rlResUsername.consumedPoints > 0)
                     await limiter.signInLimiterStore.delete(username);
 

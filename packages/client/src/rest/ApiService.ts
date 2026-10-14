@@ -39,7 +39,7 @@ const deleteArchive = (archive: ArchiveLike) => transport.delete<ArchiveLike>(`$
 const archiveFiles = (kind: ArchiveKind, id: string) => transport.get<ArchiveFile[]>(`${API_ENDPOINT}/api/${kind}/${id}/files`);
 const fetchArchiveComments = (kind: ArchiveKind, id: string) => transport.get<ArchiveCommentsResponse>(`${API_ENDPOINT}/api/${kind}/${id}/comments`);
 
-const scrapeOpenGraph = (url: string) => transport.get<OpenGraphData>(`${API_ENDPOINT}/${OpenGraphScrapeQueryKey}?url=${url}`);
+const scrapeOpenGraph = (url: string) => transport.get<OpenGraphData>(`${API_ENDPOINT}/${OpenGraphScrapeQueryKey}?url=${encodeURIComponent(url)}`);
 
 const ApiService = {
     session,

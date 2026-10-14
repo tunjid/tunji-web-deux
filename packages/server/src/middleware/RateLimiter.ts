@@ -4,11 +4,14 @@ import { NextFunction, Request, Response } from 'express';
 import { serverMessage } from '@tunji-web/server/src/controllers/Common';
 
 const maxConsecutiveFailsByUsername = 3;
+const maxFailsByIp = 10;
 
 export interface RateLimiter {
     generalLimiter: (req: Request, res: Response, next: NextFunction) => void;
     signInLimiterStore: RateLimiterStoreAbstract;
     maxConsecutiveFailsByUsername: number;
+    signInIpLimiterStore: RateLimiterStoreAbstract;
+    maxFailsByIp: number;
 }
 
 const createRateLimiter: (connection: Connection) => RateLimiter = (connection) => {
@@ -27,6 +30,14 @@ const createRateLimiter: (connection: Connection) => RateLimiter = (connection) 
         blockDuration: 60 * 60 * 24 * 7 * 2, // Block for 2 weeks
     });
 
+    const limiterFailsByIp = new RateLimiterMongo({
+        storeClient: connection,
+        keyPrefix: 'ip-sign-in-rate-limiter',
+        points: maxFailsByIp,
+        duration: 60 * 60 * 24, // Count fails over a day
+        blockDuration: 60 * 60 * 24, // Block for a day
+    });
+
     return ({
         generalLimiter: (req: Request, res: Response, next: NextFunction) =>
             defaultLimiter.consume(req.ip || req.socket.remoteAddress || 'unknown')
@@ -38,6 +49,8 @@ const createRateLimiter: (connection: Connection) => RateLimiter = (connection) 
                 )),
         signInLimiterStore: limiterConsecutiveFailsByUsername,
         maxConsecutiveFailsByUsername,
+        signInIpLimiterStore: limiterFailsByIp,
+        maxFailsByIp,
     });
 };
 
